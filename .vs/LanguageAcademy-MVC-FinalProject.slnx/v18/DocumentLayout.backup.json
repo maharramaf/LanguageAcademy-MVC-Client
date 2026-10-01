@@ -1,12 +1,139 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\languageacademy-mvc-finalproject\\languageacademy-mvc-finalproject\\wwwroot\\js\\i18n-rows.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|solutionrelative:languageacademy-mvc-finalproject\\wwwroot\\js\\i18n-rows.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\languageacademy-mvc-finalproject\\languageacademy-mvc-finalproject\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|solutionrelative:languageacademy-mvc-finalproject\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\languageacademy-mvc-finalproject\\languageacademy-mvc-finalproject\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|solutionrelative:languageacademy-mvc-finalproject\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\languageacademy-mvc-finalproject\\languageacademy-mvc-finalproject\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|solutionrelative:languageacademy-mvc-finalproject\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\languageacademy-mvc-finalproject\\languageacademy-mvc-finalproject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|solutionrelative:languageacademy-mvc-finalproject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\languageacademy-mvc-finalproject\\languageacademy-mvc-finalproject\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|solutionrelative:languageacademy-mvc-finalproject\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\languageacademy-mvc-finalproject\\languageacademy-mvc-finalproject\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{5F3042E4-2245-CFB2-B630-418DA7A18851}|LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject.csproj|solutionrelative:languageacademy-mvc-finalproject\\views\\_viewstart.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "i18n-rows.json",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\wwwroot\\js\\i18n-rows.json",
+              "RelativeDocumentMoniker": "LanguageAcademy-MVC-FinalProject\\wwwroot\\js\\i18n-rows.json",
+              "ToolTip": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\wwwroot\\js\\i18n-rows.json",
+              "RelativeToolTip": "LanguageAcademy-MVC-FinalProject\\wwwroot\\js\\i18n-rows.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-10-01T11:32:41.851Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "_ViewStart.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Views\\_ViewStart.cshtml",
+              "RelativeDocumentMoniker": "LanguageAcademy-MVC-FinalProject\\Views\\_ViewStart.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Views\\_ViewStart.cshtml",
+              "RelativeToolTip": "LanguageAcademy-MVC-FinalProject\\Views\\_ViewStart.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-10-01T10:49:42.892Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "LanguageAcademy-MVC-FinalProject\\Views\\_ViewImports.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "LanguageAcademy-MVC-FinalProject\\Views\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-10-01T10:49:13.564Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "LanguageAcademy-MVC-FinalProject\\Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "LanguageAcademy-MVC-FinalProject\\Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AgIAAIwAAAAAAAAAAAAUwKkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-10-01T10:47:49.435Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "LanguageAcademy-MVC-FinalProject\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "LanguageAcademy-MVC-FinalProject\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAIoBAAAAAAAAAAAUwKcBAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-10-01T10:47:07.892Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "LanguageAcademy-MVC-FinalProject\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "LanguageAcademy-MVC-FinalProject\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-01T10:42:30.213Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Program.cs",
+              "RelativeDocumentMoniker": "LanguageAcademy-MVC-FinalProject\\Program.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\LanguageAcademy-MVC-FinalProject\\LanguageAcademy-MVC-FinalProject\\Program.cs",
+              "RelativeToolTip": "LanguageAcademy-MVC-FinalProject\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-10-01T10:41:36.53Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

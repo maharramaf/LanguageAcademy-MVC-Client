@@ -1,0 +1,2 @@
+C:\Users\User\Desktop\LanguageAcademy-MVC-FinalProject\LanguageAcademy-MVC-FinalProject\wwwroot\js\router.js
+C:\Users\User\Desktop\LanguageAcademy-MVC-FinalProject\LanguageAcademy-MVC-FinalProject\wwwroot\js\pages.js
