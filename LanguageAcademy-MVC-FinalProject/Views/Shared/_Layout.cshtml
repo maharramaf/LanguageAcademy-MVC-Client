@@ -1,18 +1,18 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="js/preferences-boot.js"></script>
+    <script src="~/js/preferences-boot.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MF Language Academy</title>
     <meta name="description" content="MF Language Academy is a modern language school for English, IELTS, German, Spanish, and professional communication.">
-    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="~/images/favicon.svg" type="image/svg+xml">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/responsive.css">
 </head>
 <body>
     <a class="skip-link" href="#hero-section" data-i18n="skip_content">Skip to content</a>
@@ -32,15 +32,15 @@
             </div>
         </div>
         <div class="container header-inner">
-            <a class="logo" href="index.html">
+            <a class="logo" asp-controller="Home" asp-action="Index">
                 <span class="logo-mark">MF</span>
                 <span class="logo-text"><strong>MF Language</strong><small>Academy</small></span>
             </a>
             <nav class="nav" aria-label="Primary" data-i18n-aria-label="aria_primary">
                 <ul class="nav-list">
-                    <li><a class="active" href="index.html" aria-current="page" data-i18n="nav_home">Home</a></li>
+                    <li><a class="active" asp-controller="Home" asp-action="Index" aria-current="page" data-i18n="nav_home">Home</a></li>
                     <li><a href="about.html" data-i18n="nav_about">About</a></li>
-                    <li><a href="courses.html" data-i18n="nav_courses">Courses</a></li>
+                    <li><a asp-controller="Courses" asp-action="Index" data-i18n="nav_courses">Courses</a></li>
                     <li><a href="teachers.html" data-i18n="nav_teachers">Teachers</a></li>
                     <li><a href="students.html" data-i18n="nav_students">Students</a></li>
                     <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
@@ -50,7 +50,7 @@
                     <a class="btn btn-secondary" href="register.html" data-i18n="nav_register">Register</a>
                 </div>
             </nav>
-            <form class="header-search" action="courses.html" method="get" role="search">
+            <form class="header-search" asp-controller="Courses" asp-action="Index" method="get" role="search">
                 <i class="bi bi-search" aria-hidden="true"></i>
                 <input type="search" name="q" placeholder="Search courses" data-i18n-placeholder="search_placeholder" aria-label="Search courses" data-i18n-aria-label="search_placeholder">
             </form>
@@ -86,7 +86,7 @@
     <footer class="footer">
         <div class="container footer-grid">
             <div>
-                <a class="logo" href="index.html">
+                <a class="logo" asp-controller="Home" asp-action="Index">
                     <span class="logo-mark">MF</span>
                     <span class="logo-text"><strong>MF Language</strong><small>Academy</small></span>
                 </a>
@@ -95,9 +95,9 @@
             <div>
                 <h3 data-i18n="footer_quick">Quick Links</h3>
                 <div class="footer-links">
-                    <a href="index.html" data-i18n="nav_home">Home</a>
+                    <a asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a>
                     <a href="about.html" data-i18n="nav_about">About</a>
-                    <a href="courses.html" data-i18n="nav_courses">Courses</a>
+                    <a asp-controller="Courses" asp-action="Index" data-i18n="nav_courses">Courses</a>
                     <a href="teachers.html" data-i18n="nav_teachers">Teachers</a>
                     <a href="contact.html" data-i18n="nav_contact">Contact</a>
                 </div>
@@ -105,11 +105,11 @@
             <div>
                 <h3 data-i18n="nav_courses">Courses</h3>
                 <div class="footer-links">
-                    <a href="course-details.html?course=english-beginner" data-i18n="course_en_beginner">English Beginner</a>
-                    <a href="course-details.html?course=ielts" data-i18n="course_ielts">IELTS Preparation</a>
-                    <a href="course-details.html?course=business-english" data-i18n="course_business">Business English</a>
-                    <a href="course-details.html?course=german" data-i18n="course_german">German Language</a>
-                    <a href="course-details.html?course=spanish" data-i18n="course_spanish">Spanish Language</a>
+                    <a asp-controller="Courses" asp-action="Details" asp-route-slug="english-beginner" data-i18n="course_en_beginner">English Beginner</a>
+                    <a asp-controller="Courses" asp-action="Details" asp-route-slug="ielts" data-i18n="course_ielts">IELTS Preparation</a>
+                    <a asp-controller="Courses" asp-action="Details" asp-route-slug="business-english" data-i18n="course_business">Business English</a>
+                    <a asp-controller="Courses" asp-action="Details" asp-route-slug="german" data-i18n="course_german">German Language</a>
+                    <a asp-controller="Courses" asp-action="Details" asp-route-slug="spanish" data-i18n="course_spanish">Spanish Language</a>
                 </div>
             </div>
             <div>
@@ -151,19 +151,19 @@
         </div>
     </div>
     <button class="back-to-top" type="button" aria-label="Back to top" data-i18n-aria-label="back_to_top"><i class="bi bi-arrow-up"></i></button>
-    <script src="js/navbar.js" defer></script>
-    <script src="js/slider.js" defer></script>
-    <script src="js/validation.js" defer></script>
-    <script src="js/main.js" defer></script>
-    <script src="js/faq-widget.js" defer></script>
-    <script src="js/ai-assistant.js" defer></script>
-    <script src="js/i18n-extra.js" defer></script>
-    <script src="js/preferences.js" defer></script>
-    <script src="js/notifications.js" defer></script>
-    <script src="js/membership.js" defer></script>
-    <script src="js/certificates.js" defer></script>
-    <script src="js/demoQuizQuestions.js" defer></script>
-    <script src="js/demoQuiz.js" defer></script>
-    <script src="js/checkout.js" defer></script>
+    <script src="~/js/navbar.js" defer></script>
+    <script src="~/js/slider.js" defer></script>
+    <script src="~/js/validation.js" defer></script>
+    <script src="~/js/main.js" defer></script>
+    <script src="~/js/faq-widget.js" defer></script>
+    <script src="~/js/ai-assistant.js" defer></script>
+    <script src="~/js/i18n-extra.js" defer></script>
+    <script src="~/js/preferences.js" defer></script>
+    <script src="~/js/notifications.js" defer></script>
+    <script src="~/js/membership.js" defer></script>
+    <script src="~/js/certificates.js" defer></script>
+    <script src="~/js/demoQuizQuestions.js" defer></script>
+    <script src="~/js/demoQuiz.js" defer></script>
+    <script src="~/js/checkout.js" defer></script>
 </body>
 </html>

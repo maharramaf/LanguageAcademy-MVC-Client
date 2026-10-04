@@ -1,0 +1,65 @@
+@model IEnumerable<CourseUIVM>
+@{
+    var catalog = ViewBag.Catalog as bool? == true;
+}
+
+<section id="courses-section" class="section @(catalog ? "" : "section-alt")">
+    <div class="container">
+        <div class="section-header center reveal">
+            @if (catalog)
+            {
+                <span class="eyebrow">Catalog</span>
+                <h2>All Courses</h2>
+                <p>Live classes, practice tasks, and teacher feedback.</p>
+            }
+            else
+            {
+                <span class="eyebrow" data-i18n="courses_eyebrow">Popular courses</span>
+                <h2 data-i18n="courses_title">Popular Courses</h2>
+                <p><span data-i18n="x1dqbh43">Choose a level, a schedule, and a goal. Every course includes live classes, practice tasks, and teacher feedback.</span></p>
+            }
+        </div>
+        <div class="slider" data-slider="courses">
+            <div class="slider-viewport">
+                <div class="slider-track">
+                    @foreach (var course in Model)
+                    {
+                        var image = string.IsNullOrWhiteSpace(course.Image)
+                            ? "/images/course-beginner.jpg"
+                            : (course.Image.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? course.Image : "/" + course.Image.TrimStart('/'));
+                        <div class="course-card reveal">
+                            <div class="course-media">
+                                <img src="@image" alt="@course.Title" width="1000" height="700">
+                                <span class="badge">@course.Level</span>
+                            </div>
+                            <div class="course-body">
+                                <h3>@course.Title</h3>
+                                <p>@course.Summary</p>
+                                <ul class="course-meta">
+                                    <li><i class="bi bi-bar-chart"></i> @course.Level</li>
+                                    <li><i class="bi bi-clock"></i> @course.Duration</li>
+                                    <li><i class="bi bi-play-btn"></i> @course.LessonCount lessons</li>
+                                </ul>
+                                <div class="course-foot">
+                                    <span class="price">₼@course.Price.ToString("0")<small>per course</small></span>
+                                    <a class="btn btn-sm btn-primary" asp-controller="Courses" asp-action="Details" asp-route-slug="@course.Slug">View Course</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="slider-controls">
+                <button class="slider-btn" type="button" data-prev aria-label="Previous courses" data-i18n-aria-label="slider_prev_courses"><i class="bi bi-arrow-left"></i></button>
+                <div class="slider-dots"></div>
+                <button class="slider-btn" type="button" data-next aria-label="Next courses" data-i18n-aria-label="slider_next_courses"><i class="bi bi-arrow-right"></i></button>
+            </div>
+        </div>
+        @if (!catalog)
+        {
+            <div style="text-align:center; margin-top: 28px;">
+                <a class="btn btn-outline" asp-controller="Courses" asp-action="Index" data-i18n="btn_browse">Browse All Courses</a>
+            </div>
+        }
+    </div>
+</section>

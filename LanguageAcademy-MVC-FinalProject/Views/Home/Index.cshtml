@@ -6,7 +6,7 @@
                 <h1 data-i18n="hero_title">Learn Languages. Open New Doors.</h1>
                 <p class="lead" data-i18n="hero_lead">Improve your language skills with professional teachers and modern learning methods.</p>
                 <div class="hero-actions">
-                    <a class="btn btn-primary" href="courses.html" data-i18n="btn_explore">Explore Courses</a>
+                    <a class="btn btn-primary" asp-controller="Courses" asp-action="Index" data-i18n="btn_explore">Explore Courses</a>
                     <a class="btn btn-secondary" href="register.html" data-i18n="btn_start">Get Started</a>
                 </div>
                 <ul class="hero-points">
@@ -30,137 +30,7 @@
     </section>
 
 
-    <section id="courses-section" class="section section-alt">
-        <div class="container">
-            <div class="section-header center reveal">
-                <span class="eyebrow" data-i18n="courses_eyebrow">Popular courses</span>
-                <h2 data-i18n="courses_title">Popular Courses</h2>
-                <p><span data-i18n="x1dqbh43">Choose a level, a schedule, and a goal. Every course includes live classes, practice tasks, and teacher feedback.</span></p>
-            </div>
-            <div class="slider" data-slider="courses">
-                <div class="slider-viewport">
-                    <div class="slider-track">
-                        <div class="course-card reveal">
-                            <div class="course-media">
-                                <img src="images/course-beginner.jpg" alt="Notebook and study desk for beginner English" data-i18n-alt="x1tu58kb" width="1000" height="700">
-                                <span class="badge" data-i18n="level_beginner">Beginner</span>
-                            </div>
-                            <div class="course-body">
-                                <h3 data-i18n="course_en_beginner">English Beginner</h3>
-                                <p><span data-i18n="x1ymmx9p">Everyday English for greetings, travel, and simple conversations.</span></p>
-                                <ul class="course-meta">
-                                    <li data-i18n="level_beginner"><i class="bi bi-bar-chart"></i> Beginner</li>
-                                    <li data-i18n="duration_8"><i class="bi bi-clock"></i> 8 weeks</li>
-                                </ul>
-                                <div class="course-foot">
-                                    <span class="price">₼180<small data-i18n="price_per_course">per course</small></span>
-                                    <a class="btn btn-sm btn-primary" href="course-details.html?course=english-beginner" data-i18n="btn_view_course">View Course</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="course-card reveal">
-                            <div class="course-media">
-                                <img src="images/course-intermediate.jpg" alt="Stack of books for intermediate study" data-i18n-alt="x71hjnk" width="1000" height="700">
-                                <span class="badge" data-i18n="level_intermediate">Intermediate</span>
-                            </div>
-                            <div class="course-body">
-                                <h3 data-i18n="course_en_intermediate">English Intermediate</h3>
-                                <p><span data-i18n="xdhikpb">Longer conversations, clearer writing, and more natural listening.</span></p>
-                                <ul class="course-meta">
-                                    <li data-i18n="level_intermediate"><i class="bi bi-bar-chart"></i> Intermediate</li>
-                                    <li data-i18n="duration_10"><i class="bi bi-clock"></i> 10 weeks</li>
-                                </ul>
-                                <div class="course-foot">
-                                    <span class="price">₼210<small data-i18n="price_per_course">per course</small></span>
-                                    <a class="btn btn-sm btn-primary" href="course-details.html?course=english-intermediate" data-i18n="btn_view_course">View Course</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="course-card reveal">
-                            <div class="course-media">
-                                <img src="images/course-ielts.jpg" alt="Planning notes for exam preparation" data-i18n-alt="x1i7pvyn" width="1000" height="700">
-                                <span class="badge" data-i18n="badge_exam">Exam</span>
-                            </div>
-                            <div class="course-body">
-                                <h3 data-i18n="course_ielts">IELTS Preparation</h3>
-                                <p><span data-i18n="xq8z55u">Timed practice and band-focused feedback for all four papers.</span></p>
-                                <ul class="course-meta">
-                                    <li data-i18n="level_upper"><i class="bi bi-bar-chart"></i> Upper intermediate</li>
-                                    <li data-i18n="duration_8"><i class="bi bi-clock"></i> 8 weeks</li>
-                                </ul>
-                                <div class="course-foot">
-                                    <span class="price">₼260<small data-i18n="price_per_course">per course</small></span>
-                                    <a class="btn btn-sm btn-primary" href="course-details.html?course=ielts" data-i18n="btn_view_course">View Course</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="course-card reveal">
-                            <div class="course-media">
-                                <img src="images/course-business.jpg" alt="Professionals in a workshop discussion" data-i18n-alt="xjph5ob" width="1000" height="700">
-                                <span class="badge"><span data-i18n="xh6tw7b">Professional</span></span>
-                            </div>
-                            <div class="course-body">
-                                <h3 data-i18n="course_business">Business English</h3>
-                                <p><span data-i18n="x13gs3r0">Meetings, email, and presentations for working professionals.</span></p>
-                                <ul class="course-meta">
-                                    <li data-i18n="level_intermediate"><i class="bi bi-bar-chart"></i> Intermediate</li>
-                                    <li data-i18n="duration_8"><i class="bi bi-clock"></i> 8 weeks</li>
-                                </ul>
-                                <div class="course-foot">
-                                    <span class="price">₼240<small data-i18n="price_per_course">per course</small></span>
-                                    <a class="btn btn-sm btn-primary" href="course-details.html?course=business-english" data-i18n="btn_view_course">View Course</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="course-card reveal">
-                            <div class="course-media">
-                                <img src="images/course-german.jpg" alt="European street scene used for the German course" data-i18n-alt="x1i89pjg" width="1000" height="700">
-                                <span class="badge" data-i18n="level_beginner">Beginner</span>
-                            </div>
-                            <div class="course-body">
-                                <h3 data-i18n="course_german">German Language</h3>
-                                <p><span data-i18n="x10ox8wn">A practical A1 start with pronunciation, grammar, and city dialogues.</span></p>
-                                <ul class="course-meta">
-                                    <li data-i18n="level_beginner"><i class="bi bi-bar-chart"></i> Beginner</li>
-                                    <li data-i18n="duration_10"><i class="bi bi-clock"></i> 10 weeks</li>
-                                </ul>
-                                <div class="course-foot">
-                                    <span class="price">₼190<small data-i18n="price_per_course">per course</small></span>
-                                    <a class="btn btn-sm btn-primary" href="course-details.html?course=german" data-i18n="btn_view_course">View Course</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="course-card reveal">
-                            <div class="course-media">
-                                <img src="images/course-spanish.jpg" alt="Sunny city architecture for the Spanish course" data-i18n-alt="x1m3z52m" width="1000" height="700">
-                                <span class="badge" data-i18n="level_beginner">Beginner</span>
-                            </div>
-                            <div class="course-body">
-                                <h3 data-i18n="course_spanish">Spanish Language</h3>
-                                <p><span data-i18n="x5kktdd">Speak from the first class with travel, culture, and daily topics.</span></p>
-                                <ul class="course-meta">
-                                    <li data-i18n="level_beginner"><i class="bi bi-bar-chart"></i> Beginner</li>
-                                    <li data-i18n="duration_10"><i class="bi bi-clock"></i> 10 weeks</li>
-                                </ul>
-                                <div class="course-foot">
-                                    <span class="price">₼190<small data-i18n="price_per_course">per course</small></span>
-                                    <a class="btn btn-sm btn-primary" href="course-details.html?course=spanish" data-i18n="btn_view_course">View Course</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="slider-controls">
-                    <button class="slider-btn" type="button" data-prev aria-label="Previous courses" data-i18n-aria-label="slider_prev_courses"><i class="bi bi-arrow-left"></i></button>
-                    <div class="slider-dots"></div>
-                    <button class="slider-btn" type="button" data-next aria-label="Next courses" data-i18n-aria-label="slider_next_courses"><i class="bi bi-arrow-right"></i></button>
-                </div>
-            </div>
-            <div style="text-align:center; margin-top: 28px;">
-                <a class="btn btn-outline" href="courses.html" data-i18n="btn_browse">Browse All Courses</a>
-            </div>
-        </div>
-    </section>
+    @await Component.InvokeAsync("Course")
 
 
     <section id="about-section" class="section">

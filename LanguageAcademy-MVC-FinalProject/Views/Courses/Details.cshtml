@@ -1,0 +1,74 @@
+@model CourseDetailUIVM
+@{
+    ViewData["Title"] = Model.Title;
+    var image = string.IsNullOrWhiteSpace(Model.Image)
+        ? "/images/course-beginner.jpg"
+        : (Model.Image.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? Model.Image : "/" + Model.Image.TrimStart('/'));
+}
+
+<section class="section">
+    <div class="container">
+        <p class="eyebrow">@Model.Type · @Model.Level</p>
+        <h1>@Model.Title</h1>
+        <p class="lead">@Model.Summary</p>
+        <p>@Model.Overview</p>
+        <ul class="course-meta">
+            <li><i class="bi bi-clock"></i> @Model.Duration</li>
+            <li><i class="bi bi-tag"></i> ₼@Model.Price.ToString("0")</li>
+        </ul>
+
+        @if (!string.IsNullOrWhiteSpace(Model.PreviewVideoUrl))
+        {
+            <div class="video-embed-wrap" style="max-width:860px;margin:24px 0;aspect-ratio:16/9;position:relative;background:#111;border-radius:12px;overflow:hidden;">
+                <iframe class="video-embed" src="@Model.PreviewVideoUrl" title="@Model.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>
+            </div>
+        }
+        else
+        {
+            <img src="@image" alt="@Model.Title" width="860" style="max-width:100%;border-radius:12px;margin:24px 0;">
+        }
+
+        @if (Model.Outcomes.Any())
+        {
+            <h2>What you will learn</h2>
+            <ul class="learn-list">
+                @foreach (var item in Model.Outcomes)
+                {
+                    <li><i class="bi bi-check-circle-fill"></i><span>@item</span></li>
+                }
+            </ul>
+        }
+
+        <h2>Curriculum</h2>
+        <div class="course-modules" data-course-curriculum>
+            @foreach (var module in Model.Modules.OrderBy(m => m.SortOrder))
+            {
+                <div class="course-module">
+                    <button class="course-module-toggle" type="button">
+                        <span><strong>@module.Title</strong><small>@module.Meta</small></span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div class="course-module-panel">
+                        @foreach (var lesson in module.Lessons.OrderBy(m => m.SortOrder))
+                        {
+                            <div class="lesson-row">
+                                <i class="bi @(lesson.Kind == "video" ? "bi-play-circle" : lesson.Kind == "quiz" ? "bi-patch-question" : "bi-file-text")"></i>
+                                <div>
+                                    <strong>@lesson.Title</strong>
+                                    <span>@lesson.Kind</span>
+                                </div>
+                            </div>
+                            @if (lesson.Kind == "video" && !string.IsNullOrWhiteSpace(lesson.VideoUrl))
+                            {
+                                <div class="video-embed-wrap" style="margin:8px 0 16px;aspect-ratio:16/9;position:relative;background:#111;border-radius:12px;overflow:hidden;">
+                                    <iframe class="video-embed" src="@lesson.VideoUrl" title="@lesson.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <p style="margin-top:24px;"><a class="btn btn-outline" asp-controller="Courses" asp-action="Index">Back to courses</a></p>
+    </div>
+</section>
