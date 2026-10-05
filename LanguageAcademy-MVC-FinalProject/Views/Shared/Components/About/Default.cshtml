@@ -1,0 +1,32 @@
+@model AboutUIVM?
+@if (Model is null) { return; }
+@{
+    var image = string.IsNullOrWhiteSpace(Model.Image)
+        ? "/images/about.jpg"
+        : (Model.Image.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? Model.Image : "/" + Model.Image.TrimStart('/'));
+}
+
+<section id="about-section" class="section">
+    <div class="container about-grid">
+        <div class="about-media reveal">
+            <img src="@image" alt="@Model.ImageAlt" width="1200" height="900">
+            <div class="about-float">
+                <strong>@Model.YearsStat</strong>
+                <span>@Model.YearsLabelLineOne<br>@Model.YearsLabelLineTwo</span>
+            </div>
+        </div>
+        <div class="reveal">
+            <span class="eyebrow">@Model.Eyebrow</span>
+            <h2>@Model.Title</h2>
+            <p>@Model.ParagraphOne</p>
+            <p>@Model.ParagraphTwo</p>
+            <div class="feature-list">
+                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> @Model.FeatureOne</div>
+                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> @Model.FeatureTwo</div>
+                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> @Model.FeatureThree</div>
+                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> @Model.FeatureFour</div>
+            </div>
+            <a class="btn btn-primary" href="about.html" style="margin-top: 22px;">@Model.ButtonText</a>
+        </div>
+    </div>
+</section>
