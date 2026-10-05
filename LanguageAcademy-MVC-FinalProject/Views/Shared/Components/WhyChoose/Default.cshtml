@@ -1,0 +1,22 @@
+@model WhyChooseUIVM?
+@if (Model is null) { return; }
+
+<section id="features-section" class="section">
+    <div class="container">
+        <div class="section-header center reveal">
+            <span class="eyebrow">@Model.Eyebrow</span>
+            <h2>@Model.Title</h2>
+            <p>@Model.Lead</p>
+        </div>
+        <div class="feature-grid">
+            @foreach (var card in Model.Cards)
+            {
+                <div class="why-card reveal">
+                    <div class="icon-bubble"><i class="@card.Icon"></i></div>
+                    <h3>@card.Title</h3>
+                    <p>@card.Text</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
