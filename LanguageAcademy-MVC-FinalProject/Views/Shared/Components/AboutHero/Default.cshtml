@@ -1,0 +1,11 @@
+@model AboutHeroUIVM?
+@if (Model is null) { return; }
+
+<section id="about-hero" class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb" data-i18n-aria-label="aria_breadcrumb"><a asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a><span>/</span><span data-i18n="nav_about">About</span></nav>
+        <span class="eyebrow">@Model.Eyebrow</span>
+        <h1>@Model.Title</h1>
+        <p>@Model.Lead</p>
+    </div>
+</section>

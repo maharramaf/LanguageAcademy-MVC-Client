@@ -4,14 +4,7 @@
 }
 
 <main>
-<section id="about-hero" class="page-hero">
-    <div class="container">
-        <nav class="breadcrumb" aria-label="Breadcrumb" data-i18n-aria-label="aria_breadcrumb"><a asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a><span>/</span><span data-i18n="nav_about">About</span></nav>
-        <span class="eyebrow"><span data-i18n="x1uyold">Our story</span></span>
-        <h1 data-i18n="about_title">About MF Language Academy</h1>
-        <p><span data-i18n="x12lkoor">MF Language Academy started as an evening English circle and grew into a full language school for adults who need results, not endless textbooks.</span></p>
-    </div>
-</section>
+@await Component.InvokeAsync("AboutHero")
 
 <section id="about-section" class="section">
     <div class="container about-grid">
