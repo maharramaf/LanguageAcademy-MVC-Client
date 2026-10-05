@@ -1,0 +1,37 @@
+@model HeroUIVM?
+@if (Model is null) { return; }
+@{
+    var image = string.IsNullOrWhiteSpace(Model.Image)
+        ? "/images/hero.jpg"
+        : (Model.Image.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? Model.Image : "/" + Model.Image.TrimStart('/'));
+}
+
+<section id="hero-section" class="hero">
+    <div class="container hero-grid">
+        <div class="hero-copy">
+            <span class="eyebrow"><i class="bi bi-stars"></i> @Model.Eyebrow</span>
+            <h1>@Model.Title</h1>
+            <p class="lead">@Model.Lead</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" asp-controller="Courses" asp-action="Index">@Model.PrimaryButtonText</a>
+                <a class="btn btn-secondary" href="register.html">@Model.SecondaryButtonText</a>
+            </div>
+            <ul class="hero-points">
+                <li><i class="bi bi-check-circle-fill"></i> @Model.PointOne</li>
+                <li><i class="bi bi-check-circle-fill"></i> @Model.PointTwo</li>
+                <li><i class="bi bi-check-circle-fill"></i> @Model.PointThree</li>
+            </ul>
+        </div>
+        <div class="hero-visual">
+            <img src="@image" alt="@Model.ImageAlt" width="1400" height="1100">
+            <div class="float-card float-card-a">
+                <i class="bi bi-people-fill"></i>
+                <div><strong>@Model.StudentsStat</strong><span>@Model.StudentsLabel</span></div>
+            </div>
+            <div class="float-card float-card-b">
+                <i class="bi bi-star-fill"></i>
+                <div><strong>@Model.RatingStat</strong><span>@Model.RatingLabel</span></div>
+            </div>
+        </div>
+    </div>
+</section>

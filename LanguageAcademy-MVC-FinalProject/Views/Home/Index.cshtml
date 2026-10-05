@@ -1,33 +1,5 @@
 ﻿<main>
-    <section id="hero-section" class="hero">
-        <div class="container hero-grid">
-            <div class="hero-copy">
-                <span class="eyebrow" data-i18n="hero_eyebrow"><i class="bi bi-stars"></i> Modern language school</span>
-                <h1 data-i18n="hero_title">Learn Languages. Open New Doors.</h1>
-                <p class="lead" data-i18n="hero_lead">Improve your language skills with professional teachers and modern learning methods.</p>
-                <div class="hero-actions">
-                    <a class="btn btn-primary" asp-controller="Courses" asp-action="Index" data-i18n="btn_explore">Explore Courses</a>
-                    <a class="btn btn-secondary" href="register.html" data-i18n="btn_start">Get Started</a>
-                </div>
-                <ul class="hero-points">
-                    <li data-i18n="hero_small"><i class="bi bi-check-circle-fill"></i> Small classes</li>
-                    <li data-i18n="hero_certified"><i class="bi bi-check-circle-fill"></i> Certified teachers</li>
-                    <li data-i18n="hero_online"><i class="bi bi-check-circle-fill"></i> Online and on campus</li>
-                </ul>
-            </div>
-            <div class="hero-visual">
-                <img src="images/hero.jpg" alt="Students collaborating during a language lesson" data-i18n-alt="xctam3v" width="1400" height="1100">
-                <div class="float-card float-card-a">
-                    <i class="bi bi-people-fill"></i>
-                    <div><strong>1,000+</strong><span data-i18n="hero_active">Active students</span></div>
-                </div>
-                <div class="float-card float-card-b">
-                    <i class="bi bi-star-fill"></i>
-                    <div><strong>4.9/5</strong><span data-i18n="hero_rating">Average rating</span></div>
-                </div>
-            </div>
-        </div>
-    </section>
+    @await Component.InvokeAsync("Hero")
 
 
     @await Component.InvokeAsync("Course")
