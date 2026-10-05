@@ -986,10 +986,17 @@ main.is-swapping { opacity: 0.72; }
   justify-content: space-between;
   gap: 12px;
   align-items: center;
+  cursor: pointer;
 }
-.accordion-trigger i { transition: transform 0.2s ease; }
-.accordion-panel { display: none; padding: 0 18px 16px; }
-.accordion-item.is-open .accordion-panel { display: block; }
+.accordion-trigger i { transition: transform 0.32s ease; flex-shrink: 0; }
+.accordion-panel {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.22s ease;
+}
+.accordion-panel p { margin: 0; padding: 0 18px 16px; line-height: 1.55; }
+.accordion-item.is-open .accordion-panel { max-height: 280px; opacity: 1; }
 .accordion-item.is-open .accordion-trigger i { transform: rotate(45deg); }
 
 .map-frame {
@@ -1316,9 +1323,16 @@ body:has(.ai-assistant.is-open) .back-to-top { opacity: 0; pointer-events: none;
 .progress-value { font-family: var(--font-heading); font-size: 2.2rem; color: var(--heading); }
 .demo-progress { width: 65%; }
 .course-faq-item { border: 1px solid var(--border); border-radius: 14px; background: #fff; margin-bottom: 10px; overflow: hidden; }
-.course-faq-toggle { width: 100%; display: flex; justify-content: space-between; gap: 12px; text-align: left; border: 0; background: #fff; padding: 16px 18px; font-weight: 800; color: var(--heading); }
-.course-faq-panel { display: none; padding: 0 18px 16px; }
-.course-faq-toggle i { transition: transform 0.2s ease; }
+.course-faq-toggle { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; text-align: left; border: 0; background: #fff; padding: 16px 18px; font-weight: 800; color: var(--heading); cursor: pointer; }
+.course-faq-panel {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.22s ease;
+}
+.course-faq-panel p { margin: 0; padding: 0 18px 16px; line-height: 1.55; color: var(--text); }
+.course-faq-toggle i { transition: transform 0.32s ease; flex-shrink: 0; }
+.course-faq-item.is-open .course-faq-panel { max-height: 280px; opacity: 1; }
 .course-faq-item.is-open .course-faq-toggle i { transform: rotate(45deg); }
 .preview-stage { position: relative; border-radius: 16px; overflow: hidden; margin-bottom: 12px; }
 .preview-stage img { width: 100%; height: 220px; object-fit: cover; }
@@ -2353,8 +2367,7 @@ body.faq-open { overflow: hidden; }
 .faq-panel .accordion-item,
 .faq-panel .accordion-trigger { background: transparent; color: var(--heading); }
 .faq-panel .accordion-trigger { padding: 12px 14px; }
-.faq-panel .accordion-item.is-open .accordion-panel { display: block; padding: 0 14px 14px; color: var(--text); }
-.faq-panel .accordion-panel p { margin: 0; line-height: 1.55; }
+.faq-panel .accordion-panel p { margin: 0; padding: 0 14px 14px; line-height: 1.55; color: var(--text); }
 
 [data-theme="dark"] .faq-panel { background: rgba(4, 10, 16, 0.72); }
 [data-theme="dark"] .support-link,

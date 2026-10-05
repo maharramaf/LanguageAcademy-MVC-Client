@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="~/css/responsive.css">
 </head>
 <body>
-    <a class="skip-link" href="#hero-section" data-i18n="skip_content">Skip to content</a>
+    <a class="skip-link" href="@(ViewData["SkipHref"] ?? "#hero-section")" data-i18n="skip_content">Skip to content</a>
     <header class="site-header">
         <div class="topbar">
             <div class="container topbar-inner">
@@ -37,10 +37,13 @@
                 <span class="logo-text"><strong>MF Language</strong><small>Academy</small></span>
             </a>
             <nav class="nav" aria-label="Primary" data-i18n-aria-label="aria_primary">
+                @{
+                    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+                }
                 <ul class="nav-list">
-                    <li><a class="active" asp-controller="Home" asp-action="Index" aria-current="page" data-i18n="nav_home">Home</a></li>
-                    <li><a href="about.html" data-i18n="nav_about">About</a></li>
-                    <li><a asp-controller="Courses" asp-action="Index" data-i18n="nav_courses">Courses</a></li>
+                    <li><a class="@(currentController == "Home" ? "active" : null)" asp-controller="Home" asp-action="Index" aria-current="@(currentController == "Home" ? "page" : null)" data-i18n="nav_home">Home</a></li>
+                    <li><a class="@(currentController == "About" ? "active" : null)" asp-controller="About" asp-action="Index" aria-current="@(currentController == "About" ? "page" : null)" data-i18n="nav_about">About</a></li>
+                    <li><a class="@(currentController == "Courses" ? "active" : null)" asp-controller="Courses" asp-action="Index" aria-current="@(currentController == "Courses" ? "page" : null)" data-i18n="nav_courses">Courses</a></li>
                     <li><a href="teachers.html" data-i18n="nav_teachers">Teachers</a></li>
                     <li><a href="students.html" data-i18n="nav_students">Students</a></li>
                     <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
@@ -96,7 +99,7 @@
                 <h3 data-i18n="footer_quick">Quick Links</h3>
                 <div class="footer-links">
                     <a asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a>
-                    <a href="about.html" data-i18n="nav_about">About</a>
+                    <a asp-controller="About" asp-action="Index" data-i18n="nav_about">About</a>
                     <a asp-controller="Courses" asp-action="Index" data-i18n="nav_courses">Courses</a>
                     <a href="teachers.html" data-i18n="nav_teachers">Teachers</a>
                     <a href="contact.html" data-i18n="nav_contact">Contact</a>

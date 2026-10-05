@@ -1,0 +1,81 @@
+@{
+    ViewData["Title"] = "About | MF Language Academy";
+    ViewData["SkipHref"] = "#about-hero";
+}
+
+<main>
+<section id="about-hero" class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb" data-i18n-aria-label="aria_breadcrumb"><a asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a><span>/</span><span data-i18n="nav_about">About</span></nav>
+        <span class="eyebrow"><span data-i18n="x1uyold">Our story</span></span>
+        <h1 data-i18n="about_title">About MF Language Academy</h1>
+        <p><span data-i18n="x12lkoor">MF Language Academy started as an evening English circle and grew into a full language school for adults who need results, not endless textbooks.</span></p>
+    </div>
+</section>
+
+<section id="about-section" class="section">
+    <div class="container about-grid">
+        <div class="about-media reveal">
+            <img src="~/images/about.jpg" alt="A language class in session" data-i18n-alt="xgtttd8" width="1200" height="900">
+            <div class="about-float"><strong>10+</strong><span><span data-i18n="x1fh70qf">Years teaching</span><br><span data-i18n="x11byn9k">in Boston</span></span></div>
+        </div>
+        <div class="reveal">
+            <span class="eyebrow"><span data-i18n="x1faiv9g">Who we are</span></span>
+            <h2><span data-i18n="x12zoilr">Small classes. Clear progress.</span></h2>
+            <p><span data-i18n="x12vgizq">Students join MF Language Academy to pass an exam, join a new team, or feel at home in another country. We keep groups small, publish the weekly plan, and measure progress with speaking checks instead of surprise tests.</span></p>
+            <p><span data-i18n="xlasygl">Campus classes meet at Language Plaza. Online classes use the same teachers and the same materials, so a student can switch format when travel or work changes.</span></p>
+            <div class="feature-list">
+                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> <span data-i18n="x1pcuo8n">Experienced Teachers</span></div>
+                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> <span data-i18n="xozngn3">Modern Learning</span></div>
+                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> <span data-i18n="x1l7zioz">Flexible Courses</span></div>
+                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> <span data-i18n="x1nxllxd">International Environment</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@await Component.InvokeAsync("HowWeWork")
+
+<section id="statistics-section" class="stats">
+    <div class="container stats-grid">
+        <div class="stat"><i class="bi bi-people"></i><span class="stat-number" data-count="1000" data-suffix="+">1000+</span><span class="stat-label" data-i18n="nav_students">Students</span></div>
+        <div class="stat"><i class="bi bi-journal-bookmark"></i><span class="stat-number" data-count="20" data-suffix="+">20+</span><span class="stat-label" data-i18n="nav_courses">Courses</span></div>
+        <div class="stat"><i class="bi bi-person-badge"></i><span class="stat-number" data-count="25" data-suffix="+">25+</span><span class="stat-label" data-i18n="nav_teachers">Teachers</span></div>
+        <div class="stat"><i class="bi bi-mortarboard"></i><span class="stat-number" data-count="10" data-suffix="+">10+</span><span class="stat-label" data-i18n="stat_years">Years Experience</span></div>
+    </div>
+</section>
+
+<section id="cta-section" class="cta">
+    <div class="container">
+        <div class="cta-band">
+            <h2 data-i18n="cta_title">Ready to Start Learning?</h2>
+            <p><span data-i18n="xn9gvkj">Join MF Language Academy and start improving your language skills today.</span></p>
+            <a class="btn btn-secondary" href="register.html" data-i18n="btn_start_learning">Start Learning</a>
+        </div>
+    </div>
+</section>
+
+<section id="newsletter-section" class="section section-alt">
+    <div class="container newsletter">
+        <div class="section-header">
+            <span class="eyebrow" data-i18n="newsletter_eyebrow">Newsletter</span>
+            <h2 data-i18n="newsletter_title">Course news, in your inbox</h2>
+            <p><span data-i18n="xqxy4up">New groups, exam dates, and study tips from MF Language Academy.</span></p>
+        </div>
+        <form class="newsletter-form" data-form="newsletter" novalidate>
+            <div class="field">
+                <label for="newsletter-email" data-i18n="label_email">Email</label>
+                <input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="you@email.com">
+                <p class="field-error" data-error-for="email"></p>
+            </div>
+            <button class="btn btn-primary" type="submit" data-i18n="btn_subscribe">Subscribe</button>
+            <p class="form-note"><span data-i18n="x1ua9mvd">Preview only. Nothing is sent.</span></p>
+            <div class="form-success" hidden>
+                <i class="bi bi-check-circle-fill"></i>
+                <h3 data-i18n="newsletter_success">You are on the list</h3>
+                <p><span data-i18n="x12lhryy">This preview validated your email and did not send it anywhere.</span></p>
+            </div>
+        </form>
+    </div>
+</section>
+</main>
