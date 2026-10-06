@@ -99,4 +99,18 @@
             </form>
         </div>
     </div>
+    @{
+        var mapOk = Model.Map.StartsWith("https://www.google.com/maps/embed", StringComparison.OrdinalIgnoreCase)
+            || Model.Map.StartsWith("https://maps.google.com/maps/embed", StringComparison.OrdinalIgnoreCase)
+            || Model.Map.StartsWith("https://www.google.az/maps/embed", StringComparison.OrdinalIgnoreCase)
+            || Model.Map.StartsWith("https://maps.google.az/maps/embed", StringComparison.OrdinalIgnoreCase);
+    }
+    @if (mapOk)
+    {
+        <div class="container">
+            <div class="map-frame">
+                <iframe title="School location" src="@Model.Map" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            </div>
+        </div>
+    }
 </section>
