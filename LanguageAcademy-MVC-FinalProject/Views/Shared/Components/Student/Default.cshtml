@@ -1,0 +1,55 @@
+@model StudentSectionUIVM?
+@if (Model is null) { return; }
+
+<section id="students-hero" class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb" data-i18n-aria-label="aria_breadcrumb"><a asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a><span>/</span><span data-i18n="nav_students">Students</span></nav>
+        <span class="eyebrow">@Model.Subtitle</span>
+        <h1>@Model.Title</h1>
+        <p>@Model.Text</p>
+    </div>
+</section>
+
+<section id="students-section" class="section">
+    <div class="container">
+        <div class="section-header center">
+            <span class="eyebrow">@Model.StoriesSubtitle</span>
+            <h2>@Model.StoriesTitle</h2>
+            <p>@Model.StoriesText</p>
+        </div>
+        <div class="story-grid">
+            @foreach (var review in Model.Reviews)
+            {
+                var photo = string.IsNullOrWhiteSpace(review.Photo)
+                    ? "/images/student-amira.jpg"
+                    : (review.Photo.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? review.Photo : "/" + review.Photo.TrimStart('/'));
+                <div class="story-card reveal">
+                    <img src="@photo" alt="@review.PhotoAlt" width="400" height="400">
+                    <h3>@review.Name</h3>
+                    <p class="role">
+                        @if (!string.IsNullOrWhiteSpace(review.CourseSlug))
+                        {
+                            <a asp-controller="Courses" asp-action="Details" asp-route-slug="@review.CourseSlug">@review.Course</a>
+                        }
+                        else
+                        {
+                            @review.Course
+                        }
+                    </p>
+                    <p>@review.Text</p>
+                    @if (!string.IsNullOrWhiteSpace(review.Result))
+                    {
+                        <span class="result">@review.Result</span>
+                    }
+                </div>
+            }
+            <div class="story-card reveal">
+                <img src="/images/student-maya.jpg" alt="Maya Collins" width="400" height="400">
+                <h3>Maya Collins</h3>
+                <p class="role" data-i18n="role_maya">Academic coordinator</p>
+                <p><span data-i18n="xzfd5nu">Maya welcomes new students, places them in the right level, and keeps the weekly schedule honest.</span></p>
+                <span class="result"><span data-i18n="x1uoale2">Student support</span></span>
+            </div>
+        </div>
+    </div>
+</section>

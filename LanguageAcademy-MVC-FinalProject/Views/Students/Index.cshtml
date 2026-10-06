@@ -1,0 +1,40 @@
+@{
+    ViewData["Title"] = "Students | MF Language Academy";
+    ViewData["SkipHref"] = "#students-hero";
+}
+
+<main>
+@await Component.InvokeAsync("Student")
+
+<section id="features-section" class="section section-alt">
+    <div class="container">
+        <div class="value-grid">
+            <div class="value-card">
+                <div class="icon-bubble"><i class="bi bi-chat-dots"></i></div>
+                <h3 data-i18n="students_clubs">Study clubs</h3>
+                <p><span data-i18n="x1trzxx6">Optional conversation hours on Thursday evenings for extra speaking without a new textbook.</span></p>
+            </div>
+            <div class="value-card">
+                <div class="icon-bubble"><i class="bi bi-graph-up"></i></div>
+                <h3 data-i18n="students_checks">Progress checks</h3>
+                <p><span data-i18n="xbp1nqu">Short speaking reviews every few weeks so students can see what changed.</span></p>
+            </div>
+            <div class="value-card">
+                <div class="icon-bubble"><i class="bi bi-award"></i></div>
+                <h3 data-i18n="dash_certificates">Certificates</h3>
+                <p><span data-i18n="x1dwbcr7">Finish the lessons and the final task to receive a course certificate.</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="cta-section" class="cta">
+    <div class="container">
+        <div class="cta-band">
+            <h2 data-i18n="cta_title">Ready to Start Learning?</h2>
+            <p><span data-i18n="xn9gvkj">Join MF Language Academy and start improving your language skills today.</span></p>
+            <a class="btn btn-secondary" href="register.html" data-i18n="btn_start_learning">Start Learning</a>
+        </div>
+    </div>
+</section>
+</main>
