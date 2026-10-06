@@ -1,0 +1,15 @@
+@model StatsUIVM?
+@if (Model is null || Model.Items.Count == 0) { return; }
+
+<section id="statistics-section" class="stats">
+    <div class="container stats-grid">
+        @foreach (var item in Model.Items)
+        {
+            <div class="stat">
+                <i class="@item.Icon"></i>
+                <span class="stat-number" data-count="@item.Value" data-suffix="@item.Suffix">@item.Value@item.Suffix</span>
+                <span class="stat-label">@item.Label</span>
+            </div>
+        }
+    </div>
+</section>
