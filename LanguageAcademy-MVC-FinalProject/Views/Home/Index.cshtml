@@ -11,69 +11,7 @@
     @await Component.InvokeAsync("WhyChoose")
 
 
-    <section id="teachers-section" class="section section-alt">
-        <div class="container">
-            <div class="section-header center reveal">
-                <span class="eyebrow" data-i18n="nav_teachers">Teachers</span>
-                <h2 data-i18n="teachers_title">Learn with people who teach for a living</h2>
-                <p><span data-i18n="xj7abym">Our faculty lead courses, write materials, and stay in the classroom.</span></p>
-            </div>
-            <div class="teacher-grid">
-                <div class="teacher-card reveal">
-                    <div class="teacher-photo"><img src="images/teacher-elena.jpg" alt="Portrait of Elena Marquez" data-i18n-alt="xkhyqqs" width="700" height="800"></div>
-                    <div class="teacher-body">
-                        <h3>Elena Marquez</h3>
-                        <p class="role" data-i18n="role_elena">English Program Lead</p>
-                        <p><span data-i18n="xiefkzk">Designs the beginner pathway and teaches the Monday speaking lab.</span></p>
-                        <div class="teacher-social">
-                            <a href="#" aria-label="Elena on LinkedIn"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" aria-label="Elena on Instagram"><i class="bi bi-instagram"></i></a>
-                        </div>
-                        <button class="btn btn-sm btn-outline" type="button" style="margin-top:12px;" data-teacher-open data-name="Elena Marquez" data-role="English Program Lead" data-i18n-role="role_elena" data-photo="images/teacher-elena.jpg" data-bio="Elena has taught English for twelve years in Boston and Madrid. She keeps classes practical, with speaking time in every lesson and feedback students can use the same week." data-i18n-bio="x1qkodnk" data-i18n="btn_view_profile">View Profile</button>
-                    </div>
-                </div>
-                <div class="teacher-card reveal">
-                    <div class="teacher-photo"><img src="images/teacher-daniel.jpg" alt="Portrait of Daniel Okonkwo" data-i18n-alt="x1xyzu0b" width="700" height="800"></div>
-                    <div class="teacher-body">
-                        <h3>Daniel Okonkwo</h3>
-                        <p class="role" data-i18n="role_daniel">IELTS Instructor</p>
-                        <p><span data-i18n="x1em3wm5">Coaches writing and speaking with calm, timed exam practice.</span></p>
-                        <div class="teacher-social">
-                            <a href="#" aria-label="Daniel on LinkedIn"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" aria-label="Daniel on X"><i class="bi bi-twitter-x"></i></a>
-                        </div>
-                        <button class="btn btn-sm btn-outline" type="button" style="margin-top:12px;" data-teacher-open data-name="Daniel Okonkwo" data-role="IELTS Instructor" data-i18n-role="role_daniel" data-photo="images/teacher-daniel.jpg" data-bio="Daniel prepares candidates for Academic IELTS. His feedback follows the public band descriptors, so students always know why a score moved." data-i18n-bio="x93jbgu" data-i18n="btn_view_profile">View Profile</button>
-                    </div>
-                </div>
-                <div class="teacher-card reveal">
-                    <div class="teacher-photo"><img src="images/teacher-sophie.jpg" alt="Portrait of Sophie Laurent" data-i18n-alt="x1m6jcz1" width="700" height="800"></div>
-                    <div class="teacher-body">
-                        <h3>Sophie Laurent</h3>
-                        <p class="role" data-i18n="role_sophie">Spanish Instructor</p>
-                        <p><span data-i18n="xexrqfp">Brings culture, travel dialogues, and clear grammar into class.</span></p>
-                        <div class="teacher-social">
-                            <a href="#" aria-label="Sophie on LinkedIn"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" aria-label="Sophie on Instagram"><i class="bi bi-instagram"></i></a>
-                        </div>
-                        <button class="btn btn-sm btn-outline" type="button" style="margin-top:12px;" data-teacher-open data-name="Sophie Laurent" data-role="Spanish Instructor" data-i18n-role="role_sophie" data-photo="images/teacher-sophie.jpg" data-bio="Sophie teaches beginner Spanish with a balance of conversation and structure. Students practice both Latin American and Peninsular varieties." data-i18n-bio="xz1miw8" data-i18n="btn_view_profile">View Profile</button>
-                    </div>
-                </div>
-                <div class="teacher-card reveal">
-                    <div class="teacher-photo"><img src="images/teacher-markus.jpg" alt="Portrait of Markus Weber" data-i18n-alt="x1ef3nrk" width="700" height="800"></div>
-                    <div class="teacher-body">
-                        <h3>Markus Weber</h3>
-                        <p class="role" data-i18n="role_markus">German Instructor</p>
-                        <p><span data-i18n="x1opdsc1">Makes cases and pronunciation feel manageable from week one.</span></p>
-                        <div class="teacher-social">
-                            <a href="#" aria-label="Markus on LinkedIn"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" aria-label="Markus on Facebook"><i class="bi bi-facebook"></i></a>
-                        </div>
-                        <button class="btn btn-sm btn-outline" type="button" style="margin-top:12px;" data-teacher-open data-name="Markus Weber" data-role="German Instructor" data-i18n-role="role_markus" data-photo="images/teacher-markus.jpg" data-bio="Markus focuses on the German beginners need for transport, housing, and introductions. Grammar is taught inside short dialogues, not long lectures." data-i18n-bio="x17kzyue" data-i18n="btn_view_profile">View Profile</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+    @await Component.InvokeAsync("Teacher")
 
 
     <section id="statistics-section" class="stats">

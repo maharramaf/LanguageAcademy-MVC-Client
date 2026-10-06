@@ -1,0 +1,33 @@
+@model TeacherSectionUIVM?
+@if (Model is null) { return; }
+
+<section id="teachers-section" class="section section-alt">
+    <div class="container">
+        <div class="section-header center reveal">
+            <span class="eyebrow">@Model.Eyebrow</span>
+            <h2>@Model.Title</h2>
+            <p>@Model.Lead</p>
+        </div>
+        <div class="teacher-grid">
+            @foreach (var teacher in Model.Teachers)
+            {
+                var photo = string.IsNullOrWhiteSpace(teacher.Photo)
+                    ? "/images/teacher-elena.jpg"
+                    : (teacher.Photo.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? teacher.Photo : "/" + teacher.Photo.TrimStart('/'));
+                <div class="teacher-card reveal">
+                    <div class="teacher-photo"><img src="@photo" alt="@teacher.PhotoAlt" width="700" height="800"></div>
+                    <div class="teacher-body">
+                        <h3>@teacher.Name</h3>
+                        <p class="role">@teacher.Role</p>
+                        <p>@teacher.Summary</p>
+                        <div class="teacher-social">
+                            <a href="@teacher.LinkedInUrl" aria-label="@teacher.LinkedInAriaLabel"><i class="bi bi-linkedin"></i></a>
+                            <a href="@teacher.SocialUrl" aria-label="@teacher.SocialAriaLabel"><i class="@teacher.SocialIcon"></i></a>
+                        </div>
+                        <button class="btn btn-sm btn-outline" type="button" style="margin-top:12px;" data-teacher-open data-name="@teacher.Name" data-role="@teacher.Role" data-photo="@photo" data-bio="@teacher.Bio">@teacher.ButtonText</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
