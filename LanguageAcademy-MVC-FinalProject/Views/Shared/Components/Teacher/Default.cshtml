@@ -4,9 +4,9 @@
 <section id="teachers-section" class="section section-alt">
     <div class="container">
         <div class="section-header center reveal">
-            <span class="eyebrow">@Model.Eyebrow</span>
+            <span class="eyebrow">@Model.Subtitle</span>
             <h2>@Model.Title</h2>
-            <p>@Model.Lead</p>
+            <p>@Model.Text</p>
         </div>
         <div class="teacher-grid">
             @foreach (var teacher in Model.Teachers)
@@ -21,10 +21,10 @@
                         <p class="role">@teacher.Role</p>
                         <p>@teacher.Summary</p>
                         <div class="teacher-social">
-                            <a href="@teacher.LinkedInUrl" aria-label="@teacher.LinkedInAriaLabel"><i class="bi bi-linkedin"></i></a>
-                            <a href="@teacher.SocialUrl" aria-label="@teacher.SocialAriaLabel"><i class="@teacher.SocialIcon"></i></a>
+                            <a href="@teacher.LinkedIn" aria-label="@teacher.Name on LinkedIn"><i class="bi bi-linkedin"></i></a>
+                            <a href="@teacher.Social" aria-label="@teacher.Name"><i class="@teacher.SocialIcon"></i></a>
                         </div>
-                        <button class="btn btn-sm btn-outline" type="button" style="margin-top:12px;" data-teacher-open data-name="@teacher.Name" data-role="@teacher.Role" data-photo="@photo" data-bio="@teacher.Bio">@teacher.ButtonText</button>
+                        <button class="btn btn-sm btn-outline" type="button" style="margin-top:12px;" data-teacher-open data-name="@teacher.Name" data-role="@teacher.Role" data-photo="@photo" data-bio="@teacher.Bio">View Profile</button>
                     </div>
                 </div>
             }

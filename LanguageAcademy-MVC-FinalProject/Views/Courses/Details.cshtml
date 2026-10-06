@@ -17,10 +17,10 @@
             <li><i class="bi bi-tag"></i> ₼@Model.Price.ToString("0")</li>
         </ul>
 
-        @if (!string.IsNullOrWhiteSpace(Model.PreviewVideoUrl))
+        @if (!string.IsNullOrWhiteSpace(Model.Video))
         {
             <div class="video-embed-wrap" style="max-width:860px;margin:24px 0;aspect-ratio:16/9;position:relative;background:#111;border-radius:12px;overflow:hidden;">
-                <iframe class="video-embed" src="@Model.PreviewVideoUrl" title="@Model.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>
+                <iframe class="video-embed" src="@Model.Video" title="@Model.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>
             </div>
         }
         else
@@ -41,15 +41,15 @@
 
         <h2>Curriculum</h2>
         <div class="course-modules" data-course-curriculum>
-            @foreach (var module in Model.Modules.OrderBy(m => m.SortOrder))
+            @foreach (var module in Model.Modules.OrderBy(m => m.Order))
             {
                 <div class="course-module">
                     <button class="course-module-toggle" type="button">
-                        <span><strong>@module.Title</strong><small>@module.Meta</small></span>
+                        <span><strong>@module.Title</strong><small>@module.Info</small></span>
                         <i class="bi bi-chevron-down"></i>
                     </button>
                     <div class="course-module-panel">
-                        @foreach (var lesson in module.Lessons.OrderBy(m => m.SortOrder))
+                        @foreach (var lesson in module.Lessons.OrderBy(m => m.Order))
                         {
                             <div class="lesson-row">
                                 <i class="bi @(lesson.Kind == "video" ? "bi-play-circle" : lesson.Kind == "quiz" ? "bi-patch-question" : "bi-file-text")"></i>
@@ -58,10 +58,10 @@
                                     <span>@lesson.Kind</span>
                                 </div>
                             </div>
-                            @if (lesson.Kind == "video" && !string.IsNullOrWhiteSpace(lesson.VideoUrl))
+                            @if (lesson.Kind == "video" && !string.IsNullOrWhiteSpace(lesson.Video))
                             {
                                 <div class="video-embed-wrap" style="margin:8px 0 16px;aspect-ratio:16/9;position:relative;background:#111;border-radius:12px;overflow:hidden;">
-                                    <iframe class="video-embed" src="@lesson.VideoUrl" title="@lesson.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>
+                                    <iframe class="video-embed" src="@lesson.Video" title="@lesson.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>
                                 </div>
                             }
                         }

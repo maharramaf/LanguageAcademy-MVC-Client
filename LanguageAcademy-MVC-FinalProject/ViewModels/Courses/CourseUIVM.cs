@@ -12,6 +12,6 @@ namespace LanguageAcademy_MVC_FinalProject.ViewModels.Courses
         public string Image { get; set; } = string.Empty;
         public string Summary { get; set; } = string.Empty;
         public int LessonCount { get; set; }
-        public string? PreviewVideoUrl { get; set; }
+        public string? Video { get; set; }
     }
 }
