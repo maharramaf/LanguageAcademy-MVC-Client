@@ -1,0 +1,10 @@
+@{
+    ViewData["Title"] = "Contact | MF Language Academy";
+    ViewData["SkipHref"] = "#contact-hero";
+}
+
+<main>
+@await Component.InvokeAsync("Contact")
+
+@await Component.InvokeAsync("Newsletter")
+</main>

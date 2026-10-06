@@ -1,0 +1,102 @@
+@model ContactSectionUIVM?
+@if (Model is null) { return; }
+
+@{
+    var status = TempData["Contact"] as string;
+    var ok = status == "ok";
+    var invalid = status == "invalid";
+    var tel = "tel:" + Model.Phone.Replace(" ", "").Replace("(", "").Replace(")", "");
+}
+
+<section id="contact-hero" class="page-hero">
+    <div class="container">
+        <nav class="breadcrumb" aria-label="Breadcrumb" data-i18n-aria-label="aria_breadcrumb"><a asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a><span>/</span><span data-i18n="nav_contact">Contact</span></nav>
+        <span class="eyebrow">@Model.Subtitle</span>
+        <h1>@Model.Title</h1>
+        <p>@Model.Text</p>
+    </div>
+</section>
+
+<section id="contact-section" class="section">
+    <div class="container contact-grid">
+        <div class="info-stack">
+            <div class="info-card">
+                <div class="info-item">
+                    <div class="icon-bubble"><i class="bi bi-geo-alt"></i></div>
+                    <div>
+                        <h3 data-i18n="x8js9uc">Address</h3>
+                        <p>@Model.Address<br>@Model.City</p>
+                    </div>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-item">
+                    <div class="icon-bubble"><i class="bi bi-telephone"></i></div>
+                    <div>
+                        <h3 data-i18n="label_phone">Phone</h3>
+                        <p><a href="@tel">@Model.Phone</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-item">
+                    <div class="icon-bubble"><i class="bi bi-envelope"></i></div>
+                    <div>
+                        <h3 data-i18n="label_email">Email</h3>
+                        <p><a href="mailto:@Model.Email">@Model.Email</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="info-card">
+                <div class="info-item">
+                    <div class="icon-bubble"><i class="bi bi-clock"></i></div>
+                    <div>
+                        <h3>Office hours</h3>
+                        <p>@Model.Hours<br>@Model.Saturday</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="contact-card">
+            <form asp-controller="Contact" asp-action="Send" method="post" novalidate>
+                <div class="form-row">
+                    <div class="field">
+                        <label for="name" data-i18n="label_name">Name</label>
+                        <input id="name" name="name" type="text" autocomplete="name" placeholder="Your name" required>
+                    </div>
+                    <div class="field">
+                        <label for="email" data-i18n="label_email">Email</label>
+                        <input id="email" name="email" type="email" autocomplete="email" placeholder="you@email.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="field">
+                        <label for="phone" data-i18n="label_phone">Phone</label>
+                        <input id="phone" name="phone" type="tel" autocomplete="tel" placeholder="+1 555 010 0000" required>
+                    </div>
+                    <div class="field">
+                        <label for="subject" data-i18n="label_subject">Subject</label>
+                        <input id="subject" name="subject" type="text" placeholder="Course or question" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="text" data-i18n="label_message">Message</label>
+                    <textarea id="text" name="text" placeholder="Tell us your goal and preferred schedule" required></textarea>
+                    @if (invalid)
+                    {
+                        <p class="field-error">Please fill every field. Message needs at least 10 characters.</p>
+                    }
+                </div>
+                <button class="btn btn-primary" type="submit" data-i18n="btn_send">Send Message</button>
+                @if (ok)
+                {
+                    <div class="form-success">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <h3>Thank you</h3>
+                        <p>Your message was sent. We will reply to this email.</p>
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+</section>

@@ -46,7 +46,7 @@
                     <li><a class="@(currentController == "Courses" ? "active" : null)" asp-controller="Courses" asp-action="Index" aria-current="@(currentController == "Courses" ? "page" : null)" data-i18n="nav_courses">Courses</a></li>
                     <li><a href="teachers.html" data-i18n="nav_teachers">Teachers</a></li>
                     <li><a href="students.html" data-i18n="nav_students">Students</a></li>
-                    <li><a href="contact.html" data-i18n="nav_contact">Contact</a></li>
+                    <li><a class="@(currentController == "Contact" ? "active" : null)" asp-controller="Contact" asp-action="Index" aria-current="@(currentController == "Contact" ? "page" : null)" data-i18n="nav_contact">Contact</a></li>
                 </ul>
                 <div class="nav-actions">
                     <a class="btn btn-outline" href="login.html" data-i18n="nav_login">Login</a>
@@ -102,7 +102,7 @@
                     <a asp-controller="About" asp-action="Index" data-i18n="nav_about">About</a>
                     <a asp-controller="Courses" asp-action="Index" data-i18n="nav_courses">Courses</a>
                     <a href="teachers.html" data-i18n="nav_teachers">Teachers</a>
-                    <a href="contact.html" data-i18n="nav_contact">Contact</a>
+                    <a asp-controller="Contact" asp-action="Index" data-i18n="nav_contact">Contact</a>
                 </div>
             </div>
             <div>
