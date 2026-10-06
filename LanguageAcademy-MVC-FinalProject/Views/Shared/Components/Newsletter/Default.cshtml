@@ -1,0 +1,38 @@
+@model NewsletterSectionUIVM?
+@if (Model is null) { return; }
+
+@{
+    var status = TempData["Newsletter"] as string;
+    var ok = status == "ok";
+    var invalid = status == "invalid";
+}
+
+<section id="newsletter-section" class="section section-alt">
+    <div class="container newsletter">
+        <div class="section-header">
+            <span class="eyebrow">@Model.Subtitle</span>
+            <h2>@Model.Title</h2>
+            <p>@Model.Text</p>
+        </div>
+        <form class="newsletter-form" asp-controller="Newsletter" asp-action="Subscribe" method="post" novalidate>
+            <input type="hidden" name="returnUrl" value="@Context.Request.Path@Context.Request.QueryString" />
+            <div class="field">
+                <label for="newsletter-email" data-i18n="label_email">Email</label>
+                <input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="you@email.com" required>
+                @if (invalid)
+                {
+                    <p class="field-error">Enter a valid email.</p>
+                }
+            </div>
+            <button class="btn btn-primary" type="submit" data-i18n="btn_subscribe">Subscribe</button>
+            @if (ok)
+            {
+                <div class="form-success">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <h3 data-i18n="newsletter_success">You are on the list</h3>
+                    <p>We will send course news to this email.</p>
+                </div>
+            }
+        </form>
+    </div>
+</section>

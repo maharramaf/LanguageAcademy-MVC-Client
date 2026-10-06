@@ -32,28 +32,6 @@
     </section>
 
 
-    <section id="newsletter-section" class="section section-alt">
-        <div class="container newsletter">
-            <div class="section-header">
-                <span class="eyebrow" data-i18n="newsletter_eyebrow">Newsletter</span>
-                <h2 data-i18n="newsletter_title">Course news, in your inbox</h2>
-                <p><span data-i18n="xqxy4up">New groups, exam dates, and study tips from MF Language Academy.</span></p>
-            </div>
-            <form class="newsletter-form" data-form="newsletter" novalidate>
-                <div class="field">
-                    <label for="newsletter-email" data-i18n="label_email">Email</label>
-                    <input id="newsletter-email" name="email" type="email" autocomplete="email" placeholder="you@email.com">
-                    <p class="field-error" data-error-for="email"></p>
-                </div>
-                <button class="btn btn-primary" type="submit" data-i18n="btn_subscribe">Subscribe</button>
-                <p class="form-note"><span data-i18n="x1ua9mvd">Preview only. Nothing is sent.</span></p>
-                <div class="form-success" hidden>
-                    <i class="bi bi-check-circle-fill"></i>
-                    <h3 data-i18n="newsletter_success">You are on the list</h3>
-                    <p><span data-i18n="x12lhryy">This preview validated your email and did not send it anywhere.</span></p>
-                </div>
-            </form>
-        </div>
-    </section>
+    @await Component.InvokeAsync("Newsletter")
 
 </main>
