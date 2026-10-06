@@ -86,6 +86,11 @@
     </header>
         @RenderBody()
 
+    @if (ViewData["HideNewsletter"] as bool? != true)
+    {
+        @await Component.InvokeAsync("Newsletter")
+    }
+
     <footer class="footer">
         <div class="container footer-grid">
             <div>
