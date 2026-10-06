@@ -1,0 +1,54 @@
+@model ReviewSectionUIVM?
+@if (Model is null || Model.Reviews.Count == 0) { return; }
+
+<section id="testimonials-section" class="section">
+    <div class="container">
+        <div class="section-header center reveal">
+            <span class="eyebrow">@Model.Subtitle</span>
+            <h2>@Model.Title</h2>
+            <p>@Model.Text</p>
+        </div>
+        <div class="slider" data-slider="testimonials">
+            <div class="slider-viewport">
+                <div class="slider-track">
+                    @foreach (var review in Model.Reviews)
+                    {
+                        var photo = string.IsNullOrWhiteSpace(review.Photo)
+                            ? "/images/student-amira.jpg"
+                            : (review.Photo.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? review.Photo : "/" + review.Photo.TrimStart('/'));
+                        <div class="testimonial-card">
+                            <div class="stars" aria-label="Rated @review.Rating out of 5">
+                                @for (var i = 1; i <= 5; i++)
+                                {
+                                    <i class="bi @(i <= review.Rating ? "bi-star-fill" : "bi-star")"></i>
+                                }
+                            </div>
+                            <p class="quote">@review.Text</p>
+                            <div class="t-top">
+                                <img src="@photo" alt="@review.PhotoAlt" width="400" height="400">
+                                <div>
+                                    <h3>@review.Name</h3>
+                                    <p>
+                                        @if (!string.IsNullOrWhiteSpace(review.CourseSlug))
+                                        {
+                                            <a asp-controller="Courses" asp-action="Details" asp-route-slug="@review.CourseSlug">@review.Course</a>
+                                        }
+                                        else
+                                        {
+                                            @review.Course
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="slider-controls">
+                <button class="slider-btn" type="button" data-prev aria-label="Previous testimonials"><i class="bi bi-arrow-left"></i></button>
+                <div class="slider-dots"></div>
+                <button class="slider-btn" type="button" data-next aria-label="Next testimonials"><i class="bi bi-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
+</section>

@@ -17,66 +17,7 @@
     @await Component.InvokeAsync("Stats")
 
 
-    <section id="testimonials-section" class="section">
-        <div class="container">
-            <div class="section-header center reveal">
-                <span class="eyebrow" data-i18n="testimonials_eyebrow">Testimonials</span>
-                <h2 data-i18n="testimonials_title">What students say after class</h2>
-                <p><span data-i18n="xq59q3s">Real goals: a visa interview, a new team, a first conversation abroad.</span></p>
-            </div>
-            <div class="slider" data-slider="testimonials">
-                <div class="slider-viewport">
-                    <div class="slider-track">
-                        <div class="testimonial-card">
-                            <div class="stars" aria-label="Rated 5 out of 5" data-i18n-aria-label="xxg89s5">
-                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            </div>
-                            <p class="quote"><span data-i18n="x1h3jxfm">“The IELTS speaking labs were the first place I stopped memorizing answers. I left with a 7.5 and a calmer exam day.”</span></p>
-                            <div class="t-top">
-                                <img src="images/student-amira.jpg" alt="Amira Hassan" width="400" height="400">
-                                <div><h3>Amira Hassan</h3><p data-i18n="course_ielts">IELTS Preparation</p></div>
-                            </div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="stars" aria-label="Rated 5 out of 5" data-i18n-aria-label="xxg89s5">
-                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            </div>
-                            <p class="quote"><span data-i18n="xzmtwyw">“Business English gave me phrases I use in stand-ups every morning. The group was small enough to actually practice.”</span></p>
-                            <div class="t-top">
-                                <img src="images/student-luca.jpg" alt="Luca Bianchi" width="400" height="400">
-                                <div><h3>Luca Bianchi</h3><p data-i18n="course_business">Business English</p></div>
-                            </div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="stars" aria-label="Rated 4 out of 5" data-i18n-aria-label="x10p88km">
-                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star"></i>
-                            </div>
-                            <p class="quote"><span data-i18n="x16rb0el">“I wanted Spanish for a family trip. By week six I could order, ask for directions, and understand the replies.”</span></p>
-                            <div class="t-top">
-                                <img src="images/student-priya.jpg" alt="Priya Shah" width="400" height="400">
-                                <div><h3>Priya Shah</h3><p data-i18n="course_spanish">Spanish Language</p></div>
-                            </div>
-                        </div>
-                        <div class="testimonial-card">
-                            <div class="stars" aria-label="Rated 5 out of 5" data-i18n-aria-label="xxg89s5">
-                                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
-                            </div>
-                            <p class="quote"><span data-i18n="xna0sa0">“German finally clicked because Markus taught grammar inside real dialogues. I use it at the bakery near my office.”</span></p>
-                            <div class="t-top">
-                                <img src="images/student-noah.jpg" alt="Noah Keller" width="400" height="400">
-                                <div><h3>Noah Keller</h3><p data-i18n="course_german">German Language</p></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="slider-controls">
-                    <button class="slider-btn" type="button" data-prev aria-label="Previous testimonials" data-i18n-aria-label="slider_prev_stories"><i class="bi bi-arrow-left"></i></button>
-                    <div class="slider-dots"></div>
-                    <button class="slider-btn" type="button" data-next aria-label="Next testimonials" data-i18n-aria-label="slider_next_stories"><i class="bi bi-arrow-right"></i></button>
-                </div>
-            </div>
-        </div>
-    </section>
+    @await Component.InvokeAsync("Review")
 
 
     <section id="cta-section" class="cta">

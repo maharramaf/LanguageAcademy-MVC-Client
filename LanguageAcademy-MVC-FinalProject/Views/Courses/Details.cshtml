@@ -69,6 +69,36 @@
                 </div>
             }
         </div>
+
+        @if (Model.Reviews.Any())
+        {
+            <h2>What learners say</h2>
+            <div class="review-list" style="max-width:860px;">
+                @foreach (var review in Model.Reviews)
+                {
+                    var photo = string.IsNullOrWhiteSpace(review.Photo)
+                        ? "/images/student-amira.jpg"
+                        : (review.Photo.StartsWith("http", StringComparison.OrdinalIgnoreCase) ? review.Photo : "/" + review.Photo.TrimStart('/'));
+                    <div class="testimonial-card" style="margin-bottom:16px;">
+                        <div class="stars" aria-label="Rated @review.Rating out of 5">
+                            @for (var i = 1; i <= 5; i++)
+                            {
+                                <i class="bi @(i <= review.Rating ? "bi-star-fill" : "bi-star")"></i>
+                            }
+                        </div>
+                        <p class="quote">@review.Text</p>
+                        <div class="t-top">
+                            <img src="@photo" alt="@review.PhotoAlt" width="80" height="80">
+                            <div>
+                                <h3>@review.Name</h3>
+                                <p>@review.Course</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
         <p style="margin-top:24px;"><a class="btn btn-outline" asp-controller="Courses" asp-action="Index">Back to courses</a></p>
     </div>
 </section>

@@ -1,3 +1,5 @@
+using LanguageAcademy_MVC_FinalProject.ViewModels.Reviews;
+
 namespace LanguageAcademy_MVC_FinalProject.ViewModels.Courses
 {
     public class CourseDetailUIVM
@@ -14,6 +16,7 @@ namespace LanguageAcademy_MVC_FinalProject.ViewModels.Courses
         public string Overview { get; set; } = string.Empty;
         public string? Video { get; set; }
         public List<string> Outcomes { get; set; } = new();
+        public List<ReviewUIVM> Reviews { get; set; } = new();
         public List<CourseModuleUIVM> Modules { get; set; } = new();
     }
 }
