@@ -121,7 +121,7 @@ function renderTeacherPlanCard() {
       '<li><span>' + teacherText("tp_lessons_limit", "Lessons per course") + '</span><strong>' + (limits.lessons >= 999 ? "∞" : limits.lessons) + '</strong></li>' +
       '<li><span>' + teacherText("tp_students_used", "Students") + '</span><strong>' + (state.studentsUsed || 0) + ' / ' + (limits.students >= 9999 ? "∞" : limits.students) + '</strong></li>' +
     '</ul>' +
-    '<a class="btn btn-outline btn-sm" href="dashboard.html#teacher-plan-section" data-open-teacher-plans>' + teacherText("plan_manage", "Manage Plan") + '</a>' +
+    '<a class="btn btn-outline btn-sm" href="dashboard.html#teacher-plan-section" data-admin-panel data-open-teacher-plans>' + teacherText("plan_manage", "Manage Plan") + '</a>' +
   '</section>';
 }
 

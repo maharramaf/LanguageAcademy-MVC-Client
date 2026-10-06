@@ -133,7 +133,7 @@ function renderPlanCard() {
   if (!premium) {
     return '<section class="panel plan-card"><p class="eyebrow">' + planText("plan_free", "Free Plan") + '</p><h2>' + planText("plan_free", "Free Plan") + '</h2><p>' + planText("plan_free_lead", "You're currently using the Free plan.") + '</p>' + upgradeLink() + '</section>';
   }
-  return '<section class="panel plan-card is-premium"><p class="eyebrow">⭐ ' + planText("plan_premium", "Premium") + '</p><h2>' + planText("plan_premium", "Premium") + '</h2><p>' + planText("plan_premium_lead", "All premium features are unlocked.") + '</p><a class="btn btn-outline" href="dashboard.html#plans-section" data-open-plans>' + planText("plan_manage", "Manage Plan") + '</a></section>';
+  return '<section class="panel plan-card is-premium"><p class="eyebrow">⭐ ' + planText("plan_premium", "Premium") + '</p><h2>' + planText("plan_premium", "Premium") + '</h2><p>' + planText("plan_premium_lead", "All premium features are unlocked.") + '</p><a class="btn btn-outline" href="dashboard.html#plans-section" data-admin-panel data-open-plans>' + planText("plan_manage", "Manage Plan") + '</a></section>';
 }
 
 function renderContinue() {

@@ -247,8 +247,8 @@ function showPayResult(form, selected, declined) {
     '<p>' + payText("pay_order", "Order number") + ': ' + order + '</p>' +
     '<p>' + payText("pay_date", "Date") + ': ' + when + '</p>' +
     '<div class="cert-card-actions">' +
-      '<a class="btn btn-primary" href="' + manageHref + '">' + manageLabel + '</a>' +
-      '<a class="btn btn-outline" href="dashboard.html#my-courses-section">' + payText("pay_courses", "Go to my courses") + '</a>' +
+      '<a class="btn btn-primary" href="' + manageHref + '"' + (typeof window.mfIsDashboardHref === "function" && window.mfIsDashboardHref(manageHref) ? " data-admin-panel" : "") + '>' + manageLabel + '</a>' +
+      '<a class="btn btn-outline" href="dashboard.html#my-courses-section" data-admin-panel>' + payText("pay_courses", "Go to my courses") + '</a>' +
     '</div>';
   box.hidden = false;
 }

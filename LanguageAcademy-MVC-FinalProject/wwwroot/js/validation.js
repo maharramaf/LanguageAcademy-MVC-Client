@@ -77,6 +77,10 @@ function initForms() {
       const emailOk = validateEmail(loginForm, "email");
       const passwordOk = validatePassword(loginForm, "password");
       if (!emailOk || !passwordOk) return;
+      const email = (fieldOf(loginForm, "email")?.value || "").trim();
+      if (typeof window.mfSaveAuth === "function") {
+        window.mfSaveAuth(email, window.mfRoleFromEmail ? window.mfRoleFromEmail(email) : "Member");
+      }
       showSuccess(loginForm);
     });
     }
@@ -123,6 +127,7 @@ function initForms() {
     if (checks.every(Boolean)) {
       showSuccess(registerForm);
       const email = (fieldOf(registerForm, "email")?.value || "").trim();
+      if (typeof window.mfSaveAuth === "function") window.mfSaveAuth(email, "Member");
       if (typeof window.showAssessmentNotification === "function") window.showAssessmentNotification(email);
       window.location.href = "index.html";
     }

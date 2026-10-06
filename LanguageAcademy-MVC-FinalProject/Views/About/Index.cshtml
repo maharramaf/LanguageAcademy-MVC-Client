@@ -6,26 +6,7 @@
 <main>
 @await Component.InvokeAsync("AboutHero")
 
-<section id="about-section" class="section">
-    <div class="container about-grid">
-        <div class="about-media reveal">
-            <img src="~/images/about.jpg" alt="A language class in session" data-i18n-alt="xgtttd8" width="1200" height="900">
-            <div class="about-float"><strong>10+</strong><span><span data-i18n="x1fh70qf">Years teaching</span><br><span data-i18n="x11byn9k">in Boston</span></span></div>
-        </div>
-        <div class="reveal">
-            <span class="eyebrow"><span data-i18n="x1faiv9g">Who we are</span></span>
-            <h2><span data-i18n="x12zoilr">Small classes. Clear progress.</span></h2>
-            <p><span data-i18n="x12vgizq">Students join MF Language Academy to pass an exam, join a new team, or feel at home in another country. We keep groups small, publish the weekly plan, and measure progress with speaking checks instead of surprise tests.</span></p>
-            <p><span data-i18n="xlasygl">Campus classes meet at Language Plaza. Online classes use the same teachers and the same materials, so a student can switch format when travel or work changes.</span></p>
-            <div class="feature-list">
-                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> <span data-i18n="x1pcuo8n">Experienced Teachers</span></div>
-                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> <span data-i18n="xozngn3">Modern Learning</span></div>
-                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> <span data-i18n="x1l7zioz">Flexible Courses</span></div>
-                <div class="feature-item"><i class="bi bi-check-circle-fill"></i> <span data-i18n="x1nxllxd">International Environment</span></div>
-            </div>
-        </div>
-    </div>
-</section>
+@await Component.InvokeAsync("About", new { page = "about" })
 
 @await Component.InvokeAsync("HowWeWork")
 

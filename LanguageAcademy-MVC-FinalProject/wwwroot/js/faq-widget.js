@@ -96,7 +96,7 @@ function initGlobalFAQ() {
         '<div class="faq-links">' +
           '<a href="faq.html"><i class="bi bi-question-circle" aria-hidden="true"></i><span data-i18n="faq_courses_certs">Course and certificate FAQ</span></a>' +
           '<a href="catalog.html"><i class="bi bi-journal-bookmark" aria-hidden="true"></i><span data-i18n="faq_browse">Browse courses</span></a>' +
-          '<a href="dashboard.html"><i class="bi bi-grid" aria-hidden="true"></i><span data-i18n="dash_home">Dashboard</span></a>' +
+          '<a href="dashboard.html" data-admin-panel><i class="bi bi-grid" aria-hidden="true"></i><span data-i18n="dash_home">Dashboard</span></a>' +
           '<a href="learning-paths.html"><i class="bi bi-signpost" aria-hidden="true"></i><span data-i18n="faq_learning">Learning</span></a>' +
           '<a href="learn.html#grades"><i class="bi bi-patch-question" aria-hidden="true"></i><span data-i18n="faq_quiz">Quiz and grades</span></a>' +
           '<a href="certificate.html?course=english-a2"><i class="bi bi-award" aria-hidden="true"></i><span data-i18n="dash_certificates">Certificates</span></a>' +
@@ -116,6 +116,7 @@ function initGlobalFAQ() {
   const panel = root.querySelector(".faq-panel");
   initFAQModal(button, panel);
   initFAQAccordion(panel);
+  if (typeof window.mfHideDashboardLinks === "function") window.mfHideDashboardLinks(root);
   if (typeof window.applyTranslations === "function") window.applyTranslations();
 }
 

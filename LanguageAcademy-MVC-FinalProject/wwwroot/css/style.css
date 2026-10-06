@@ -2362,6 +2362,12 @@ body.faq-open { overflow: hidden; }
   font-weight: 800;
 }
 .faq-links a:hover { border-color: var(--primary); }
+html:not(.mf-admin) a[href="dashboard.html"],
+html:not(.mf-admin) a[href^="dashboard.html"],
+html:not(.mf-admin) a[href="/dashboard"],
+html:not(.mf-admin) a[href^="/dashboard"],
+html:not(.mf-admin) a[data-i18n="dash_home"],
+html:not(.mf-admin) a[data-admin-panel] { display: none !important; }
 .faq-group { margin-top: 16px; }
 .faq-group h3 { font-size: 0.95rem; margin-bottom: 8px; }
 .faq-panel .accordion-item,

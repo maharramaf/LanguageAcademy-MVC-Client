@@ -12,13 +12,16 @@ namespace LanguageAcademy_MVC_FinalProject.ViewComponents
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(string page = "home")
         {
             AboutUIVM? about = null;
             try
             {
                 var client = _httpClientFactory.CreateClient("LanguageAcademyApi");
-                about = await client.GetFromJsonAsync<AboutUIVM>("api/About");
+                var path = string.Equals(page, "about", StringComparison.OrdinalIgnoreCase)
+                    ? "api/About?page=about"
+                    : "api/About?page=home";
+                about = await client.GetFromJsonAsync<AboutUIVM>(path);
             }
             catch (HttpRequestException)
             {

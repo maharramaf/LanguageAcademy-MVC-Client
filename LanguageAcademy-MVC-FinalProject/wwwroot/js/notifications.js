@@ -34,7 +34,7 @@ function loadNotificationState() {}
 function saveNotificationState() {}
 
 function unreadNotificationCount() {
-  return mfNotifyItems.filter(function (item) { return !item.read; }).length;
+  return mfNotifyItems.filter(function (item) { return !item.read && !isAdminDashboardNotice(item); }).length;
 }
 
 function updateNotificationBadge() {
@@ -77,8 +77,14 @@ function emptyNotificationMarkup() {
   );
 }
 
+function isAdminDashboardNotice(item) {
+  return item && typeof window.mfIsDashboardHref === "function" && window.mfIsDashboardHref(item.href)
+    && !(typeof window.mfCanSeeAdminPanel === "function" && window.mfCanSeeAdminPanel());
+}
+
 function visibleNotifications() {
   return mfNotifyItems.filter(function (item) {
+    if (isAdminDashboardNotice(item)) return false;
     if (mfNotifyFilter === "all") return true;
     if (mfNotifyFilter === "unread") return !item.read;
     return item.type === mfNotifyFilter;
@@ -92,7 +98,9 @@ function renderNotifications() {
       list.innerHTML = emptyNotificationMarkup();
       return;
     }
-    list.innerHTML = mfNotifyItems.map(function (item) {
+    list.innerHTML = mfNotifyItems.filter(function (item) {
+      return !isAdminDashboardNotice(item);
+    }).map(function (item) {
       return notificationMarkup(item, true);
     }).join("");
   });
@@ -150,6 +158,7 @@ function bindNotificationList(root) {
     if (!button || !root.contains(button)) return;
     const item = markNotificationAsRead(button.getAttribute("data-notify-id"));
     if (item && item.href && root.classList.contains("notify-list")) {
+      if (isAdminDashboardNotice(item)) return;
       window.location.href = item.href;
     }
   });

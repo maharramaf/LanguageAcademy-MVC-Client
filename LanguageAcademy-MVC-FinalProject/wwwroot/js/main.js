@@ -554,6 +554,14 @@ function initDashboard() {
   const sideOverlay = document.querySelector(".side-overlay");
   if (!document.querySelector(".dash")) return;
 
+  document.querySelectorAll("a.logout").forEach(function (link) {
+    if (link.dataset.logoutBound === "1") return;
+    link.dataset.logoutBound = "1";
+    link.addEventListener("click", function () {
+      if (typeof window.mfClearAuth === "function") window.mfClearAuth();
+    });
+  });
+
   function setSidebar(open) {
     sidebar?.classList.toggle("is-open", open);
     sideOverlay?.classList.toggle("is-open", open);
