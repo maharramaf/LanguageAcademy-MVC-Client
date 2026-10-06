@@ -44,7 +44,7 @@
                     <li><a class="@(currentController == "Home" ? "active" : null)" asp-controller="Home" asp-action="Index" aria-current="@(currentController == "Home" ? "page" : null)" data-i18n="nav_home">Home</a></li>
                     <li><a class="@(currentController == "About" ? "active" : null)" asp-controller="About" asp-action="Index" aria-current="@(currentController == "About" ? "page" : null)" data-i18n="nav_about">About</a></li>
                     <li><a class="@(currentController == "Courses" ? "active" : null)" asp-controller="Courses" asp-action="Index" aria-current="@(currentController == "Courses" ? "page" : null)" data-i18n="nav_courses">Courses</a></li>
-                    <li><a href="teachers.html" data-i18n="nav_teachers">Teachers</a></li>
+                    <li><a class="@(currentController == "Teachers" ? "active" : null)" asp-controller="Teachers" asp-action="Index" aria-current="@(currentController == "Teachers" ? "page" : null)" data-i18n="nav_teachers">Teachers</a></li>
                     <li><a href="students.html" data-i18n="nav_students">Students</a></li>
                     <li><a class="@(currentController == "Contact" ? "active" : null)" asp-controller="Contact" asp-action="Index" aria-current="@(currentController == "Contact" ? "page" : null)" data-i18n="nav_contact">Contact</a></li>
                 </ul>
@@ -101,7 +101,7 @@
                     <a asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a>
                     <a asp-controller="About" asp-action="Index" data-i18n="nav_about">About</a>
                     <a asp-controller="Courses" asp-action="Index" data-i18n="nav_courses">Courses</a>
-                    <a href="teachers.html" data-i18n="nav_teachers">Teachers</a>
+                    <a asp-controller="Teachers" asp-action="Index" data-i18n="nav_teachers">Teachers</a>
                     <a asp-controller="Contact" asp-action="Index" data-i18n="nav_contact">Contact</a>
                 </div>
             </div>

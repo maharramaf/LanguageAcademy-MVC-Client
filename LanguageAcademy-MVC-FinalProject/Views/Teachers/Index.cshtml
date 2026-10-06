@@ -1,0 +1,20 @@
+@{
+    ViewData["Title"] = "Teachers | MF Language Academy";
+    ViewData["SkipHref"] = "#teachers-hero";
+}
+
+<main>
+@await Component.InvokeAsync("Teacher", new { layout = "page" })
+
+<section id="cta-section" class="cta">
+    <div class="container">
+        <div class="cta-band">
+            <h2 data-i18n="teachers_cta">Want to teach with us?</h2>
+            <p><span data-i18n="x12rdztk">We hire patient instructors who enjoy adult learners. Send a short note and we will reply from the frontend contact page.</span></p>
+            <a class="btn btn-secondary" asp-controller="Contact" asp-action="Index" data-i18n="btn_contact_school">Contact the School</a>
+        </div>
+    </div>
+</section>
+
+@await Component.InvokeAsync("Newsletter")
+</main>

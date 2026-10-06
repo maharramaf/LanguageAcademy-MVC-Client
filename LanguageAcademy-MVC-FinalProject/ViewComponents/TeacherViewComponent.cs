@@ -12,7 +12,7 @@ namespace LanguageAcademy_MVC_FinalProject.ViewComponents
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(string layout = "home")
         {
             TeacherSectionUIVM? section = null;
             try
@@ -25,7 +25,7 @@ namespace LanguageAcademy_MVC_FinalProject.ViewComponents
                 // API işləmirsə teachers gizlədilir, səhifənin qalanı yenə açılsın
             }
 
-            return View(section);
+            return View(layout == "page" ? "Page" : "Default", section);
         }
     }
 }
