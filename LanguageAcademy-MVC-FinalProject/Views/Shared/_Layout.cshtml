@@ -49,8 +49,7 @@
                     <li><a class="@(currentController == "Contact" ? "active" : null)" asp-controller="Contact" asp-action="Index" aria-current="@(currentController == "Contact" ? "page" : null)" data-i18n="nav_contact">Contact</a></li>
                 </ul>
                 <div class="nav-actions">
-                    <a class="btn btn-outline" asp-controller="Account" asp-action="Login" data-i18n="nav_login">Login</a>
-                    <a class="btn btn-secondary" asp-controller="Account" asp-action="Register" data-i18n="nav_register">Register</a>
+                    <partial name="_AuthNav" />
                 </div>
             </nav>
             <form class="header-search" asp-controller="Courses" asp-action="Index" method="get" role="search">
@@ -75,8 +74,7 @@
             </div>
 
             <div class="header-actions">
-                <a class="btn btn-outline" asp-controller="Account" asp-action="Login" data-i18n="nav_login">Login</a>
-                <a class="btn btn-secondary" asp-controller="Account" asp-action="Register" data-i18n="nav_register">Register</a>
+                <partial name="_AuthNav" />
                 <button class="nav-toggle" type="button" aria-label="Open menu" data-i18n-aria-label="open_menu" aria-expanded="false">
                     <span></span><span></span><span></span>
                 </button>
@@ -142,7 +140,15 @@
         </div>
         <div class="container footer-bottom">
             <p><span data-i18n="xuwyenm">© 2026 MF Language Academy. All rights reserved.</span></p>
-            <p><a asp-controller="Account" asp-action="Login" data-i18n="nav_login">Login</a> · <a asp-controller="Account" asp-action="Register" data-i18n="nav_register">Register</a></p>
+            <p>
+                @{
+                    ViewData["AuthNavLinks"] = true;
+                }
+                <partial name="_AuthNav" />
+                @{
+                    ViewData.Remove("AuthNavLinks");
+                }
+            </p>
         </div>
     </footer>
 

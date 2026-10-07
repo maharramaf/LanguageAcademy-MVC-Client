@@ -18,6 +18,9 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            if (AuthCookie.Exists(Request))
+                return RedirectToAction("Index", "Home");
+
             ViewData["Title"] = "Register | MF Language Academy";
             return View(new RegisterUIVM());
         }
@@ -54,6 +57,9 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (AuthCookie.Exists(Request))
+                return RedirectToAction("Index", "Home");
+
             ViewData["Title"] = "Login | MF Language Academy";
             return View(new LoginUIVM());
         }
@@ -92,6 +98,14 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             }
 
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete(AuthCookie.Name, AuthCookie.DeleteOptions());
+            return RedirectToAction("Index", "Home");
         }
 
         private async Task<List<string>?> ReadErrorsAsync(HttpResponseMessage response)

@@ -1,0 +1,21 @@
+@{
+    var signedIn = AuthCookie.Exists(Context.Request);
+    var links = ViewData["AuthNavLinks"] as bool? == true;
+}
+@if (signedIn)
+{
+    <form asp-controller="Account" asp-action="Logout" method="post">
+        <button class="@(links ? "link-btn" : "btn btn-outline")" type="submit" data-i18n="dash_logout">Logout</button>
+    </form>
+}
+else if (links)
+{
+    <a asp-controller="Account" asp-action="Login" data-i18n="nav_login">Login</a>
+    <text> · </text>
+    <a asp-controller="Account" asp-action="Register" data-i18n="nav_register">Register</a>
+}
+else
+{
+    <a class="btn btn-outline" asp-controller="Account" asp-action="Login" data-i18n="nav_login">Login</a>
+    <a class="btn btn-secondary" asp-controller="Account" asp-action="Register" data-i18n="nav_register">Register</a>
+}
