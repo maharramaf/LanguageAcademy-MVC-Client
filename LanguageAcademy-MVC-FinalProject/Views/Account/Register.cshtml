@@ -41,8 +41,7 @@
                 <div class="form-success">
                     <i class="bi bi-check-circle-fill"></i>
                     <h3>Your student account was created.</h3>
-                    <p>You can sign in after the login page is connected.</p>
-                    <p><a class="btn btn-primary" asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a></p>
+                    <p><a class="btn btn-primary" asp-controller="Account" asp-action="Login" data-i18n="nav_login">Login</a></p>
                 </div>
             }
             else
@@ -91,7 +90,7 @@
                     <button class="btn btn-secondary btn-block" type="submit" data-i18n="nav_register">Register</button>
                 </form>
             }
-            <p class="auth-switch"><span data-i18n="x122cfat">Already have an account?</span> <a href="login.html" data-i18n="nav_login">Login</a></p>
+            <p class="auth-switch"><span data-i18n="x122cfat">Already have an account?</span> <a asp-controller="Account" asp-action="Login" data-i18n="nav_login">Login</a></p>
             <p><a asp-controller="Home" asp-action="Index" data-i18n="auth_back">Back to website</a></p>
         </div>
     </section>

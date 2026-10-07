@@ -1,0 +1,60 @@
+@model LoginUIVM
+@{
+    Layout = "_AuthLayout";
+}
+
+<main class="auth-page">
+    <aside class="auth-aside">
+        <a class="logo" asp-controller="Home" asp-action="Index">
+            <span class="logo-mark">MF</span>
+            <span class="logo-text"><strong>MF Language</strong><small>Academy</small></span>
+        </a>
+        <div class="auth-quote">
+            <h2 data-i18n="auth_welcome">Welcome back to class.</h2>
+            <p data-i18n="auth_welcome_text">Pick up your courses, messages, and progress from the learning portal.</p>
+        </div>
+        <p data-i18n="auth_aside">Small classes. Real conversations. Boston and online.</p>
+    </aside>
+    <section id="login-section" class="auth-panel">
+        <div class="auth-card">
+            <div class="header-tools">
+                <div class="lang-switch">
+                    <button class="lang-toggle" type="button" aria-haspopup="listbox" aria-expanded="false" data-i18n-aria-label="language_menu">
+                        <span class="lang-current">AZ</span>
+                        <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                    </button>
+                    <ul class="lang-menu" role="listbox" hidden>
+                        <li role="none"><button type="button" role="option" data-set-lang="az">🇦🇿 Azərbaycan</button></li>
+                        <li role="none"><button type="button" role="option" data-set-lang="ru">🇷🇺 Русский</button></li>
+                        <li role="none"><button type="button" role="option" data-set-lang="en">🇬🇧 English</button></li>
+                    </ul>
+                </div>
+                <button class="theme-toggle" type="button" aria-pressed="false" data-i18n-aria-label="toggle_theme">
+                    <i class="bi bi-moon-stars" aria-hidden="true"></i>
+                </button>
+            </div>
+            <span class="eyebrow" data-i18n="auth_portal">Portal</span>
+            <h1 data-i18n="nav_login">Login</h1>
+            <p>Sign in with the email and password of your student or admin account.</p>
+            <form asp-controller="Account" asp-action="Login" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="field-error"></div>
+                <div class="field">
+                    <label asp-for="Email" data-i18n="label_email">Email</label>
+                    <input asp-for="Email" type="email" autocomplete="email" placeholder="you@email.com">
+                    <span asp-validation-for="Email" class="field-error"></span>
+                </div>
+                <div class="field">
+                    <label asp-for="Password" data-i18n="label_password">Password</label>
+                    <div class="password-field">
+                        <input asp-for="Password" type="password" autocomplete="current-password">
+                        <button class="password-toggle" type="button" data-password-toggle aria-label="Show password" data-i18n-aria-label="show_password"><i class="bi bi-eye"></i></button>
+                    </div>
+                    <span asp-validation-for="Password" class="field-error"></span>
+                </div>
+                <button class="btn btn-primary btn-block" type="submit" data-i18n="nav_login">Login</button>
+            </form>
+            <p class="auth-switch"><span data-i18n="xykg00t">Don't have an account?</span> <a asp-controller="Account" asp-action="Register" data-i18n="nav_register">Register</a></p>
+            <p><a asp-controller="Home" asp-action="Index" data-i18n="auth_back">Back to website</a></p>
+        </div>
+    </section>
+</main>
