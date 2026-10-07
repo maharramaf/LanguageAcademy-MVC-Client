@@ -1,7 +1,9 @@
-@model LanguageAcademy_MVC_FinalProject.ViewModels.Accounts.RegisterUIVM
+@model RegisterPageUIVM
 @{
     Layout = "_AuthLayout";
-    var ok = TempData["Register"] as string == "ok";
+    var registerOk = TempData["Register"] as string == "ok";
+    var applyOk = TempData["Apply"] as string == "ok";
+    var tab = ViewData["RegisterTab"] as string ?? "student";
 }
 
 <main class="auth-page">
@@ -36,7 +38,7 @@
             </div>
             <span class="eyebrow" data-i18n="auth_new">New student</span>
             <h1 data-i18n="nav_register">Register</h1>
-            @if (ok)
+            @if (registerOk)
             {
                 <div class="form-success">
                     <i class="bi bi-check-circle-fill"></i>
@@ -44,50 +46,141 @@
                     <p><a class="btn btn-primary" asp-controller="Account" asp-action="Login" data-i18n="nav_login">Login</a></p>
                 </div>
             }
+            else if (applyOk)
+            {
+                <div class="apply-pending">
+                    <i class="bi bi-hourglass-split"></i>
+                    <h3 data-i18n="apply_submitted">Application submitted</h3>
+                    <p data-i18n="apply_submitted_text">Your teacher application has been submitted successfully. Our administration team will review your information and CV.</p>
+                    <p><strong data-i18n="apply_status">Status</strong>: <span data-i18n="apply_pending">Pending review</span></p>
+                    <p><a class="btn btn-primary" asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a></p>
+                </div>
+            }
             else
             {
-                <p>Create a student account. Instructor applications will come later.</p>
-                <form asp-controller="Account" asp-action="Register" method="post" novalidate>
+                <p>Create a student account, or send a teacher application for admin review.</p>
+                <div class="reg-role" role="tablist" data-active-tab="@tab">
+                    <button class="filter-btn @(tab == "instructor" ? null : "is-active")" type="button" data-reg-role="student" data-i18n="reg_student">Student</button>
+                    <button class="filter-btn @(tab == "instructor" ? "is-active" : null)" type="button" data-reg-role="instructor" data-i18n="reg_instructor">Instructor</button>
+                </div>
+                <form data-student-field asp-controller="Account" asp-action="Register" method="post" novalidate hidden="@(tab == "instructor" ? "hidden" : null)">
                     <div asp-validation-summary="ModelOnly" class="field-error"></div>
                     <div class="form-row">
                         <div class="field">
-                            <label asp-for="Name" data-i18n="label_first">First Name</label>
-                            <input asp-for="Name" autocomplete="given-name">
-                            <span asp-validation-for="Name" class="field-error"></span>
+                            <label asp-for="Student.Name" data-i18n="label_first">First Name</label>
+                            <input asp-for="Student.Name" autocomplete="given-name">
+                            <span asp-validation-for="Student.Name" class="field-error"></span>
                         </div>
                         <div class="field">
-                            <label asp-for="Surname" data-i18n="label_last">Last Name</label>
-                            <input asp-for="Surname" autocomplete="family-name">
-                            <span asp-validation-for="Surname" class="field-error"></span>
+                            <label asp-for="Student.Surname" data-i18n="label_last">Last Name</label>
+                            <input asp-for="Student.Surname" autocomplete="family-name">
+                            <span asp-validation-for="Student.Surname" class="field-error"></span>
                         </div>
                     </div>
                     <div class="field">
-                        <label asp-for="Email" data-i18n="label_email">Email</label>
-                            <input asp-for="Email" type="email" autocomplete="email">
-                        <span asp-validation-for="Email" class="field-error"></span>
+                        <label asp-for="Student.Email" data-i18n="label_email">Email</label>
+                        <input asp-for="Student.Email" type="email" autocomplete="email">
+                        <span asp-validation-for="Student.Email" class="field-error"></span>
                     </div>
                     <div class="field">
-                        <label asp-for="Phone" data-i18n="label_phone">Phone</label>
-                            <input asp-for="Phone" type="tel" autocomplete="tel">
-                        <span asp-validation-for="Phone" class="field-error"></span>
+                        <label asp-for="Student.Phone" data-i18n="label_phone">Phone</label>
+                        <input asp-for="Student.Phone" type="tel" autocomplete="tel">
+                        <span asp-validation-for="Student.Phone" class="field-error"></span>
                     </div>
                     <div class="field">
-                        <label asp-for="Password" data-i18n="label_password">Password</label>
+                        <label asp-for="Student.Password" data-i18n="label_password">Password</label>
                         <div class="password-field">
-                            <input asp-for="Password" type="password" autocomplete="new-password">
+                            <input asp-for="Student.Password" type="password" autocomplete="new-password">
                             <button class="password-toggle" type="button" data-password-toggle aria-label="Show password" data-i18n-aria-label="show_password"><i class="bi bi-eye"></i></button>
                         </div>
-                        <span asp-validation-for="Password" class="field-error"></span>
+                        <span asp-validation-for="Student.Password" class="field-error"></span>
                     </div>
                     <div class="field">
-                        <label asp-for="ConfirmPassword" data-i18n="label_confirm">Confirm Password</label>
+                        <label asp-for="Student.ConfirmPassword" data-i18n="label_confirm">Confirm Password</label>
                         <div class="password-field">
-                            <input asp-for="ConfirmPassword" type="password" autocomplete="new-password">
+                            <input asp-for="Student.ConfirmPassword" type="password" autocomplete="new-password">
                             <button class="password-toggle" type="button" data-password-toggle aria-label="Show password" data-i18n-aria-label="show_password"><i class="bi bi-eye"></i></button>
                         </div>
-                        <span asp-validation-for="ConfirmPassword" class="field-error"></span>
+                        <span asp-validation-for="Student.ConfirmPassword" class="field-error"></span>
                     </div>
                     <button class="btn btn-secondary btn-block" type="submit" data-i18n="nav_register">Register</button>
+                </form>
+                <form data-instructor-field asp-controller="Account" asp-action="Apply" method="post" novalidate hidden="@(tab != "instructor" ? "hidden" : null)">
+                    <div asp-validation-summary="ModelOnly" class="field-error"></div>
+                    <div class="form-row">
+                        <div class="field">
+                            <label asp-for="Instructor.Name" data-i18n="label_first">First Name</label>
+                            <input asp-for="Instructor.Name" autocomplete="given-name">
+                            <span asp-validation-for="Instructor.Name" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Instructor.Surname" data-i18n="label_last">Last Name</label>
+                            <input asp-for="Instructor.Surname" autocomplete="family-name">
+                            <span asp-validation-for="Instructor.Surname" class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Instructor.Email" data-i18n="label_email">Email</label>
+                        <input asp-for="Instructor.Email" type="email" autocomplete="email">
+                        <span asp-validation-for="Instructor.Email" class="field-error"></span>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Instructor.Phone" data-i18n="label_phone">Phone</label>
+                        <input asp-for="Instructor.Phone" type="tel" autocomplete="tel">
+                        <span asp-validation-for="Instructor.Phone" class="field-error"></span>
+                    </div>
+                    <div class="form-row">
+                        <div class="field">
+                            <label asp-for="Instructor.Country" data-i18n="apply_country">Country</label>
+                            <input asp-for="Instructor.Country">
+                            <span asp-validation-for="Instructor.Country" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Instructor.Education" data-i18n="apply_education">Education</label>
+                            <input asp-for="Instructor.Education">
+                            <span asp-validation-for="Instructor.Education" class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Instructor.Institution" data-i18n="apply_institution">University / Institution</label>
+                        <input asp-for="Instructor.Institution">
+                        <span asp-validation-for="Instructor.Institution" class="field-error"></span>
+                    </div>
+                    <div class="form-row">
+                        <div class="field">
+                            <label asp-for="Instructor.Experience" data-i18n="apply_experience">Teaching experience</label>
+                            <input asp-for="Instructor.Experience">
+                            <span asp-validation-for="Instructor.Experience" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Instructor.Years" data-i18n="apply_years">Years of experience</label>
+                            <input asp-for="Instructor.Years" type="number" min="0" max="60">
+                            <span asp-validation-for="Instructor.Years" class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="field">
+                            <label asp-for="Instructor.Languages" data-i18n="apply_languages">Languages</label>
+                            <input asp-for="Instructor.Languages">
+                            <span asp-validation-for="Instructor.Languages" class="field-error"></span>
+                        </div>
+                        <div class="field">
+                            <label asp-for="Instructor.Subject" data-i18n="studio_subject">Specialization</label>
+                            <input asp-for="Instructor.Subject">
+                            <span asp-validation-for="Instructor.Subject" class="field-error"></span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Instructor.Bio" data-i18n="apply_bio">Short biography</label>
+                        <textarea asp-for="Instructor.Bio"></textarea>
+                        <span asp-validation-for="Instructor.Bio" class="field-error"></span>
+                    </div>
+                    <div class="field">
+                        <label asp-for="Instructor.Portfolio" data-i18n="apply_portfolio">LinkedIn / portfolio URL</label>
+                        <input asp-for="Instructor.Portfolio" type="url">
+                        <span asp-validation-for="Instructor.Portfolio" class="field-error"></span>
+                    </div>
+                    <button class="btn btn-secondary btn-block" type="submit">Send application</button>
                 </form>
             }
             <p class="auth-switch"><span data-i18n="x122cfat">Already have an account?</span> <a asp-controller="Account" asp-action="Login" data-i18n="nav_login">Login</a></p>

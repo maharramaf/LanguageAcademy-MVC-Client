@@ -22,17 +22,18 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                 return redirect;
 
             ViewData["Title"] = "Register | MF Language Academy";
-            return View(new RegisterUIVM());
+            return View(new RegisterPageUIVM());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterUIVM model)
+        public async Task<IActionResult> Register([Bind(Prefix = "Student")] RegisterUIVM model)
         {
             ViewData["Title"] = "Register | MF Language Academy";
+            ViewData["RegisterTab"] = "student";
 
             if (!ModelState.IsValid)
-                return View(model);
+                return View(Page(student: model));
 
             try
             {
@@ -51,7 +52,37 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                 ModelState.AddModelError(string.Empty, "Could not create the account.");
             }
 
-            return View(model);
+            return View(Page(student: model));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Apply([Bind(Prefix = "Instructor")] TeacherApplicationUIVM model)
+        {
+            ViewData["Title"] = "Register | MF Language Academy";
+            ViewData["RegisterTab"] = "instructor";
+
+            if (!ModelState.IsValid)
+                return View(nameof(Register), Page(instructor: model));
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient("LanguageAcademyApi");
+                var response = await client.PostAsJsonAsync("api/TeacherApplications", model);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["Apply"] = "ok";
+                    return RedirectToAction(nameof(Register));
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not send the application.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not send the application.");
+            }
+
+            return View(nameof(Register), Page(instructor: model));
         }
 
         [HttpGet]
@@ -109,6 +140,15 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         {
             Response.Cookies.Delete(AuthCookie.Name, AuthCookie.DeleteOptions());
             return RedirectToAction("Index", "Home");
+        }
+
+        private static RegisterPageUIVM Page(RegisterUIVM? student = null, TeacherApplicationUIVM? instructor = null)
+        {
+            return new RegisterPageUIVM
+            {
+                Student = student ?? new RegisterUIVM(),
+                Instructor = instructor ?? new TeacherApplicationUIVM()
+            };
         }
 
         private IActionResult? RedirectIfSignedIn()
