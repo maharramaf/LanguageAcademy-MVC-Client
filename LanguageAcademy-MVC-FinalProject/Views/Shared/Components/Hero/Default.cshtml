@@ -14,7 +14,7 @@
             <p class="lead">@Model.Text</p>
             <div class="hero-actions">
                 <a class="btn btn-primary" asp-controller="Courses" asp-action="Index">@Model.Button1</a>
-                <a class="btn btn-secondary" href="register.html">@Model.Button2</a>
+                <a class="btn btn-secondary" asp-controller="Account" asp-action="Register">@Model.Button2</a>
             </div>
             <ul class="hero-points">
                 <li><i class="bi bi-check-circle-fill"></i> @Model.Point1</li>
