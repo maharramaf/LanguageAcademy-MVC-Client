@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LanguageAcademy_MVC_FinalProject.Controllers
 {
-    [Authorize(Roles = Roles.Admin + "," + Roles.SuperAdmin)]
+    [Authorize(Roles = Roles.DashboardRoles)]
     public class DashboardController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -33,18 +33,22 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         public IActionResult TeacherPlan() => PlaceholderPage("Teacher Subscription", "tp_title");
 
         [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
         public IActionResult Rewards() => PlaceholderPage("Rewards", "reward_title");
 
         [HttpGet]
         public IActionResult Earnings() => PlaceholderPage("Earnings", "tp_earnings");
 
         [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
         public IActionResult Courses() => PlaceholderPage("Courses", "nav_courses");
 
         [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
         public IActionResult Teachers() => PlaceholderPage("Teachers", "nav_teachers");
 
         [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
         public IActionResult Students() => PlaceholderPage("Students", "nav_students");
 
         [HttpGet]
@@ -54,12 +58,14 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         public IActionResult Profile() => PlaceholderPage("Profile", "dash_profile");
 
         [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
         public IActionResult Learn() => PlaceholderPage("Continue learning", "learn_continue");
 
         [HttpGet]
         public IActionResult Studio() => PlaceholderPage("Course studio", "studio_open");
 
         [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
         public async Task<IActionResult> Applications()
         {
             SetDash("Teacher applications", "apply_admin");
@@ -84,6 +90,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
         public async Task<IActionResult> AcceptApplication(int id)
         {
             try
@@ -112,6 +119,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
         public async Task<IActionResult> RejectApplication(int id)
         {
             try

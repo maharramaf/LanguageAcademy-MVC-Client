@@ -1,13 +1,21 @@
 @{
     Layout = "_DashLayout";
-    var displayName = User.Identity?.Name ?? "Admin";
+    var displayName = User.Identity?.Name ?? "User";
+    var teacher = User.IsInRole(Roles.Teacher) && !Roles.IsStaff(User);
 }
 <div class="dash-content">
     <section class="welcome">
         <div>
             <span class="eyebrow" style="color:#fde68a;" data-i18n="dash_hello">Good to see you</span>
             <h2>Welcome back, @displayName</h2>
-            <p>This is the management panel. Tools will be added here next.</p>
+            @if (teacher)
+            {
+                <p>This is your teacher panel. Your courses and studio will be added here next.</p>
+            }
+            else
+            {
+                <p>This is the management panel. Tools will be added here next.</p>
+            }
         </div>
         <a class="btn btn-light" asp-controller="Home" asp-action="Index" data-i18n="nav_home">Home</a>
     </section>

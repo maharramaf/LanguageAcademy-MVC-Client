@@ -1,6 +1,6 @@
 @{
     var displayName = User.Identity?.Name ?? "Admin";
-    var roleLabel = User.IsInRole(Roles.SuperAdmin) ? Roles.SuperAdmin : Roles.Admin;
+    var roleLabel = Roles.Label(User);
     var dashAction = ViewContext.RouteData.Values["action"]?.ToString();
 }
 <!DOCTYPE html>
@@ -28,7 +28,7 @@
                 <span class="logo-text"><strong>MF Language</strong><small>Academy</small></span>
             </a>
             <nav class="dash-nav" aria-label="Portal" data-i18n-aria-label="auth_portal">
-                @foreach (var item in DashNav.Items)
+                @foreach (var item in DashNav.For(User))
                 {
                     <a class="@(dashAction == item.Action ? "is-active" : null)" asp-controller="Dashboard" asp-action="@item.Action" data-i18n="@item.I18n"><i class="bi @item.Icon"></i> @item.Text</a>
                 }

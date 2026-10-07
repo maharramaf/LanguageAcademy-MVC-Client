@@ -114,7 +114,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     if (!string.IsNullOrWhiteSpace(body?.Token))
                     {
                         Response.Cookies.Append(AuthCookie.Name, body.Token, AuthCookie.Options());
-                        if (Roles.IsStaff(body.Role))
+                        if (Roles.CanOpenDashboard(body.Role))
                             return RedirectToAction("Index", "Dashboard");
 
                         return RedirectToAction("Index", "Home");
@@ -153,7 +153,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         private IActionResult? RedirectIfSignedIn()
         {
-            if (Roles.IsStaff(User))
+            if (Roles.CanOpenDashboard(User))
                 return RedirectToAction("Index", "Dashboard");
 
             if (User.Identity?.IsAuthenticated == true)

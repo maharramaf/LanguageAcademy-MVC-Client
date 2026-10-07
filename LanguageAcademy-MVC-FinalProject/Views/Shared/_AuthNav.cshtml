@@ -1,6 +1,6 @@
 @{
     var signedIn = User.Identity?.IsAuthenticated == true;
-    var staff = Roles.IsStaff(User);
+    var staff = Roles.CanOpenDashboard(User);
     var links = ViewData["AuthNavLinks"] as bool? == true;
 }
 @if (signedIn)
