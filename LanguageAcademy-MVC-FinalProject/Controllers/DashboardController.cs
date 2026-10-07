@@ -19,14 +19,50 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            ViewData["Title"] = "Dashboard | MF Language Academy";
+            SetDash("Dashboard", "dash_home");
             return View();
         }
 
         [HttpGet]
+        public IActionResult MyCourses() => PlaceholderPage("My Courses", "dash_my_courses");
+
+        [HttpGet]
+        public IActionResult Plans() => PlaceholderPage("Plans", "plan_nav");
+
+        [HttpGet]
+        public IActionResult TeacherPlan() => PlaceholderPage("Teacher Subscription", "tp_title");
+
+        [HttpGet]
+        public IActionResult Rewards() => PlaceholderPage("Rewards", "reward_title");
+
+        [HttpGet]
+        public IActionResult Earnings() => PlaceholderPage("Earnings", "tp_earnings");
+
+        [HttpGet]
+        public IActionResult Courses() => PlaceholderPage("Courses", "nav_courses");
+
+        [HttpGet]
+        public IActionResult Teachers() => PlaceholderPage("Teachers", "nav_teachers");
+
+        [HttpGet]
+        public IActionResult Students() => PlaceholderPage("Students", "nav_students");
+
+        [HttpGet]
+        public IActionResult Messages() => PlaceholderPage("Messages", "dash_messages");
+
+        [HttpGet]
+        public IActionResult Profile() => PlaceholderPage("Profile", "dash_profile");
+
+        [HttpGet]
+        public IActionResult Learn() => PlaceholderPage("Continue learning", "learn_continue");
+
+        [HttpGet]
+        public IActionResult Studio() => PlaceholderPage("Course studio", "studio_open");
+
+        [HttpGet]
         public async Task<IActionResult> Applications()
         {
-            ViewData["Title"] = "Teacher applications | MF Language Academy";
+            SetDash("Teacher applications", "apply_admin");
             var items = new List<TeacherApplicationListUIVM>();
 
             try
@@ -92,6 +128,19 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             }
 
             return RedirectToAction(nameof(Applications));
+        }
+
+        private IActionResult PlaceholderPage(string heading, string i18n)
+        {
+            SetDash(heading, i18n);
+            return View("Placeholder");
+        }
+
+        private void SetDash(string heading, string i18n)
+        {
+            ViewData["Title"] = heading + " | MF Language Academy";
+            ViewData["DashHeading"] = heading;
+            ViewData["DashI18n"] = i18n;
         }
 
         private sealed class AcceptResultUIVM

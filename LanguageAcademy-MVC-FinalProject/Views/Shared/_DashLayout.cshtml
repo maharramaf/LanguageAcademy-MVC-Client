@@ -28,8 +28,10 @@
                 <span class="logo-text"><strong>MF Language</strong><small>Academy</small></span>
             </a>
             <nav class="dash-nav" aria-label="Portal" data-i18n-aria-label="auth_portal">
-                <a class="@(dashAction == "Index" ? "is-active" : null)" asp-controller="Dashboard" asp-action="Index" data-i18n="dash_home"><i class="bi bi-grid"></i> Dashboard</a>
-                <a class="@(dashAction == "Applications" ? "is-active" : null)" asp-controller="Dashboard" asp-action="Applications" data-i18n="apply_admin"><i class="bi bi-file-earmark-person"></i> Teacher applications</a>
+                @foreach (var item in DashNav.Items)
+                {
+                    <a class="@(dashAction == item.Action ? "is-active" : null)" asp-controller="Dashboard" asp-action="@item.Action" data-i18n="@item.I18n"><i class="bi @item.Icon"></i> @item.Text</a>
+                }
                 <form class="logout" asp-controller="Account" asp-action="Logout" method="post">
                     <button type="submit" data-i18n="dash_logout"><i class="bi bi-box-arrow-right"></i> Logout</button>
                 </form>
@@ -45,14 +47,7 @@
             <header class="dash-top">
                 <div style="display:flex; align-items:center; gap:10px;">
                     <button class="icon-btn side-toggle" id="sideToggle" type="button" aria-label="Open sidebar" data-i18n-aria-label="x56pmee"><i class="bi bi-list"></i></button>
-                    @if (dashAction == "Applications")
-                    {
-                        <h1 class="dash-title" id="dashTitle" data-i18n="apply_admin">Teacher applications</h1>
-                    }
-                    else
-                    {
-                        <h1 class="dash-title" id="dashTitle" data-i18n="dash_home">Dashboard</h1>
-                    }
+                    <h1 class="dash-title" id="dashTitle" data-i18n="@(ViewData["DashI18n"] ?? "dash_home")">@(ViewData["DashHeading"] ?? "Dashboard")</h1>
                 </div>
                 <div class="dash-tools">
                     <div class="header-tools">
