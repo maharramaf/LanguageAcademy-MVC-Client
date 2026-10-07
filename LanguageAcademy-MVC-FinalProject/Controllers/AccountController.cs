@@ -18,8 +18,8 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         [HttpGet]
         public IActionResult Register()
         {
-            if (AuthCookie.Exists(Request))
-                return RedirectToAction("Index", "Home");
+            if (RedirectIfSignedIn() is { } redirect)
+                return redirect;
 
             ViewData["Title"] = "Register | MF Language Academy";
             return View(new RegisterUIVM());
@@ -57,8 +57,8 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            if (AuthCookie.Exists(Request))
-                return RedirectToAction("Index", "Home");
+            if (RedirectIfSignedIn() is { } redirect)
+                return redirect;
 
             ViewData["Title"] = "Login | MF Language Academy";
             return View(new LoginUIVM());
@@ -83,6 +83,9 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     if (!string.IsNullOrWhiteSpace(body?.Token))
                     {
                         Response.Cookies.Append(AuthCookie.Name, body.Token, AuthCookie.Options());
+                        if (Roles.IsStaff(body.Role))
+                            return RedirectToAction("Index", "Dashboard");
+
                         return RedirectToAction("Index", "Home");
                     }
 
@@ -106,6 +109,20 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         {
             Response.Cookies.Delete(AuthCookie.Name, AuthCookie.DeleteOptions());
             return RedirectToAction("Index", "Home");
+        }
+
+        private IActionResult? RedirectIfSignedIn()
+        {
+            if (Roles.IsStaff(User))
+                return RedirectToAction("Index", "Dashboard");
+
+            if (User.Identity?.IsAuthenticated == true)
+                return RedirectToAction("Index", "Home");
+
+            if (AuthCookie.Exists(Request))
+                Response.Cookies.Delete(AuthCookie.Name, AuthCookie.DeleteOptions());
+
+            return null;
         }
 
         private async Task<List<string>?> ReadErrorsAsync(HttpResponseMessage response)
@@ -141,6 +158,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private sealed class LoginResultUIVM
         {
             public string Token { get; set; } = string.Empty;
+            public string Role { get; set; } = string.Empty;
         }
     }
 }

@@ -1,9 +1,22 @@
 @{
-    var signedIn = AuthCookie.Exists(Context.Request);
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var staff = Roles.IsStaff(User);
     var links = ViewData["AuthNavLinks"] as bool? == true;
 }
 @if (signedIn)
 {
+    if (staff)
+    {
+        if (links)
+        {
+            <a asp-controller="Dashboard" asp-action="Index" data-i18n="dash_home">Dashboard</a>
+            <text> · </text>
+        }
+        else
+        {
+            <a class="btn btn-secondary" asp-controller="Dashboard" asp-action="Index" data-i18n="dash_home">Dashboard</a>
+        }
+    }
     <form asp-controller="Account" asp-action="Logout" method="post">
         <button class="@(links ? "link-btn" : "btn btn-outline")" type="submit" data-i18n="dash_logout">Logout</button>
     </form>

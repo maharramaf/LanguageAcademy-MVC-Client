@@ -61,7 +61,7 @@
   function isDashboardHref(href) {
     if (!href) return false;
     var page = String(href).split("#")[0].split("?")[0].replace(/\\/g, "/").split("/").pop().toLowerCase();
-    return page === "dashboard.html" || page === "dashboard";
+    return page === "dashboard.html";
   }
 
   function hideDashboardLinks(root) {
@@ -91,7 +91,7 @@
   syncAdminClass();
 
   var page = ((location.pathname || "").split("/").pop() || "").toLowerCase();
-  if ((page === "dashboard.html" || page === "dashboard") && !canSeeAdminPanel()) {
+  if (page === "dashboard.html" && !canSeeAdminPanel()) {
     location.replace("index.html");
   }
 

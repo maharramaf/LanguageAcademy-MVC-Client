@@ -1,0 +1,78 @@
+@{
+    var displayName = User.Identity?.Name ?? "Admin";
+    var roleLabel = User.IsInRole(Roles.SuperAdmin) ? Roles.SuperAdmin : Roles.Admin;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="~/js/preferences-boot.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@(ViewData["Title"] ?? "Dashboard | MF Language Academy")</title>
+    <meta name="description" content="MF Language Academy management panel.">
+    <link rel="icon" href="~/images/favicon.svg" type="image/svg+xml">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,400;0,6..12,600;0,6..12,700;0,6..12,800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/responsive.css">
+</head>
+<body>
+    <div class="side-overlay" id="sideOverlay"></div>
+    <div class="dash">
+        <aside class="dash-sidebar" id="sidebar">
+            <a class="logo" asp-controller="Home" asp-action="Index">
+                <span class="logo-mark">MF</span>
+                <span class="logo-text"><strong>MF Language</strong><small>Academy</small></span>
+            </a>
+            <nav class="dash-nav" aria-label="Portal" data-i18n-aria-label="auth_portal">
+                <a class="is-active" asp-controller="Dashboard" asp-action="Index" data-i18n="dash_home"><i class="bi bi-grid"></i> Dashboard</a>
+                <form class="logout" asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" data-i18n="dash_logout"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                </form>
+            </nav>
+            <div class="side-user">
+                <div>
+                    <strong>@displayName</strong>
+                    <span>@roleLabel</span>
+                </div>
+            </div>
+        </aside>
+        <div class="dash-main">
+            <header class="dash-top">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <button class="icon-btn side-toggle" id="sideToggle" type="button" aria-label="Open sidebar" data-i18n-aria-label="x56pmee"><i class="bi bi-list"></i></button>
+                    <h1 class="dash-title" id="dashTitle" data-i18n="dash_home">Dashboard</h1>
+                </div>
+                <div class="dash-tools">
+                    <div class="header-tools">
+                        <div class="lang-switch">
+                            <button class="lang-toggle" type="button" aria-haspopup="listbox" aria-expanded="false" data-i18n-aria-label="language_menu">
+                                <span class="lang-current">AZ</span>
+                                <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                            </button>
+                            <ul class="lang-menu" role="listbox" hidden>
+                                <li role="none"><button type="button" role="option" data-set-lang="az">🇦🇿 Azərbaycan</button></li>
+                                <li role="none"><button type="button" role="option" data-set-lang="ru">🇷🇺 Русский</button></li>
+                                <li role="none"><button type="button" role="option" data-set-lang="en">🇬🇧 English</button></li>
+                            </ul>
+                        </div>
+                        <button class="theme-toggle" type="button" aria-pressed="false" data-i18n-aria-label="toggle_theme">
+                            <i class="bi bi-moon-stars" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <span class="user-chip">@displayName</span>
+                </div>
+            </header>
+            <main>
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <script src="~/js/navbar.js" defer></script>
+    <script src="~/js/main.js" defer></script>
+    <script src="~/js/i18n-extra.js" defer></script>
+    <script src="~/js/preferences.js" defer></script>
+</body>
+</html>
