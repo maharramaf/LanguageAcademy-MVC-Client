@@ -104,7 +104,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.PostAsJsonAsync("api/Courses", new
+                var response = await client.PostAsJsonAsync("api/admin/Courses", new
                 {
                     model.Title,
                     model.Type,
@@ -126,6 +126,111 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             catch (HttpRequestException)
             {
                 ModelState.AddModelError(string.Empty, "Could not create the course.");
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> EditCourse(int id)
+        {
+            SetDash("Edit course", "nav_courses");
+            if (id <= 0)
+                return RedirectToAction(nameof(Courses));
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/admin/Courses/" + id);
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["CourseNotice"] = "Course was not found.";
+                    return RedirectToAction(nameof(Courses));
+                }
+
+                var course = await response.Content.ReadFromJsonAsync<CourseDetailUIVM>();
+                if (course is null)
+                {
+                    TempData["CourseNotice"] = "Course was not found.";
+                    return RedirectToAction(nameof(Courses));
+                }
+
+                return View(new CourseEditUIVM
+                {
+                    Id = course.Id,
+                    Slug = course.Slug,
+                    CurrentImage = course.Image,
+                    Title = course.Title,
+                    Type = course.Type,
+                    Level = course.Level,
+                    Duration = course.Duration,
+                    Price = course.Price,
+                    Summary = course.Summary,
+                    Overview = course.Overview
+                });
+            }
+            catch (HttpRequestException)
+            {
+                TempData["CourseNotice"] = "Could not load the course.";
+                return RedirectToAction(nameof(Courses));
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> EditCourse(CourseEditUIVM model)
+        {
+            SetDash("Edit course", "nav_courses");
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            string? imagePath = null;
+            if (model.Image is { Length: > 0 })
+            {
+                imagePath = await SaveCourseImageAsync(model.Image);
+                if (imagePath is null)
+                {
+                    ModelState.AddModelError(nameof(model.Image), "Choose a JPG, PNG, WEBP, or GIF image.");
+                    return View(model);
+                }
+            }
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PutAsJsonAsync("api/admin/Courses/" + model.Id, new
+                {
+                    model.Title,
+                    model.Type,
+                    model.Level,
+                    model.Duration,
+                    model.Price,
+                    Image = imagePath ?? model.CurrentImage,
+                    model.Summary,
+                    model.Overview
+                });
+                if (response.IsSuccessStatusCode)
+                {
+                    if (!string.IsNullOrWhiteSpace(imagePath))
+                        DeleteCourseImage(model.CurrentImage);
+                    TempData["CourseNotice"] = "Course updated.";
+                    return RedirectToAction(nameof(Courses));
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    TempData["CourseNotice"] = "Course was not found.";
+                    return RedirectToAction(nameof(Courses));
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not update the course.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not update the course.");
             }
 
             return View(model);
@@ -165,7 +270,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.GetAsync("api/account/students");
+                var response = await client.GetAsync("api/admin/Students");
                 if (response.IsSuccessStatusCode)
                 {
                     items = await response.Content.ReadFromJsonAsync<List<StudentAccountUIVM>>()
@@ -203,7 +308,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.GetAsync("api/TeacherApplications");
+                var response = await client.GetAsync("api/admin/TeacherApplications");
                 if (response.IsSuccessStatusCode)
                 {
                     items = await response.Content.ReadFromJsonAsync<List<TeacherApplicationListUIVM>>()
@@ -225,7 +330,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.PostAsJsonAsync($"api/TeacherApplications/{id}/accept", new { });
+                var response = await client.PostAsJsonAsync($"api/admin/TeacherApplications/{id}/accept", new { });
                 if (response.IsSuccessStatusCode)
                 {
                     var body = await response.Content.ReadFromJsonAsync<AcceptResultUIVM>();
@@ -254,7 +359,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.PostAsJsonAsync($"api/TeacherApplications/{id}/reject", new { });
+                var response = await client.PostAsJsonAsync($"api/admin/TeacherApplications/{id}/reject", new { });
                 TempData["ApplyNotice"] = response.IsSuccessStatusCode
                     ? "Application rejected."
                     : "Could not reject the application.";
@@ -285,6 +390,16 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             await file.CopyToAsync(stream);
 
             return "images/courses/" + fileName;
+        }
+
+        private void DeleteCourseImage(string? path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !path.Replace('\\', '/').StartsWith("images/courses/", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            var fullPath = Path.Combine(_environment.WebRootPath, path.Replace('/', Path.DirectorySeparatorChar));
+            if (System.IO.File.Exists(fullPath))
+                System.IO.File.Delete(fullPath);
         }
 
         private async Task<List<string>?> ReadErrorsAsync(HttpResponseMessage response)
