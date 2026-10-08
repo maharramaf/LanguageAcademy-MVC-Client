@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using LanguageAcademy_MVC_FinalProject.Helpers;
+using LanguageAcademy_MVC_FinalProject.ViewModels.Accounts;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Courses;
 using LanguageAcademy_MVC_FinalProject.ViewModels.TeacherApplications;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Teachers;
@@ -93,7 +94,27 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.StaffRoles)]
-        public IActionResult Students() => PlaceholderPage("Students", "nav_students");
+        public async Task<IActionResult> Students()
+        {
+            SetDash("Students", "nav_students");
+            var items = new List<StudentAccountUIVM>();
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/account/students");
+                if (response.IsSuccessStatusCode)
+                {
+                    items = await response.Content.ReadFromJsonAsync<List<StudentAccountUIVM>>()
+                        ?? new List<StudentAccountUIVM>();
+                }
+            }
+            catch (HttpRequestException)
+            {
+            }
+
+            return View(items);
+        }
 
         [HttpGet]
         public IActionResult Messages() => PlaceholderPage("Messages", "dash_messages");
