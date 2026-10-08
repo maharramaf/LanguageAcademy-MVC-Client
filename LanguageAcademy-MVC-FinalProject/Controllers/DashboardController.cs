@@ -2,6 +2,7 @@ using System.Net.Http.Json;
 using LanguageAcademy_MVC_FinalProject.Helpers;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Courses;
 using LanguageAcademy_MVC_FinalProject.ViewModels.TeacherApplications;
+using LanguageAcademy_MVC_FinalProject.ViewModels.Teachers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -68,7 +69,27 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.StaffRoles)]
-        public IActionResult Teachers() => PlaceholderPage("Teachers", "nav_teachers");
+        public async Task<IActionResult> Teachers()
+        {
+            SetDash("Teachers", "nav_teachers");
+            var items = new List<TeacherUIVM>();
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/Teachers");
+                if (response.IsSuccessStatusCode)
+                {
+                    var section = await response.Content.ReadFromJsonAsync<TeacherSectionUIVM>();
+                    items = section?.Teachers ?? new List<TeacherUIVM>();
+                }
+            }
+            catch (HttpRequestException)
+            {
+            }
+
+            return View(items);
+        }
 
         [HttpGet]
         [Authorize(Roles = Roles.StaffRoles)]
