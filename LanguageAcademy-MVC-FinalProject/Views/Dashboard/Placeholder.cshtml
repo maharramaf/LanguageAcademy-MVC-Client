@@ -1,9 +1,19 @@
 @{
     Layout = "_DashLayout";
+    var student = Roles.IsStudent(User);
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var coursesEmpty = student && (action == "MyCourses" || action == "Learn");
 }
 <div class="dash-content">
     <section class="panel">
         <h2 data-i18n="@ViewData["DashI18n"]">@ViewData["DashHeading"]</h2>
-        <p>This section will be connected next.</p>
+        @if (coursesEmpty)
+        {
+            <p>Your courses will appear here when you enroll.</p>
+        }
+        else
+        {
+            <p>This section will be connected next.</p>
+        }
     </section>
 </div>

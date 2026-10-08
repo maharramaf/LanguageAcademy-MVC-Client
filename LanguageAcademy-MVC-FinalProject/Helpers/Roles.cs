@@ -9,7 +9,9 @@ namespace LanguageAcademy_MVC_FinalProject.Helpers
         public const string Admin = "Admin";
         public const string SuperAdmin = "SuperAdmin";
         public const string StaffRoles = Admin + "," + SuperAdmin;
-        public const string DashboardRoles = StaffRoles + "," + Teacher;
+        public const string TeacherPanelRoles = StaffRoles + "," + Teacher;
+        public const string StudentPanelRoles = StaffRoles + "," + Student;
+        public const string DashboardRoles = TeacherPanelRoles + "," + Student;
 
         public static bool IsStaff(string? role)
         {
@@ -30,6 +32,13 @@ namespace LanguageAcademy_MVC_FinalProject.Helpers
         public static bool CanOpenDashboard(ClaimsPrincipal user)
         {
             return IsStaff(user) || (user.Identity?.IsAuthenticated == true && user.IsInRole(Teacher));
+        }
+
+        public static bool IsStudent(ClaimsPrincipal user)
+        {
+            return user.Identity?.IsAuthenticated == true
+                && user.IsInRole(Student)
+                && !CanOpenDashboard(user);
         }
 
         public static string Label(ClaimsPrincipal user)

@@ -30,13 +30,15 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         public IActionResult Plans() => PlaceholderPage("Plans", "plan_nav");
 
         [HttpGet]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public IActionResult TeacherPlan() => PlaceholderPage("Teacher Subscription", "tp_title");
 
         [HttpGet]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.StudentPanelRoles)]
         public IActionResult Rewards() => PlaceholderPage("Rewards", "reward_title");
 
         [HttpGet]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public IActionResult Earnings() => PlaceholderPage("Earnings", "tp_earnings");
 
         [HttpGet]
@@ -58,10 +60,11 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         public IActionResult Profile() => PlaceholderPage("Profile", "dash_profile");
 
         [HttpGet]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.StudentPanelRoles)]
         public IActionResult Learn() => PlaceholderPage("Continue learning", "learn_continue");
 
         [HttpGet]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public IActionResult Studio() => PlaceholderPage("Course studio", "studio_open");
 
         [HttpGet]

@@ -57,6 +57,10 @@
                 <input type="search" name="q" placeholder="Search courses" data-i18n-placeholder="search_placeholder" aria-label="Search courses" data-i18n-aria-label="search_placeholder">
             </form>
             <div class="header-tools">
+                @if (Roles.IsStudent(User))
+                {
+                    <a class="icon-btn" asp-controller="Dashboard" asp-action="Index" aria-label="Dashboard" data-i18n-aria-label="dash_home"><i class="bi bi-grid"></i></a>
+                }
                 <div class="lang-switch">
                     <button class="lang-toggle" type="button" aria-haspopup="listbox" aria-expanded="false" data-i18n-aria-label="language_menu">
                         <span class="lang-current">AZ</span>
