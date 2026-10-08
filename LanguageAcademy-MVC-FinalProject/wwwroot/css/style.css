@@ -799,7 +799,21 @@ ul { margin: 0; padding: 0; list-style: none; }
 }
 
 .field.has-error input,
-.field.has-error textarea { border-color: var(--danger); }
+.field.has-error textarea,
+.field.has-error select { border-color: var(--danger); }
+
+.course-image-preview {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  height: 200px;
+  margin-top: 12px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+.course-image-preview[hidden] { display: none; }
 
 .field-error {
   color: var(--danger);

@@ -1,0 +1,122 @@
+@model CourseCreateUIVM
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2>Create course</h2>
+        <p>Lessons and videos will be added later from the video folder. Do not paste a YouTube URL.</p>
+        <form asp-controller="Dashboard" asp-action="CreateCourse" method="post" enctype="multipart/form-data" novalidate data-course-create>
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label asp-for="Title">Title</label>
+                <input asp-for="Title" type="text" maxlength="160" />
+                <span asp-validation-for="Title" class="field-error" data-error-for="Title"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Type">Course type</label>
+                <select asp-for="Type">
+                    <option value="demo">Demo</option>
+                    <option value="standard">Standard</option>
+                    <option value="premium">Premium</option>
+                </select>
+                <span asp-validation-for="Type" class="field-error" data-error-for="Type"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Level">Level</label>
+                <input asp-for="Level" type="text" maxlength="60" />
+                <span asp-validation-for="Level" class="field-error" data-error-for="Level"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Duration">Duration</label>
+                <input asp-for="Duration" type="text" maxlength="40" placeholder="8 weeks" />
+                <span asp-validation-for="Duration" class="field-error" data-error-for="Duration"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Price">Price</label>
+                <input asp-for="Price" type="number" min="0" step="1" />
+                <span asp-validation-for="Price" class="field-error" data-error-for="Price"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Image">Image</label>
+                <input asp-for="Image" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif" data-image-input />
+                <img class="course-image-preview" data-image-preview alt="Selected course image" hidden />
+                <span asp-validation-for="Image" class="field-error" data-error-for="Image"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Summary">Summary</label>
+                <textarea asp-for="Summary" rows="3" maxlength="500"></textarea>
+                <span asp-validation-for="Summary" class="field-error" data-error-for="Summary"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Overview">Overview</label>
+                <textarea asp-for="Overview" rows="5" maxlength="2000"></textarea>
+                <span asp-validation-for="Overview" class="field-error" data-error-for="Overview"></span>
+            </div>
+            <p>
+                <button class="btn btn-primary" type="submit">Create course</button>
+                <a class="btn btn-outline" asp-controller="Dashboard" asp-action="Courses">Courses</a>
+            </p>
+        </form>
+    </section>
+</div>
+<script>
+    (function () {
+        var form = document.querySelector("[data-course-create]");
+        if (!form) return;
+
+        function setError(name, message) {
+            var input = form.querySelector("[name='" + name + "']");
+            var error = form.querySelector("[data-error-for='" + name + "']");
+            var field = input ? input.closest(".field") : null;
+            if (field) field.classList.toggle("has-error", Boolean(message));
+            if (error) error.textContent = message || "";
+            return !message;
+        }
+
+        function required(name, message) {
+            var input = form.querySelector("[name='" + name + "']");
+            var value = (input && input.value ? input.value : "").trim();
+            return setError(name, value ? "" : message);
+        }
+
+        var imageInput = form.querySelector("[data-image-input]");
+        var imagePreview = form.querySelector("[data-image-preview]");
+        if (imageInput && imagePreview) {
+            imageInput.addEventListener("change", function () {
+                var file = imageInput.files && imageInput.files[0];
+                if (imagePreview.dataset.url) {
+                    URL.revokeObjectURL(imagePreview.dataset.url);
+                    imagePreview.dataset.url = "";
+                }
+                if (!file) {
+                    imagePreview.hidden = true;
+                    imagePreview.removeAttribute("src");
+                    return;
+                }
+                var url = URL.createObjectURL(file);
+                imagePreview.dataset.url = url;
+                imagePreview.src = url;
+                imagePreview.hidden = false;
+            });
+        }
+
+        form.addEventListener("submit", function (event) {
+            var titleOk = required("Title", "Title is required.");
+            var typeOk = required("Type", "Course type is required.");
+            var levelOk = required("Level", "Level is required.");
+            var durationOk = required("Duration", "Duration is required.");
+            var summaryOk = required("Summary", "Summary is required.");
+            var overviewOk = required("Overview", "Overview is required.");
+            var imageInput = form.querySelector("[name='Image']");
+            var imageFile = imageInput && imageInput.files && imageInput.files[0];
+            var imageOk = setError("Image", imageFile ? "" : "Image is required.");
+            var priceInput = form.querySelector("[name='Price']");
+            var priceValue = priceInput ? Number(priceInput.value) : 0;
+            var priceOk = setError("Price", priceValue < 0 ? "Price cannot be negative." : "");
+            if (!titleOk || !typeOk || !levelOk || !durationOk || !summaryOk || !overviewOk || !imageOk || !priceOk) {
+                event.preventDefault();
+            }
+        });
+    })();
+</script>

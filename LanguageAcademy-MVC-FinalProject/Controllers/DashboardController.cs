@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using LanguageAcademy_MVC_FinalProject.Helpers;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Accounts;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Courses;
@@ -12,11 +13,18 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
     [Authorize(Roles = Roles.DashboardRoles)]
     public class DashboardController : Controller
     {
-        private readonly IHttpClientFactory _httpClientFactory;
+        private static readonly HashSet<string> ImageExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".jpg", ".jpeg", ".png", ".webp", ".gif"
+        };
 
-        public DashboardController(IHttpClientFactory httpClientFactory)
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IWebHostEnvironment _environment;
+
+        public DashboardController(IHttpClientFactory httpClientFactory, IWebHostEnvironment environment)
         {
             _httpClientFactory = httpClientFactory;
+            _environment = environment;
         }
 
         [HttpGet]
@@ -66,6 +74,61 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             }
 
             return View(items);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public IActionResult CreateCourse()
+        {
+            SetDash("Create course", "nav_courses");
+            return View(new CourseCreateUIVM());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> CreateCourse(CourseCreateUIVM model)
+        {
+            SetDash("Create course", "nav_courses");
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var imagePath = await SaveCourseImageAsync(model.Image);
+            if (imagePath is null)
+            {
+                ModelState.AddModelError(nameof(model.Image), "Choose a JPG, PNG, WEBP, or GIF image.");
+                return View(model);
+            }
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PostAsJsonAsync("api/Courses", new
+                {
+                    model.Title,
+                    model.Type,
+                    model.Level,
+                    model.Duration,
+                    model.Price,
+                    Image = imagePath,
+                    model.Summary,
+                    model.Overview
+                });
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["CourseNotice"] = "Course created.";
+                    return RedirectToAction(nameof(Courses));
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not create the course.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not create the course.");
+            }
+
+            return View(model);
         }
 
         [HttpGet]
@@ -204,6 +267,51 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             return RedirectToAction(nameof(Applications));
         }
 
+        private async Task<string?> SaveCourseImageAsync(IFormFile? file)
+        {
+            if (file is null || file.Length is 0 or > 2_000_000)
+                return null;
+
+            var extension = Path.GetExtension(file.FileName);
+            if (!ImageExtensions.Contains(extension))
+                return null;
+
+            var folder = Path.Combine(_environment.WebRootPath, "images", "courses");
+            Directory.CreateDirectory(folder);
+
+            var fileName = "course-" + Guid.NewGuid().ToString("N")[..12] + extension.ToLowerInvariant();
+            var fullPath = Path.Combine(folder, fileName);
+            await using var stream = System.IO.File.Create(fullPath);
+            await file.CopyToAsync(stream);
+
+            return "images/courses/" + fileName;
+        }
+
+        private async Task<List<string>?> ReadErrorsAsync(HttpResponseMessage response)
+        {
+            try
+            {
+                var body = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+                return body?.Errors?.Where(e => !string.IsNullOrWhiteSpace(e)).ToList();
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+        }
+
+        private void AddApiErrors(List<string>? errors, string fallback)
+        {
+            if (errors is { Count: > 0 })
+            {
+                foreach (var error in errors)
+                    ModelState.AddModelError(string.Empty, error);
+                return;
+            }
+
+            ModelState.AddModelError(string.Empty, fallback);
+        }
+
         private IActionResult PlaceholderPage(string heading, string i18n)
         {
             SetDash(heading, i18n);
@@ -220,6 +328,11 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private sealed class AcceptResultUIVM
         {
             public string? TemporaryPassword { get; set; }
+        }
+
+        private sealed class ApiErrorResponse
+        {
+            public List<string>? Errors { get; set; }
         }
     }
 }
