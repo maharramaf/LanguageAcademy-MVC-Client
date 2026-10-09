@@ -723,7 +723,94 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         public IActionResult Messages() => PlaceholderPage("Messages", "dash_messages");
 
         [HttpGet]
-        public IActionResult Profile() => PlaceholderPage("Profile", "dash_profile");
+        public async Task<IActionResult> Profile()
+        {
+            SetDash("Profile", "dash_profile");
+            var page = await LoadProfilePageAsync();
+            if (page is null)
+            {
+                TempData["ProfileNotice"] = "Could not load the profile.";
+                page = new ProfilePageUIVM();
+            }
+
+            return View(page);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateProfile([Bind(Prefix = "Profile")] ProfileUIVM model)
+        {
+            SetDash("Profile", "dash_profile");
+            var page = await LoadProfilePageAsync() ?? new ProfilePageUIVM();
+            page.Profile = model;
+
+            if (!ModelState.IsValid)
+                return View(nameof(Profile), page);
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PutAsJsonAsync("api/Account/profile", new
+                {
+                    model.Name,
+                    model.Surname,
+                    model.Phone
+                });
+                if (response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadFromJsonAsync<ProfileTokenUIVM>();
+                    if (!string.IsNullOrWhiteSpace(body?.Token))
+                        Response.Cookies.Append(AuthCookie.Name, body.Token, AuthCookie.Options());
+
+                    TempData["ProfileNotice"] = "Profile updated.";
+                    return RedirectToAction(nameof(Profile));
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not update the profile.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not update the profile.");
+            }
+
+            return View(nameof(Profile), page);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword([Bind(Prefix = "Password")] ProfilePasswordUIVM model)
+        {
+            SetDash("Profile", "dash_profile");
+            var page = await LoadProfilePageAsync() ?? new ProfilePageUIVM();
+            page.Password = model;
+
+            if (!ModelState.IsValid)
+                return View(nameof(Profile), page);
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PutAsJsonAsync("api/Account/password", new
+                {
+                    model.CurrentPassword,
+                    model.NewPassword,
+                    model.ConfirmPassword
+                });
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["ProfileNotice"] = "Password updated.";
+                    return RedirectToAction(nameof(Profile));
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not update the password.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not update the password.");
+            }
+
+            return View(nameof(Profile), page);
+        }
 
         [HttpGet]
         [Authorize(Roles = Roles.StudentPanelRoles)]
@@ -1034,6 +1121,27 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             return Roles.IsStaff(User) ? nameof(Courses) : nameof(Studio);
         }
 
+        private async Task<ProfilePageUIVM?> LoadProfilePageAsync()
+        {
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/Account/me");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var profile = await response.Content.ReadFromJsonAsync<ProfileUIVM>();
+                if (profile is null)
+                    return null;
+
+                return new ProfilePageUIVM { Profile = profile };
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
+        }
+
         private IActionResult PlaceholderPage(string heading, string i18n)
         {
             SetDash(heading, i18n);
@@ -1050,6 +1158,11 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private sealed class AcceptResultUIVM
         {
             public string? TemporaryPassword { get; set; }
+        }
+
+        private sealed class ProfileTokenUIVM
+        {
+            public string? Token { get; set; }
         }
 
         private sealed class ApiErrorResponse

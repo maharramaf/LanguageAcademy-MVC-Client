@@ -1,0 +1,63 @@
+@model ProfilePageUIVM
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2 data-i18n="dash_profile">Profile</h2>
+        @if (TempData["ProfileNotice"] is string notice)
+        {
+            <p>@notice</p>
+        }
+        <div asp-validation-summary="ModelOnly" class="field-error"></div>
+        <p>Email stays the same. You can change your name, phone, and password here.</p>
+
+        <h3>Account</h3>
+        <form asp-controller="Dashboard" asp-action="UpdateProfile" method="post" novalidate data-profile-edit>
+            <div class="field">
+                <label asp-for="Profile.Name">Name</label>
+                <input asp-for="Profile.Name" type="text" maxlength="80" />
+                <span asp-validation-for="Profile.Name" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Profile.Surname">Surname</label>
+                <input asp-for="Profile.Surname" type="text" maxlength="80" />
+                <span asp-validation-for="Profile.Surname" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Profile.Email">Email</label>
+                <input asp-for="Profile.Email" type="email" readonly />
+            </div>
+            <div class="field">
+                <label asp-for="Profile.Phone">Phone</label>
+                <input asp-for="Profile.Phone" type="text" maxlength="40" />
+                <span asp-validation-for="Profile.Phone" class="field-error"></span>
+            </div>
+            <p>
+                <button class="btn btn-primary" type="submit">Save profile</button>
+            </p>
+        </form>
+
+        <h3>Password</h3>
+        <form asp-controller="Dashboard" asp-action="ChangePassword" method="post" novalidate data-profile-password>
+            <div class="field">
+                <label asp-for="Password.CurrentPassword">Current password</label>
+                <input asp-for="Password.CurrentPassword" type="password" autocomplete="current-password" />
+                <span asp-validation-for="Password.CurrentPassword" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Password.NewPassword">New password</label>
+                <input asp-for="Password.NewPassword" type="password" autocomplete="new-password" />
+                <span asp-validation-for="Password.NewPassword" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Password.ConfirmPassword">Confirm password</label>
+                <input asp-for="Password.ConfirmPassword" type="password" autocomplete="new-password" />
+                <span asp-validation-for="Password.ConfirmPassword" class="field-error"></span>
+            </div>
+            <p>
+                <button class="btn btn-primary" type="submit">Change password</button>
+            </p>
+        </form>
+    </section>
+</div>
