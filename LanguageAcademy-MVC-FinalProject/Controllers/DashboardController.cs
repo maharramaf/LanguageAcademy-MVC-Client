@@ -277,6 +277,115 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> CourseLessons(int id)
+        {
+            SetDash("Course lessons", "nav_courses");
+            var page = await LoadLessonsPageAsync(id);
+            if (page is null)
+            {
+                TempData["CourseNotice"] = "Course was not found.";
+                return RedirectToAction(nameof(Courses));
+            }
+
+            return View(page);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> CreateModule(int id, [Bind(Prefix = "Module")] ModuleCreateUIVM model)
+        {
+            SetDash("Course lessons", "nav_courses");
+            var page = await LoadLessonsPageAsync(id);
+            if (page is null)
+            {
+                TempData["CourseNotice"] = "Course was not found.";
+                return RedirectToAction(nameof(Courses));
+            }
+
+            page.Module = model;
+            if (!ModelState.IsValid)
+                return View(nameof(CourseLessons), page);
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PostAsJsonAsync($"api/admin/Courses/{id}/modules", new
+                {
+                    model.Title,
+                    model.Info
+                });
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["CourseNotice"] = "Module created.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    TempData["CourseNotice"] = "Course was not found.";
+                    return RedirectToAction(nameof(Courses));
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not create the module.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not create the module.");
+            }
+
+            return View(nameof(CourseLessons), page);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> CreateLesson(int id, int moduleId, LessonCreateUIVM model)
+        {
+            SetDash("Course lessons", "nav_courses");
+            var page = await LoadLessonsPageAsync(id);
+            if (page is null)
+            {
+                TempData["CourseNotice"] = "Course was not found.";
+                return RedirectToAction(nameof(Courses));
+            }
+
+            if (!ModelState.IsValid)
+                return View(nameof(CourseLessons), page);
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PostAsJsonAsync($"api/admin/Courses/{id}/modules/{moduleId}/lessons", new
+                {
+                    model.Title,
+                    model.Kind,
+                    model.Seconds
+                });
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["CourseNotice"] = "Lesson created.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    TempData["CourseNotice"] = "Course or module was not found.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not create the lesson.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not create the lesson.");
+            }
+
+            return View(nameof(CourseLessons), page);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
         public async Task<IActionResult> Teachers()
         {
             SetDash("Teachers", "nav_teachers");
@@ -409,6 +518,35 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             }
 
             return RedirectToAction(nameof(Applications));
+        }
+
+        private async Task<CourseLessonsPageUIVM?> LoadLessonsPageAsync(int id)
+        {
+            if (id <= 0) return null;
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/admin/Courses/" + id + "/modules");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                var course = await response.Content.ReadFromJsonAsync<CourseDetailUIVM>();
+                if (course is null)
+                    return null;
+
+                return new CourseLessonsPageUIVM
+                {
+                    Id = course.Id,
+                    Title = course.Title,
+                    Slug = course.Slug,
+                    Modules = course.Modules ?? new List<CourseModuleUIVM>()
+                };
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
 
         private async Task<string?> SaveCourseImageAsync(IFormFile? file)

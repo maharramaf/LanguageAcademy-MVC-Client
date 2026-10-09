@@ -1,0 +1,162 @@
+@model CourseLessonsPageUIVM
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2>@Model.Title</h2>
+        <p>Add modules and lessons here. Video files come later from the folder — do not paste a YouTube URL.</p>
+        @if (TempData["CourseNotice"] is string notice)
+        {
+            <p>@notice</p>
+        }
+        <div asp-validation-summary="ModelOnly" class="field-error"></div>
+        <p>
+            <a class="btn btn-outline" asp-controller="Dashboard" asp-action="Courses">Courses</a>
+            <a class="btn btn-outline" asp-controller="Courses" asp-action="Details" asp-route-slug="@Model.Slug">View Course</a>
+        </p>
+
+        <h3>New module</h3>
+        <form asp-controller="Dashboard" asp-action="CreateModule" asp-route-id="@Model.Id" method="post" novalidate data-module-create>
+            <div class="field">
+                <label asp-for="Module.Title">Title</label>
+                <input asp-for="Module.Title" type="text" maxlength="160" />
+                <span asp-validation-for="Module.Title" class="field-error" data-error-for="Module.Title"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Module.Info">Info</label>
+                <input asp-for="Module.Info" type="text" maxlength="80" placeholder="4 lessons · 45 min" />
+                <span asp-validation-for="Module.Info" class="field-error" data-error-for="Module.Info"></span>
+            </div>
+            <p>
+                <button class="btn btn-primary" type="submit">Add module</button>
+            </p>
+        </form>
+    </section>
+
+    @if (Model.Modules.Count == 0)
+    {
+        <section class="panel">
+            <p>No modules yet.</p>
+        </section>
+    }
+    else
+    {
+        @foreach (var module in Model.Modules.OrderBy(m => m.Order))
+        {
+            <section class="panel">
+                <h3>@module.Title</h3>
+                <p>@module.Info</p>
+                @if (module.Lessons.Count == 0)
+                {
+                    <p>No lessons yet.</p>
+                }
+                else
+                {
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Lesson</th>
+                                    <th>Type</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var lesson in module.Lessons.OrderBy(m => m.Order))
+                                {
+                                    <tr>
+                                        <td>@lesson.Title</td>
+                                        <td>@lesson.Kind</td>
+                                        <td>
+                                            @if (lesson.Seconds > 0)
+                                            {
+                                                <text>@lesson.Seconds sec</text>
+                                            }
+                                            else
+                                            {
+                                                <text>—</text>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                <h4>New lesson</h4>
+                <form asp-controller="Dashboard" asp-action="CreateLesson" asp-route-id="@Model.Id" asp-route-moduleId="@module.Id" method="post" novalidate data-lesson-create>
+                    <div class="field">
+                        <label for="Title-@module.Id">Title</label>
+                        <input id="Title-@module.Id" name="Title" type="text" maxlength="160" />
+                        <span class="field-error" data-error-for="Title"></span>
+                    </div>
+                    <div class="field">
+                        <label for="Kind-@module.Id">Lesson type</label>
+                        <select id="Kind-@module.Id" name="Kind">
+                            <option value="video">Video</option>
+                            <option value="text">Text</option>
+                            <option value="quiz">Quiz</option>
+                            <option value="homework">Homework</option>
+                            <option value="download">Download</option>
+                        </select>
+                        <span class="field-error" data-error-for="Kind"></span>
+                    </div>
+                    <div class="field">
+                        <label for="Seconds-@module.Id">Duration (seconds)</label>
+                        <input id="Seconds-@module.Id" name="Seconds" type="number" min="0" step="1" value="0" />
+                        <span class="field-error" data-error-for="Seconds"></span>
+                    </div>
+                    <p>
+                        <button class="btn btn-primary" type="submit">Add lesson</button>
+                    </p>
+                </form>
+            </section>
+        }
+    }
+</div>
+<script>
+    (function () {
+        function bindRequired(form, names) {
+            form.addEventListener("submit", function (event) {
+                var ok = true;
+                names.forEach(function (item) {
+                    var input = form.querySelector("[name='" + item.name + "']");
+                    var error = form.querySelector("[data-error-for='" + item.name + "']");
+                    var field = input ? input.closest(".field") : null;
+                    var value = (input && input.value ? input.value : "").trim();
+                    var message = value ? "" : item.message;
+                    if (field) field.classList.toggle("has-error", Boolean(message));
+                    if (error) error.textContent = message;
+                    if (message) ok = false;
+                });
+                var seconds = form.querySelector("[name='Seconds']");
+                if (seconds) {
+                    var error = form.querySelector("[data-error-for='Seconds']");
+                    var field = seconds.closest(".field");
+                    var message = Number(seconds.value) < 0 ? "Duration cannot be negative." : "";
+                    if (field) field.classList.toggle("has-error", Boolean(message));
+                    if (error) error.textContent = message;
+                    if (message) ok = false;
+                }
+                if (!ok) event.preventDefault();
+            });
+        }
+
+        var moduleForm = document.querySelector("[data-module-create]");
+        if (moduleForm) {
+            bindRequired(moduleForm, [
+                { name: "Module.Title", message: "Module title is required." },
+                { name: "Module.Info", message: "Module info is required." }
+            ]);
+        }
+
+        document.querySelectorAll("[data-lesson-create]").forEach(function (form) {
+            bindRequired(form, [
+                { name: "Title", message: "Lesson title is required." },
+                { name: "Kind", message: "Lesson type is required." }
+            ]);
+        });
+    })();
+</script>

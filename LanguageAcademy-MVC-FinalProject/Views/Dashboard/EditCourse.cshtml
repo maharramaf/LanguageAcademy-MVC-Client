@@ -10,7 +10,7 @@
 <div class="dash-content">
     <section class="panel">
         <h2>Edit course</h2>
-        <p>Leave the image empty to keep the current photo. Lessons and videos will be added later.</p>
+        <p>Leave the image empty to keep the current photo. Add lessons from the course list. Videos come later from the folder.</p>
         <form asp-controller="Dashboard" asp-action="EditCourse" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" novalidate data-course-edit>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="Slug" />
