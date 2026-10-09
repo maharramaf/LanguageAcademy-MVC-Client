@@ -1,0 +1,108 @@
+@model CourseDetailUIVM?
+@{
+    Layout = "_DashLayout";
+    var lessonId = ViewBag.LessonId is int id ? id : (int?)null;
+    var lessons = Model?.Modules
+        .OrderBy(m => m.Order)
+        .SelectMany(m => m.Lessons.OrderBy(x => x.Order).Select(x => new { Module = m, Lesson = x }))
+        .ToList() ?? [];
+    var current = lessons.FirstOrDefault(m => m.Lesson.Id == lessonId)
+        ?? lessons.FirstOrDefault(m => m.Lesson.Kind == "video")
+        ?? lessons.FirstOrDefault();
+}
+<div class="dash-content">
+    @if (Model is null)
+    {
+        <section class="panel">
+            <h2 data-i18n="learn_continue">Continue learning</h2>
+            <p>Your courses will appear here when you enroll.</p>
+            <p><a class="btn btn-primary" asp-controller="Courses" asp-action="Index" data-i18n="btn_browse">Browse All Courses</a></p>
+        </section>
+    }
+    else
+    {
+        <section class="panel">
+            <h2>@Model.Title</h2>
+            <p>@Model.Level · @Model.Duration</p>
+            <p>
+                <a class="btn btn-outline" asp-controller="Dashboard" asp-action="MyCourses" data-i18n="dash_my_courses">My Courses</a>
+                <a class="btn btn-outline" asp-controller="Courses" asp-action="Details" asp-route-slug="@Model.Slug" data-i18n="btn_view_course">View Course</a>
+            </p>
+        </section>
+
+        @if (current is not null)
+        {
+            var lesson = current.Lesson;
+            <section class="panel">
+                <h3>@lesson.Title</h3>
+                <p>@current.Module.Title · @lesson.Kind</p>
+                @if (lesson.Kind == "video" && !string.IsNullOrWhiteSpace(lesson.Video))
+                {
+                    var remote = lesson.Video.StartsWith("http", StringComparison.OrdinalIgnoreCase);
+                    var src = remote ? lesson.Video : "/" + lesson.Video.TrimStart('/');
+                    <div class="video-embed-wrap" style="margin:8px 0 16px;aspect-ratio:16/9;position:relative;background:#111;border-radius:12px;overflow:hidden;">
+                        @if (remote)
+                        {
+                            <iframe class="video-embed" src="@src" title="@lesson.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>
+                        }
+                        else
+                        {
+                            <video class="video-embed" src="@src" title="@lesson.Title" controls playsinline style="position:absolute;inset:0;width:100%;height:100%;border:0;"></video>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p>This lesson has no video yet.</p>
+                }
+            </section>
+        }
+        else
+        {
+            <section class="panel">
+                <p>No lessons yet.</p>
+            </section>
+        }
+
+        @foreach (var module in Model.Modules.OrderBy(m => m.Order))
+        {
+            <section class="panel">
+                <h3>@module.Title</h3>
+                <p>@module.Info</p>
+                @if (module.Lessons.Count == 0)
+                {
+                    <p>No lessons yet.</p>
+                }
+                else
+                {
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <tbody>
+                                @foreach (var lesson in module.Lessons.OrderBy(m => m.Order))
+                                {
+                                    var active = current?.Lesson.Id == lesson.Id;
+                                    <tr>
+                                        <td>
+                                            @if (active)
+                                            {
+                                                <strong>@lesson.Title</strong>
+                                            }
+                                            else
+                                            {
+                                                @lesson.Title
+                                            }
+                                        </td>
+                                        <td>@lesson.Kind</td>
+                                        <td>
+                                            <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug" asp-route-lessonId="@lesson.Id">@(active ? "Playing" : "Play")</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </section>
+        }
+    }
+</div>

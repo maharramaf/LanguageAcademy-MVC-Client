@@ -31,7 +31,7 @@
             {
                 if (enrolled)
                 {
-                    <a class="btn btn-primary" asp-controller="Dashboard" asp-action="MyCourses">Go to My Courses</a>
+                    <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug" data-i18n="learn_continue">Continue learning</a>
                 }
                 else
                 {
@@ -109,6 +109,7 @@
                 </div>
             }
         </div>
+        <p>Lesson videos open in Continue learning after you enroll.</p>
 
         @if (Model.Reviews.Any())
         {

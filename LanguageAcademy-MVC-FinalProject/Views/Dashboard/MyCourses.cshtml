@@ -38,6 +38,7 @@
                                 <td>@item.Duration</td>
                                 <td>@item.LessonCount</td>
                                 <td>
+                                    <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@item.Slug" data-i18n="learn_continue">Continue learning</a>
                                     <a class="btn btn-outline btn-sm" asp-controller="Courses" asp-action="Details" asp-route-slug="@item.Slug" data-i18n="btn_view_course">View Course</a>
                                 </td>
                             </tr>

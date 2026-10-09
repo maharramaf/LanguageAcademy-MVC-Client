@@ -725,7 +725,48 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.StudentPanelRoles)]
-        public IActionResult Learn() => PlaceholderPage("Continue learning", "learn_continue");
+        public async Task<IActionResult> Learn(string? slug, int? lessonId)
+        {
+            if (!Roles.IsStudent(User))
+                return PlaceholderPage("Continue learning", "learn_continue");
+
+            SetDash("Continue learning", "learn_continue");
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+
+                if (string.IsNullOrWhiteSpace(slug))
+                {
+                    var mineResponse = await client.GetAsync("api/Enrollments");
+                    if (mineResponse.IsSuccessStatusCode)
+                    {
+                        var mine = await mineResponse.Content.ReadFromJsonAsync<List<CourseUIVM>>()
+                            ?? new List<CourseUIVM>();
+                        var first = mine.FirstOrDefault();
+                        if (first is not null)
+                            return RedirectToAction(nameof(Learn), new { slug = first.Slug });
+                    }
+
+                    return View((CourseDetailUIVM?)null);
+                }
+
+                var response = await client.GetAsync($"api/Enrollments/learn/{Uri.EscapeDataString(slug)}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["CourseNotice"] = "Enroll in a course to start learning.";
+                    return RedirectToAction(nameof(MyCourses));
+                }
+
+                var course = await response.Content.ReadFromJsonAsync<CourseDetailUIVM>();
+                ViewBag.LessonId = lessonId;
+                return View(course);
+            }
+            catch (HttpRequestException)
+            {
+                return View((CourseDetailUIVM?)null);
+            }
+        }
 
         [HttpGet]
         [Authorize(Roles = Roles.TeacherPanelRoles)]
