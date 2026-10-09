@@ -53,6 +53,9 @@
                                 <td>
                                     <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="EditCourse" asp-route-id="@item.Id">Edit</a>
                                     <a class="btn btn-outline btn-sm" asp-controller="Courses" asp-action="Details" asp-route-slug="@item.Slug" data-i18n="btn_view_course">View Course</a>
+                                    <form asp-controller="Dashboard" asp-action="DeleteCourse" asp-route-id="@item.Id" method="post" style="display:inline;" onsubmit="return confirm('Delete this course?');">
+                                        <button class="btn btn-outline btn-sm" type="submit">Delete</button>
+                                    </form>
                                 </td>
                             </tr>
                         }

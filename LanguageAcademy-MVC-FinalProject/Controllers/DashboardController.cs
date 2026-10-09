@@ -236,6 +236,45 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> DeleteCourse(int id)
+        {
+            if (id <= 0)
+                return RedirectToAction(nameof(Courses));
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var get = await client.GetAsync("api/admin/Courses/" + id);
+                string? image = null;
+                if (get.IsSuccessStatusCode)
+                {
+                    var course = await get.Content.ReadFromJsonAsync<CourseDetailUIVM>();
+                    image = course?.Image;
+                }
+
+                var response = await client.DeleteAsync("api/admin/Courses/" + id);
+                if (response.IsSuccessStatusCode)
+                {
+                    DeleteCourseImage(image);
+                    TempData["CourseNotice"] = "Course deleted.";
+                    return RedirectToAction(nameof(Courses));
+                }
+
+                TempData["CourseNotice"] = response.StatusCode == System.Net.HttpStatusCode.NotFound
+                    ? "Course was not found."
+                    : "Could not delete the course.";
+            }
+            catch (HttpRequestException)
+            {
+                TempData["CourseNotice"] = "Could not delete the course.";
+            }
+
+            return RedirectToAction(nameof(Courses));
+        }
+
         [HttpGet]
         [Authorize(Roles = Roles.StaffRoles)]
         public async Task<IActionResult> Teachers()
