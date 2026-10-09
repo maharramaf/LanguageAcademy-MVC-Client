@@ -1,0 +1,97 @@
+@model MessagesPageUIVM
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2 data-i18n="dash_messages">Messages</h2>
+        @if (TempData["MessageNotice"] is string notice)
+        {
+            <p>@notice</p>
+        }
+        <div asp-validation-summary="ModelOnly" class="field-error"></div>
+        <p>Students can message the teacher of an enrolled course. Teachers can message their enrolled students.</p>
+
+        @if (Model.Contacts.Count > 0)
+        {
+            <form method="get" asp-controller="Dashboard" asp-action="Messages">
+                <div class="field">
+                    <label for="userId">Start a conversation</label>
+                    <select name="userId" id="userId">
+                        <option value="">Choose a person</option>
+                        @foreach (var contact in Model.Contacts)
+                        {
+                            <option value="@contact.UserId" selected="@(contact.UserId == Model.ReceiverId ? "selected" : null)">@contact.Name (@contact.Role)</option>
+                        }
+                    </select>
+                </div>
+                <p>
+                    <button class="btn btn-outline" type="submit">Open</button>
+                </p>
+            </form>
+        }
+
+        <div class="message-layout">
+            <div>
+                <h3>Inbox</h3>
+                @if (Model.Inbox.Count == 0)
+                {
+                    <p>No messages yet.</p>
+                }
+                else
+                {
+                    @foreach (var item in Model.Inbox)
+                    {
+                        <a class="message-item @(item.UserId == Model.ReceiverId ? "is-active" : null)" asp-controller="Dashboard" asp-action="Messages" asp-route-userId="@item.UserId">
+                            <span>
+                                <strong>@item.Name</strong>
+                                @if (item.Unread > 0)
+                                {
+                                    <text> (@item.Unread)</text>
+                                }
+                                <br />
+                                @item.LastBody
+                            </span>
+                        </a>
+                    }
+                }
+            </div>
+            <div>
+                @if (Model.Thread is null)
+                {
+                    <p>Open a conversation from the inbox or start a new one.</p>
+                }
+                else
+                {
+                    <h3>@Model.Thread.Name</h3>
+                    @if (Model.Thread.Messages.Count == 0)
+                    {
+                        <p>No messages in this conversation yet.</p>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model.Thread.Messages)
+                        {
+                            <p>
+                                <strong>@(item.Mine ? "You" : item.SenderName)</strong>
+                                <span>@item.CreatedAt.ToLocalTime().ToString("g")</span><br />
+                                @item.Body
+                            </p>
+                        }
+                    }
+                    <form asp-controller="Dashboard" asp-action="SendMessage" method="post" novalidate>
+                        <input type="hidden" name="receiverId" value="@Model.Thread.UserId" />
+                        <div class="field">
+                            <label asp-for="Body">Message</label>
+                            <textarea asp-for="Body" rows="3" maxlength="2000"></textarea>
+                            <span asp-validation-for="Body" class="field-error"></span>
+                        </div>
+                        <p>
+                            <button class="btn btn-primary" type="submit">Send</button>
+                        </p>
+                    </form>
+                }
+            </div>
+        </div>
+    </section>
+</div>

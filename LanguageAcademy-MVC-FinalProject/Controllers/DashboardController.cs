@@ -3,6 +3,7 @@ using System.Text.Json;
 using LanguageAcademy_MVC_FinalProject.Helpers;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Accounts;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Courses;
+using LanguageAcademy_MVC_FinalProject.ViewModels.Messages;
 using LanguageAcademy_MVC_FinalProject.ViewModels.TeacherApplications;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Teachers;
 using Microsoft.AspNetCore.Authorization;
@@ -720,7 +721,57 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         }
 
         [HttpGet]
-        public IActionResult Messages() => PlaceholderPage("Messages", "dash_messages");
+        public async Task<IActionResult> Messages(string? userId)
+        {
+            SetDash("Messages", "dash_messages");
+            var page = await LoadMessagesPageAsync(userId);
+            if (page.Thread is null && !string.IsNullOrWhiteSpace(userId))
+                TempData["MessageNotice"] = "Conversation was not found.";
+
+            return View(page);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendMessage(string receiverId, string body)
+        {
+            SetDash("Messages", "dash_messages");
+            var page = await LoadMessagesPageAsync(receiverId);
+            page.ReceiverId = receiverId;
+            page.Body = body;
+
+            if (string.IsNullOrWhiteSpace(receiverId))
+            {
+                ModelState.AddModelError(string.Empty, "Choose someone to message.");
+                return View(nameof(Messages), page);
+            }
+
+            if (string.IsNullOrWhiteSpace(body) || body.Trim().Length > 2000)
+            {
+                ModelState.AddModelError(nameof(page.Body), "Write a message.");
+                return View(nameof(Messages), page);
+            }
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PostAsJsonAsync("api/Messages", new
+                {
+                    ReceiverId = receiverId,
+                    Body = body.Trim()
+                });
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Messages), new { userId = receiverId });
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not send the message.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not send the message.");
+            }
+
+            return View(nameof(Messages), page);
+        }
 
         [HttpGet]
         public async Task<IActionResult> Profile()
@@ -1119,6 +1170,40 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private string CourseListAction()
         {
             return Roles.IsStaff(User) ? nameof(Courses) : nameof(Studio);
+        }
+
+        private async Task<MessagesPageUIVM> LoadMessagesPageAsync(string? userId)
+        {
+            var page = new MessagesPageUIVM { ReceiverId = userId };
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var inbox = await client.GetAsync("api/Messages");
+                if (inbox.IsSuccessStatusCode)
+                {
+                    page.Inbox = await inbox.Content.ReadFromJsonAsync<List<ConversationUIVM>>()
+                        ?? new List<ConversationUIVM>();
+                }
+
+                var contacts = await client.GetAsync("api/Messages/contacts");
+                if (contacts.IsSuccessStatusCode)
+                {
+                    page.Contacts = await contacts.Content.ReadFromJsonAsync<List<ContactUIVM>>()
+                        ?? new List<ContactUIVM>();
+                }
+
+                if (!string.IsNullOrWhiteSpace(userId))
+                {
+                    var thread = await client.GetAsync("api/Messages/" + Uri.EscapeDataString(userId));
+                    if (thread.IsSuccessStatusCode)
+                        page.Thread = await thread.Content.ReadFromJsonAsync<ThreadUIVM>();
+                }
+            }
+            catch (HttpRequestException)
+            {
+            }
+
+            return page;
         }
 
         private async Task<ProfilePageUIVM?> LoadProfilePageAsync()
