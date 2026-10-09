@@ -2,11 +2,20 @@ using System.Security.Claims;
 using System.Text;
 using LanguageAcademy_MVC_FinalProject.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 52_428_800;
+});
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 52_428_800;
+});
 builder.Services.AddHttpContextAccessor();
 
 var jwtSection = builder.Configuration.GetSection("Jwt");

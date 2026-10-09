@@ -13,5 +13,7 @@ namespace LanguageAcademy_MVC_FinalProject.ViewModels.Courses
 
         [Range(0, 86400, ErrorMessage = "Duration cannot be negative.")]
         public int Seconds { get; set; }
+
+        public IFormFile? Video { get; set; }
     }
 }

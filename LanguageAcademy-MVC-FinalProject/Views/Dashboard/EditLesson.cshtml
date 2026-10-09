@@ -1,15 +1,19 @@
 @model LessonEditUIVM
 @{
     Layout = "_DashLayout";
+    var localVideo = !string.IsNullOrWhiteSpace(Model.CurrentVideo)
+        && Model.CurrentVideo.Replace('\\', '/').StartsWith("videos/lessons/", StringComparison.OrdinalIgnoreCase);
+    var preview = localVideo ? "/" + Model.CurrentVideo!.TrimStart('/') : null;
 }
 <div class="dash-content">
     <section class="panel">
         <h2>Edit lesson</h2>
-        <p>Video files come later from the folder — do not paste a YouTube URL.</p>
-        <form asp-controller="Dashboard" asp-action="EditLesson" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId" asp-route-lessonId="@Model.LessonId" method="post" novalidate data-lesson-edit>
+        <p>For video lessons, choose a file from your computer. Leave empty to keep the current video. Do not paste a YouTube URL.</p>
+        <form asp-controller="Dashboard" asp-action="EditLesson" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId" asp-route-lessonId="@Model.LessonId" method="post" enctype="multipart/form-data" novalidate data-lesson-edit>
             <input type="hidden" asp-for="CourseId" />
             <input type="hidden" asp-for="ModuleId" />
             <input type="hidden" asp-for="LessonId" />
+            <input type="hidden" asp-for="CurrentVideo" />
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
                 <label asp-for="Title">Title</label>
@@ -32,6 +36,12 @@
                 <input asp-for="Seconds" type="number" min="0" step="1" />
                 <span asp-validation-for="Seconds" class="field-error" data-error-for="Seconds"></span>
             </div>
+            <div class="field">
+                <label asp-for="Video">Video file</label>
+                <input asp-for="Video" type="file" accept=".mp4,.webm,.ogg,.ogv,video/mp4,video/webm,video/ogg" data-video-input />
+                <video class="lesson-video-preview" data-video-preview controls playsinline src="@preview" hidden="@(preview is null ? "hidden" : null)"></video>
+                <span asp-validation-for="Video" class="field-error" data-error-for="Video"></span>
+            </div>
             <p>
                 <button class="btn btn-primary" type="submit">Save lesson</button>
                 <a class="btn btn-outline" asp-controller="Dashboard" asp-action="CourseLessons" asp-route-id="@Model.CourseId">Lessons</a>
@@ -43,13 +53,42 @@
     (function () {
         var form = document.querySelector("[data-lesson-edit]");
         if (!form) return;
+
+        var input = form.querySelector("[data-video-input]");
+        var preview = form.querySelector("[data-video-preview]");
+        if (input && preview) {
+            input.addEventListener("change", function () {
+                var file = input.files && input.files[0];
+                if (preview.dataset.url) {
+                    URL.revokeObjectURL(preview.dataset.url);
+                    preview.dataset.url = "";
+                }
+                if (!file) {
+                    var current = preview.getAttribute("data-current") || "";
+                    if (current) {
+                        preview.src = current;
+                        preview.hidden = false;
+                    } else {
+                        preview.hidden = true;
+                        preview.removeAttribute("src");
+                    }
+                    return;
+                }
+                var url = URL.createObjectURL(file);
+                preview.dataset.url = url;
+                preview.src = url;
+                preview.hidden = false;
+            });
+            if (preview.getAttribute("src")) preview.setAttribute("data-current", preview.getAttribute("src"));
+        }
+
         form.addEventListener("submit", function (event) {
             var ok = true;
             [{ name: "Title", message: "Lesson title is required." }, { name: "Kind", message: "Lesson type is required." }].forEach(function (item) {
-                var input = form.querySelector("[name='" + item.name + "']");
+                var fieldInput = form.querySelector("[name='" + item.name + "']");
                 var error = form.querySelector("[data-error-for='" + item.name + "']");
-                var field = input ? input.closest(".field") : null;
-                var message = (input && input.value ? input.value : "").trim() ? "" : item.message;
+                var field = fieldInput ? fieldInput.closest(".field") : null;
+                var message = (fieldInput && fieldInput.value ? fieldInput.value : "").trim() ? "" : item.message;
                 if (field) field.classList.toggle("has-error", Boolean(message));
                 if (error) error.textContent = message;
                 if (message) ok = false;
@@ -61,6 +100,22 @@
             if (secondsField) secondsField.classList.toggle("has-error", Boolean(secondsMessage));
             if (secondsError) secondsError.textContent = secondsMessage;
             if (secondsMessage) ok = false;
+
+            var kind = form.querySelector("[name='Kind']");
+            var current = form.querySelector("[name='CurrentVideo']");
+            var currentValue = current && current.value ? current.value : "";
+            var hasCurrent = currentValue.indexOf("videos/lessons/") === 0 || currentValue.indexOf("http") === 0;
+            if (kind && kind.value.toLowerCase() === "video" && !hasCurrent) {
+                var video = form.querySelector("[name='Video']");
+                var error = form.querySelector("[data-error-for='Video']");
+                var field = video ? video.closest(".field") : null;
+                var file = video && video.files && video.files[0];
+                var message = file ? "" : "Choose an MP4, WEBM, or OGG video.";
+                if (field) field.classList.toggle("has-error", Boolean(message));
+                if (error) error.textContent = message;
+                if (message) ok = false;
+            }
+
             if (!ok) event.preventDefault();
         });
     })();
