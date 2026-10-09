@@ -1,0 +1,10 @@
+namespace LanguageAcademy_MVC_FinalProject.ViewModels.Plans
+{
+    public class PlanUIVM
+    {
+        public string Type { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public decimal Price { get; set; }
+        public string Info { get; set; } = string.Empty;
+    }
+}

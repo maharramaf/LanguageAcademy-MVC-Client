@@ -4,6 +4,7 @@ using LanguageAcademy_MVC_FinalProject.Helpers;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Accounts;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Courses;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Messages;
+using LanguageAcademy_MVC_FinalProject.ViewModels.Plans;
 using LanguageAcademy_MVC_FinalProject.ViewModels.TeacherApplications;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Teachers;
 using Microsoft.AspNetCore.Authorization;
@@ -69,7 +70,39 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         }
 
         [HttpGet]
-        public IActionResult Plans() => PlaceholderPage("Plans", "plan_nav");
+        public async Task<IActionResult> Plans()
+        {
+            SetDash("Plans", "plan_nav");
+            var page = await LoadPlansPageAsync() ?? new PlanPageUIVM();
+            return View(page);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChoosePlan(string type)
+        {
+            SetDash("Plans", "plan_nav");
+            var page = await LoadPlansPageAsync() ?? new PlanPageUIVM();
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PutAsJsonAsync("api/Plans", new { type });
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["PlanNotice"] = "Plan updated.";
+                    return RedirectToAction(nameof(Plans));
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not update the plan.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not update the plan.");
+            }
+
+            return View(nameof(Plans), page);
+        }
 
         [HttpGet]
         [Authorize(Roles = Roles.TeacherPanelRoles)]
@@ -1170,6 +1203,23 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private string CourseListAction()
         {
             return Roles.IsStaff(User) ? nameof(Courses) : nameof(Studio);
+        }
+
+        private async Task<PlanPageUIVM?> LoadPlansPageAsync()
+        {
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/Plans");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                return await response.Content.ReadFromJsonAsync<PlanPageUIVM>();
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
 
         private async Task<MessagesPageUIVM> LoadMessagesPageAsync(string? userId)
