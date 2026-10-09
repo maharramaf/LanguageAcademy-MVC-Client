@@ -1,0 +1,46 @@
+@model PlanPageUIVM
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2 data-i18n="tp_title">Teacher Subscription</h2>
+        @if (TempData["TeacherPlanNotice"] is string notice)
+        {
+            <p>@notice</p>
+        }
+        <div asp-validation-summary="ModelOnly" class="field-error"></div>
+        <p>This is a test teacher subscription. No card is charged. Current plan: <strong>@Model.Current</strong></p>
+        <div class="teacher-plan-offers">
+            @foreach (var item in Model.Items)
+            {
+                var current = string.Equals(item.Type, Model.Current, StringComparison.OrdinalIgnoreCase);
+                <section class="panel plan-card @(current ? "is-current" : null) @(item.Type == "premium" ? "is-premium" : null)">
+                    <h2>@item.Title</h2>
+                    <p class="plan-metric">
+                        @if (item.Price <= 0)
+                        {
+                            <text>Free</text>
+                        }
+                        else
+                        {
+                            <text>₼@item.Price.ToString("0") / month</text>
+                        }
+                    </p>
+                    <p>@item.Info</p>
+                    @if (current)
+                    {
+                        <p>Active</p>
+                    }
+                    else
+                    {
+                        <form asp-controller="Dashboard" asp-action="ChooseTeacherPlan" method="post">
+                            <input type="hidden" name="type" value="@item.Type" />
+                            <button class="btn btn-primary" type="submit">Choose @item.Title</button>
+                        </form>
+                    }
+                </section>
+            }
+        </div>
+    </section>
+</div>

@@ -106,7 +106,40 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.TeacherPanelRoles)]
-        public IActionResult TeacherPlan() => PlaceholderPage("Teacher Subscription", "tp_title");
+        public async Task<IActionResult> TeacherPlan()
+        {
+            SetDash("Teacher Subscription", "tp_title");
+            var page = await LoadTeacherPlansPageAsync() ?? new PlanPageUIVM();
+            return View(page);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
+        public async Task<IActionResult> ChooseTeacherPlan(string type)
+        {
+            SetDash("Teacher Subscription", "tp_title");
+            var page = await LoadTeacherPlansPageAsync() ?? new PlanPageUIVM();
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PutAsJsonAsync("api/TeacherPlans", new { type });
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["TeacherPlanNotice"] = "Teacher plan updated.";
+                    return RedirectToAction(nameof(TeacherPlan));
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not update the teacher plan.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not update the teacher plan.");
+            }
+
+            return View(nameof(TeacherPlan), page);
+        }
 
         [HttpGet]
         [Authorize(Roles = Roles.StudentPanelRoles)]
@@ -1203,6 +1236,23 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private string CourseListAction()
         {
             return Roles.IsStaff(User) ? nameof(Courses) : nameof(Studio);
+        }
+
+        private async Task<PlanPageUIVM?> LoadTeacherPlansPageAsync()
+        {
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/TeacherPlans");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                return await response.Content.ReadFromJsonAsync<PlanPageUIVM>();
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
 
         private async Task<PlanPageUIVM?> LoadPlansPageAsync()
