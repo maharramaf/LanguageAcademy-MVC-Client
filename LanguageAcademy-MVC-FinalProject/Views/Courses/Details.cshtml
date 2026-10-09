@@ -17,6 +17,37 @@
             <li><i class="bi bi-tag"></i> ₼@Model.Price.ToString("0")</li>
         </ul>
 
+        @if (TempData["EnrollError"] is string enrollError)
+        {
+            <p class="field-error">@enrollError</p>
+        }
+
+        @{
+            var enrolled = ViewBag.Enrolled as bool? == true;
+            var loginReturn = Url.Action("Details", "Courses", new { slug = Model.Slug });
+        }
+        <p style="margin:20px 0 8px;">
+            @if (Roles.IsStudent(User))
+            {
+                if (enrolled)
+                {
+                    <a class="btn btn-primary" asp-controller="Dashboard" asp-action="MyCourses">Go to My Courses</a>
+                }
+                else
+                {
+                    <form asp-controller="Courses" asp-action="Enroll" method="post" style="display:inline;">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <input type="hidden" name="slug" value="@Model.Slug" />
+                        <button class="btn btn-primary" type="submit" data-i18n="btn_enroll">Enroll Now</button>
+                    </form>
+                }
+            }
+            else if (User.Identity?.IsAuthenticated != true)
+            {
+                <a class="btn btn-primary" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@loginReturn" data-i18n="btn_enroll">Enroll Now</a>
+            }
+        </p>
+
         @if (!string.IsNullOrWhiteSpace(Model.Video))
         {
             <div class="video-embed-wrap" style="max-width:860px;margin:24px 0;aspect-ratio:16/9;position:relative;background:#111;border-radius:12px;overflow:hidden;">

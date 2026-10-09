@@ -42,7 +42,30 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         }
 
         [HttpGet]
-        public IActionResult MyCourses() => PlaceholderPage("My Courses", "dash_my_courses");
+        public async Task<IActionResult> MyCourses()
+        {
+            if (!Roles.IsStudent(User))
+                return PlaceholderPage("My Courses", "dash_my_courses");
+
+            SetDash("My Courses", "dash_my_courses");
+            var items = new List<CourseUIVM>();
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/Enrollments");
+                if (response.IsSuccessStatusCode)
+                {
+                    items = await response.Content.ReadFromJsonAsync<List<CourseUIVM>>()
+                        ?? new List<CourseUIVM>();
+                }
+            }
+            catch (HttpRequestException)
+            {
+            }
+
+            return View(items);
+        }
 
         [HttpGet]
         public IActionResult Plans() => PlaceholderPage("Plans", "plan_nav");

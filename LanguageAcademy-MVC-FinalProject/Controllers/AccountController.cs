@@ -86,20 +86,22 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl)
         {
-            if (RedirectIfSignedIn() is { } redirect)
+            if (RedirectIfSignedIn(returnUrl) is { } redirect)
                 return redirect;
 
             ViewData["Title"] = "Login | MF Language Academy";
+            ViewBag.ReturnUrl = returnUrl;
             return View(new LoginUIVM());
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginUIVM model)
+        public async Task<IActionResult> Login(LoginUIVM model, string? returnUrl)
         {
             ViewData["Title"] = "Login | MF Language Academy";
+            ViewBag.ReturnUrl = returnUrl;
 
             if (!ModelState.IsValid)
                 return View(model);
@@ -117,7 +119,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                         if (Roles.CanOpenDashboard(body.Role))
                             return RedirectToAction("Index", "Dashboard");
 
-                        return RedirectToAction("Index", "Home");
+                        return LocalOrHome(returnUrl);
                     }
 
                     ModelState.AddModelError(string.Empty, "Email or password is incorrect.");
@@ -151,13 +153,21 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             };
         }
 
-        private IActionResult? RedirectIfSignedIn()
+        private IActionResult LocalOrHome(string? returnUrl)
+        {
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return LocalRedirect(returnUrl);
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        private IActionResult? RedirectIfSignedIn(string? returnUrl = null)
         {
             if (Roles.CanOpenDashboard(User))
                 return RedirectToAction("Index", "Dashboard");
 
             if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "Home");
+                return LocalOrHome(returnUrl);
 
             if (AuthCookie.Exists(Request))
                 Response.Cookies.Delete(AuthCookie.Name, AuthCookie.DeleteOptions());
