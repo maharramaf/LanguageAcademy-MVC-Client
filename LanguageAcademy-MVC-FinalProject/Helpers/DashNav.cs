@@ -25,7 +25,7 @@ namespace LanguageAcademy_MVC_FinalProject.Helpers
         public static IEnumerable<DashNavItem> For(ClaimsPrincipal user)
         {
             if (Roles.IsStaff(user))
-                return Items;
+                return Items.Where(item => item.Action != "Studio");
 
             if (user.IsInRole(Roles.Teacher))
                 return Items.Where(item => item.Teacher);

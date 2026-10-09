@@ -61,6 +61,11 @@
                 <textarea asp-for="Overview" rows="5" maxlength="2000"></textarea>
                 <span asp-validation-for="Overview" class="field-error" data-error-for="Overview"></span>
             </div>
+            <div class="field">
+                <label asp-for="TeacherEmail">Teacher email</label>
+                <input asp-for="TeacherEmail" type="email" maxlength="256" placeholder="Leave empty to unassign" />
+                <span asp-validation-for="TeacherEmail" class="field-error" data-error-for="TeacherEmail"></span>
+            </div>
             <p>
                 <button class="btn btn-primary" type="submit">Save course</button>
                 <a class="btn btn-outline" asp-controller="Dashboard" asp-action="Courses">Courses</a>

@@ -1,0 +1,51 @@
+@model List<CourseUIVM>
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2 data-i18n="studio_open">Course studio</h2>
+        @if (TempData["CourseNotice"] is string notice)
+        {
+            <p>@notice</p>
+        }
+        <p>These are courses assigned to you. Add modules and lessons here. Admins assign a course from Edit course.</p>
+        @if (Model.Count == 0)
+        {
+            <p>No courses assigned yet.</p>
+        }
+        else
+        {
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Course</th>
+                            <th data-i18n="course_type">Course type</th>
+                            <th data-i18n="label_level">Level</th>
+                            <th data-i18n="label_duration">Duration</th>
+                            <th>Lessons</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.Type</td>
+                                <td>@item.Level</td>
+                                <td>@item.Duration</td>
+                                <td>@item.LessonCount</td>
+                                <td>
+                                    <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="CourseLessons" asp-route-id="@item.Id">Lessons</a>
+                                    <a class="btn btn-outline btn-sm" asp-controller="Courses" asp-action="Details" asp-route-slug="@item.Slug" data-i18n="btn_view_course">View Course</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>

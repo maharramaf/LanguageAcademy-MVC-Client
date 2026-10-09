@@ -14,6 +14,7 @@ namespace LanguageAcademy_MVC_FinalProject.ViewModels.Courses
         public string Image { get; set; } = string.Empty;
         public string Summary { get; set; } = string.Empty;
         public string Overview { get; set; } = string.Empty;
+        public string? TeacherEmail { get; set; }
         public string? Video { get; set; }
         public List<string> Outcomes { get; set; } = new();
         public List<ReviewUIVM> Reviews { get; set; } = new();

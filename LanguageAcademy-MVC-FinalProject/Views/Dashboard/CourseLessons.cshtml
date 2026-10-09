@@ -12,7 +12,7 @@
         }
         <div asp-validation-summary="ModelOnly" class="field-error"></div>
         <p>
-            <a class="btn btn-outline" asp-controller="Dashboard" asp-action="Courses">Courses</a>
+            <a class="btn btn-outline" asp-controller="Dashboard" asp-action="@(Roles.IsStaff(User) ? "Courses" : "Studio")">@(Roles.IsStaff(User) ? "Courses" : "Studio")</a>
             <a class="btn btn-outline" asp-controller="Courses" asp-action="Details" asp-route-slug="@Model.Slug">View Course</a>
         </p>
 

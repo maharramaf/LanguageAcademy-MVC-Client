@@ -197,7 +197,8 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     Duration = course.Duration,
                     Price = course.Price,
                     Summary = course.Summary,
-                    Overview = course.Overview
+                    Overview = course.Overview,
+                    TeacherEmail = course.TeacherEmail
                 });
             }
             catch (HttpRequestException)
@@ -240,7 +241,8 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     model.Price,
                     Image = imagePath ?? model.CurrentImage,
                     model.Summary,
-                    model.Overview
+                    model.Overview,
+                    TeacherEmail = model.TeacherEmail ?? string.Empty
                 });
                 if (response.IsSuccessStatusCode)
                 {
@@ -310,7 +312,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public async Task<IActionResult> CourseLessons(int id)
         {
             SetDash("Course lessons", "nav_courses");
@@ -318,7 +320,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             if (page is null)
             {
                 TempData["CourseNotice"] = "Course was not found.";
-                return RedirectToAction(nameof(Courses));
+                return RedirectToAction(CourseListAction());
             }
 
             return View(page);
@@ -326,7 +328,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public async Task<IActionResult> CreateModule(int id, [Bind(Prefix = "Module")] ModuleCreateUIVM model)
         {
             SetDash("Course lessons", "nav_courses");
@@ -334,7 +336,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             if (page is null)
             {
                 TempData["CourseNotice"] = "Course was not found.";
-                return RedirectToAction(nameof(Courses));
+                return RedirectToAction(CourseListAction());
             }
 
             page.Module = model;
@@ -344,7 +346,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.PostAsJsonAsync($"api/admin/Courses/{id}/modules", new
+                var response = await client.PostAsJsonAsync($"{CoursesWriteApi()}/{id}/modules", new
                 {
                     model.Title,
                     model.Info
@@ -358,7 +360,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     TempData["CourseNotice"] = "Course was not found.";
-                    return RedirectToAction(nameof(Courses));
+                    return RedirectToAction(CourseListAction());
                 }
 
                 AddApiErrors(await ReadErrorsAsync(response), "Could not create the module.");
@@ -373,7 +375,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         [RequestSizeLimit(MaxLessonVideoBytes)]
         [RequestFormLimits(MultipartBodyLengthLimit = MaxLessonVideoBytes)]
         public async Task<IActionResult> CreateLesson(int id, int moduleId, LessonCreateUIVM model)
@@ -383,7 +385,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             if (page is null)
             {
                 TempData["CourseNotice"] = "Course was not found.";
-                return RedirectToAction(nameof(Courses));
+                return RedirectToAction(CourseListAction());
             }
 
             if (!ModelState.IsValid)
@@ -403,7 +405,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.PostAsJsonAsync($"api/admin/Courses/{id}/modules/{moduleId}/lessons", new
+                var response = await client.PostAsJsonAsync($"{CoursesWriteApi()}/{id}/modules/{moduleId}/lessons", new
                 {
                     model.Title,
                     model.Kind,
@@ -433,14 +435,14 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public async Task<IActionResult> EditModule(int id, int moduleId)
         {
             SetDash("Edit module", "nav_courses");
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.GetAsync($"api/admin/Courses/{id}/modules/{moduleId}");
+                var response = await client.GetAsync($"{CoursesWriteApi()}/{id}/modules/{moduleId}");
                 if (!response.IsSuccessStatusCode)
                 {
                     TempData["CourseNotice"] = "Module was not found.";
@@ -471,7 +473,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public async Task<IActionResult> EditModule(int id, int moduleId, ModuleEditUIVM model)
         {
             SetDash("Edit module", "nav_courses");
@@ -483,7 +485,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.PutAsJsonAsync($"api/admin/Courses/{id}/modules/{moduleId}", new
+                var response = await client.PutAsJsonAsync($"{CoursesWriteApi()}/{id}/modules/{moduleId}", new
                 {
                     model.Title,
                     model.Info
@@ -512,7 +514,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public async Task<IActionResult> DeleteModule(int id, int moduleId)
         {
             var page = await LoadLessonsPageAsync(id);
@@ -523,7 +525,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                 .ToList() ?? new List<string>();
 
             TempData["CourseNotice"] = await SendCurriculumDeleteAsync(
-                $"api/admin/Courses/{id}/modules/{moduleId}",
+                $"{CoursesWriteApi()}/{id}/modules/{moduleId}",
                 "Module deleted.",
                 "Could not delete the module.");
             if (TempData["CourseNotice"] as string == "Module deleted.")
@@ -536,14 +538,14 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public async Task<IActionResult> EditLesson(int id, int moduleId, int lessonId)
         {
             SetDash("Edit lesson", "nav_courses");
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.GetAsync($"api/admin/Courses/{id}/modules/{moduleId}/lessons/{lessonId}");
+                var response = await client.GetAsync($"{CoursesWriteApi()}/{id}/modules/{moduleId}/lessons/{lessonId}");
                 if (!response.IsSuccessStatusCode)
                 {
                     TempData["CourseNotice"] = "Lesson was not found.";
@@ -577,7 +579,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         [RequestSizeLimit(MaxLessonVideoBytes)]
         [RequestFormLimits(MultipartBodyLengthLimit = MaxLessonVideoBytes)]
         public async Task<IActionResult> EditLesson(int id, int moduleId, int lessonId, LessonEditUIVM model)
@@ -608,7 +610,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.PutAsJsonAsync($"api/admin/Courses/{id}/modules/{moduleId}/lessons/{lessonId}", new
+                var response = await client.PutAsJsonAsync($"{CoursesWriteApi()}/{id}/modules/{moduleId}/lessons/{lessonId}", new
                 {
                     model.Title,
                     model.Kind,
@@ -641,14 +643,14 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Roles.StaffRoles)]
+        [Authorize(Roles = Roles.TeacherPanelRoles)]
         public async Task<IActionResult> DeleteLesson(int id, int moduleId, int lessonId)
         {
             string? video = null;
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var get = await client.GetAsync($"api/admin/Courses/{id}/modules/{moduleId}/lessons/{lessonId}");
+                var get = await client.GetAsync($"{CoursesWriteApi()}/{id}/modules/{moduleId}/lessons/{lessonId}");
                 if (get.IsSuccessStatusCode)
                 {
                     var lesson = await get.Content.ReadFromJsonAsync<LessonUIVM>();
@@ -660,7 +662,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             }
 
             TempData["CourseNotice"] = await SendCurriculumDeleteAsync(
-                $"api/admin/Courses/{id}/modules/{moduleId}/lessons/{lessonId}",
+                $"{CoursesWriteApi()}/{id}/modules/{moduleId}/lessons/{lessonId}",
                 "Lesson deleted.",
                 "Could not delete the lesson.");
             if (TempData["CourseNotice"] as string == "Lesson deleted.")
@@ -770,7 +772,30 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.TeacherPanelRoles)]
-        public IActionResult Studio() => PlaceholderPage("Course studio", "studio_open");
+        public async Task<IActionResult> Studio()
+        {
+            if (Roles.IsStaff(User))
+                return RedirectToAction(nameof(Courses));
+
+            SetDash("Course studio", "studio_open");
+            var items = new List<CourseUIVM>();
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/studio/Courses");
+                if (response.IsSuccessStatusCode)
+                {
+                    items = await response.Content.ReadFromJsonAsync<List<CourseUIVM>>()
+                        ?? new List<CourseUIVM>();
+                }
+            }
+            catch (HttpRequestException)
+            {
+            }
+
+            return View(items);
+        }
 
         [HttpGet]
         [Authorize(Roles = Roles.StaffRoles)]
@@ -871,7 +896,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
-                var response = await client.GetAsync("api/admin/Courses/" + id + "/modules");
+                var response = await client.GetAsync(CoursesWriteApi() + "/" + id + "/modules");
                 if (!response.IsSuccessStatusCode)
                     return null;
 
@@ -997,6 +1022,16 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             }
 
             ModelState.AddModelError(string.Empty, fallback);
+        }
+
+        private string CoursesWriteApi()
+        {
+            return Roles.IsStaff(User) ? "api/admin/Courses" : "api/studio/Courses";
+        }
+
+        private string CourseListAction()
+        {
+            return Roles.IsStaff(User) ? nameof(Courses) : nameof(Studio);
         }
 
         private IActionResult PlaceholderPage(string heading, string i18n)
