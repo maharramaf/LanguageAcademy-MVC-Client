@@ -386,6 +386,190 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> EditModule(int id, int moduleId)
+        {
+            SetDash("Edit module", "nav_courses");
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync($"api/admin/Courses/{id}/modules/{moduleId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["CourseNotice"] = "Module was not found.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                var module = await response.Content.ReadFromJsonAsync<CourseModuleUIVM>();
+                if (module is null)
+                {
+                    TempData["CourseNotice"] = "Module was not found.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                return View(new ModuleEditUIVM
+                {
+                    CourseId = id,
+                    ModuleId = module.Id,
+                    Title = module.Title,
+                    Info = module.Info
+                });
+            }
+            catch (HttpRequestException)
+            {
+                TempData["CourseNotice"] = "Could not load the module.";
+                return RedirectToAction(nameof(CourseLessons), new { id });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> EditModule(int id, int moduleId, ModuleEditUIVM model)
+        {
+            SetDash("Edit module", "nav_courses");
+            model.CourseId = id;
+            model.ModuleId = moduleId;
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PutAsJsonAsync($"api/admin/Courses/{id}/modules/{moduleId}", new
+                {
+                    model.Title,
+                    model.Info
+                });
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["CourseNotice"] = "Module updated.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    TempData["CourseNotice"] = "Module was not found.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not update the module.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not update the module.");
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> DeleteModule(int id, int moduleId)
+        {
+            TempData["CourseNotice"] = await SendCurriculumDeleteAsync(
+                $"api/admin/Courses/{id}/modules/{moduleId}",
+                "Module deleted.",
+                "Could not delete the module.");
+            return RedirectToAction(nameof(CourseLessons), new { id });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> EditLesson(int id, int moduleId, int lessonId)
+        {
+            SetDash("Edit lesson", "nav_courses");
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync($"api/admin/Courses/{id}/modules/{moduleId}/lessons/{lessonId}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    TempData["CourseNotice"] = "Lesson was not found.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                var lesson = await response.Content.ReadFromJsonAsync<LessonUIVM>();
+                if (lesson is null)
+                {
+                    TempData["CourseNotice"] = "Lesson was not found.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                return View(new LessonEditUIVM
+                {
+                    CourseId = id,
+                    ModuleId = moduleId,
+                    LessonId = lesson.Id,
+                    Title = lesson.Title,
+                    Kind = lesson.Kind,
+                    Seconds = lesson.Seconds
+                });
+            }
+            catch (HttpRequestException)
+            {
+                TempData["CourseNotice"] = "Could not load the lesson.";
+                return RedirectToAction(nameof(CourseLessons), new { id });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> EditLesson(int id, int moduleId, int lessonId, LessonEditUIVM model)
+        {
+            SetDash("Edit lesson", "nav_courses");
+            model.CourseId = id;
+            model.ModuleId = moduleId;
+            model.LessonId = lessonId;
+            if (!ModelState.IsValid)
+                return View(model);
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PutAsJsonAsync($"api/admin/Courses/{id}/modules/{moduleId}/lessons/{lessonId}", new
+                {
+                    model.Title,
+                    model.Kind,
+                    model.Seconds
+                });
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["CourseNotice"] = "Lesson updated.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    TempData["CourseNotice"] = "Lesson was not found.";
+                    return RedirectToAction(nameof(CourseLessons), new { id });
+                }
+
+                AddApiErrors(await ReadErrorsAsync(response), "Could not update the lesson.");
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "Could not update the lesson.");
+            }
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StaffRoles)]
+        public async Task<IActionResult> DeleteLesson(int id, int moduleId, int lessonId)
+        {
+            TempData["CourseNotice"] = await SendCurriculumDeleteAsync(
+                $"api/admin/Courses/{id}/modules/{moduleId}/lessons/{lessonId}",
+                "Lesson deleted.",
+                "Could not delete the lesson.");
+            return RedirectToAction(nameof(CourseLessons), new { id });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Roles.StaffRoles)]
         public async Task<IActionResult> Teachers()
         {
             SetDash("Teachers", "nav_teachers");
@@ -518,6 +702,24 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             }
 
             return RedirectToAction(nameof(Applications));
+        }
+
+        private async Task<string> SendCurriculumDeleteAsync(string url, string ok, string fail)
+        {
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.DeleteAsync(url);
+                if (response.IsSuccessStatusCode)
+                    return ok;
+                return response.StatusCode == System.Net.HttpStatusCode.NotFound
+                    ? "Item was not found."
+                    : fail;
+            }
+            catch (HttpRequestException)
+            {
+                return fail;
+            }
         }
 
         private async Task<CourseLessonsPageUIVM?> LoadLessonsPageAsync(int id)

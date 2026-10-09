@@ -1,0 +1,47 @@
+@model ModuleEditUIVM
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2>Edit module</h2>
+        <form asp-controller="Dashboard" asp-action="EditModule" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId" method="post" novalidate data-module-edit>
+            <input type="hidden" asp-for="CourseId" />
+            <input type="hidden" asp-for="ModuleId" />
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label asp-for="Title">Title</label>
+                <input asp-for="Title" type="text" maxlength="160" />
+                <span asp-validation-for="Title" class="field-error" data-error-for="Title"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Info">Info</label>
+                <input asp-for="Info" type="text" maxlength="80" />
+                <span asp-validation-for="Info" class="field-error" data-error-for="Info"></span>
+            </div>
+            <p>
+                <button class="btn btn-primary" type="submit">Save module</button>
+                <a class="btn btn-outline" asp-controller="Dashboard" asp-action="CourseLessons" asp-route-id="@Model.CourseId">Lessons</a>
+            </p>
+        </form>
+    </section>
+</div>
+<script>
+    (function () {
+        var form = document.querySelector("[data-module-edit]");
+        if (!form) return;
+        form.addEventListener("submit", function (event) {
+            var ok = true;
+            ["Title", "Info"].forEach(function (name) {
+                var input = form.querySelector("[name='" + name + "']");
+                var error = form.querySelector("[data-error-for='" + name + "']");
+                var field = input ? input.closest(".field") : null;
+                var message = (input && input.value ? input.value : "").trim() ? "" : (name === "Title" ? "Module title is required." : "Module info is required.");
+                if (field) field.classList.toggle("has-error", Boolean(message));
+                if (error) error.textContent = message;
+                if (message) ok = false;
+            });
+            if (!ok) event.preventDefault();
+        });
+    })();
+</script>

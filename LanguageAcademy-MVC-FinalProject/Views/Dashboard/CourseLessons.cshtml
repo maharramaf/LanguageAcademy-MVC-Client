@@ -47,6 +47,12 @@
             <section class="panel">
                 <h3>@module.Title</h3>
                 <p>@module.Info</p>
+                <p>
+                    <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="EditModule" asp-route-id="@Model.Id" asp-route-moduleId="@module.Id">Edit module</a>
+                    <form asp-controller="Dashboard" asp-action="DeleteModule" asp-route-id="@Model.Id" asp-route-moduleId="@module.Id" method="post" style="display:inline;" onsubmit="return confirm('Delete this module and its lessons?');">
+                        <button class="btn btn-outline btn-sm" type="submit">Delete module</button>
+                    </form>
+                </p>
                 @if (module.Lessons.Count == 0)
                 {
                     <p>No lessons yet.</p>
@@ -60,6 +66,7 @@
                                     <th>Lesson</th>
                                     <th>Type</th>
                                     <th>Duration</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,6 +84,12 @@
                                             {
                                                 <text>—</text>
                                             }
+                                        </td>
+                                        <td>
+                                            <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="EditLesson" asp-route-id="@Model.Id" asp-route-moduleId="@module.Id" asp-route-lessonId="@lesson.Id">Edit</a>
+                                            <form asp-controller="Dashboard" asp-action="DeleteLesson" asp-route-id="@Model.Id" asp-route-moduleId="@module.Id" asp-route-lessonId="@lesson.Id" method="post" style="display:inline;" onsubmit="return confirm('Delete this lesson?');">
+                                                <button class="btn btn-outline btn-sm" type="submit">Delete</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 }
