@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Security.Claims;
 using System.Text.Json;
 using LanguageAcademy_MVC_FinalProject.Helpers;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Accounts;
@@ -802,11 +803,26 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         public async Task<IActionResult> Messages(string? userId)
         {
             SetDash("Messages", "dash_messages");
+            ViewBag.MeId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var page = await LoadMessagesPageAsync(userId);
             if (page.Thread is null && !string.IsNullOrWhiteSpace(userId))
                 TempData["MessageNotice"] = "Conversation was not found.";
 
             return View(page);
+        }
+
+        [HttpGet]
+        public IActionResult ChatHubToken()
+        {
+            var token = Request.Cookies[AuthCookie.Name];
+            if (string.IsNullOrWhiteSpace(token))
+                return Unauthorized();
+
+            var hubUrl = new Uri(
+                _httpClientFactory.CreateClient("LanguageAcademyApi").BaseAddress
+                    ?? new Uri("https://localhost:7210/"),
+                "hubs/chat").ToString();
+            return Json(new { token, hubUrl });
         }
 
         [HttpPost]

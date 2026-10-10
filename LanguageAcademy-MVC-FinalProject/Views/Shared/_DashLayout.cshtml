@@ -78,5 +78,6 @@
     <script src="~/js/main.js" defer></script>
     <script src="~/js/i18n-extra.js" defer></script>
     <script src="~/js/preferences.js" defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -11,6 +11,11 @@
         }
         <div asp-validation-summary="ModelOnly" class="field-error"></div>
         <p>Students can message the teacher of an enrolled course. Teachers can message their enrolled students.</p>
+        <p id="message-live" hidden
+           data-me-id="@ViewBag.MeId"
+           data-other-id="@(Model.Thread?.UserId)"
+           data-other-name="@(Model.Thread?.Name)"
+           data-token-url="@Url.Action("ChatHubToken", "Dashboard")">Live</p>
 
         @if (Model.Contacts.Count > 0)
         {
@@ -34,15 +39,16 @@
         <div class="message-layout">
             <div>
                 <h3>Inbox</h3>
+                <div id="message-inbox">
                 @if (Model.Inbox.Count == 0)
                 {
-                    <p>No messages yet.</p>
+                    <p class="message-empty">No messages yet.</p>
                 }
                 else
                 {
                     @foreach (var item in Model.Inbox)
                     {
-                        <a class="message-item @(item.UserId == Model.ReceiverId ? "is-active" : null)" asp-controller="Dashboard" asp-action="Messages" asp-route-userId="@item.UserId">
+                        <a class="message-item @(item.UserId == Model.ReceiverId ? "is-active" : null)" asp-controller="Dashboard" asp-action="Messages" asp-route-userId="@item.UserId" data-user-id="@item.UserId">
                             <span>
                                 <strong>@item.Name</strong>
                                 @if (item.Unread > 0)
@@ -50,11 +56,12 @@
                                     <text> (@item.Unread)</text>
                                 }
                                 <br />
-                                @item.LastBody
+                                <span class="message-last">@item.LastBody</span>
                             </span>
                         </a>
                     }
                 }
+                </div>
             </div>
             <div>
                 @if (Model.Thread is null)
@@ -64,22 +71,24 @@
                 else
                 {
                     <h3>@Model.Thread.Name</h3>
+                    <div id="message-thread">
                     @if (Model.Thread.Messages.Count == 0)
                     {
-                        <p>No messages in this conversation yet.</p>
+                        <p class="message-empty">No messages in this conversation yet.</p>
                     }
                     else
                     {
                         @foreach (var item in Model.Thread.Messages)
                         {
-                            <p>
+                            <p data-id="@item.Id">
                                 <strong>@(item.Mine ? "You" : item.SenderName)</strong>
                                 <span>@item.CreatedAt.ToLocalTime().ToString("g")</span><br />
                                 @item.Body
                             </p>
                         }
                     }
-                    <form asp-controller="Dashboard" asp-action="SendMessage" method="post" novalidate>
+                    </div>
+                    <form id="message-send-form" asp-controller="Dashboard" asp-action="SendMessage" method="post" novalidate>
                         <input type="hidden" name="receiverId" value="@Model.Thread.UserId" />
                         <div class="field">
                             <label asp-for="Body">Message</label>
@@ -95,3 +104,7 @@
         </div>
     </section>
 </div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+    <script src="~/js/messages.js"></script>
+}
