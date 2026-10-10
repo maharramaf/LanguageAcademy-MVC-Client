@@ -1,0 +1,39 @@
+@model List<CertificateUIVM>
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2 data-i18n="dash_certificates">Certificates</h2>
+        <p>A certificate is ready when every lesson in a course is complete.</p>
+        @if (TempData["CourseNotice"] is string notice)
+        {
+            <p>@notice</p>
+        }
+        @if (Model.Count == 0)
+        {
+            <div class="cert-empty">
+                <strong data-i18n="cert_none_title">No certificates yet</strong>
+                <p data-i18n="cert_none_text">Complete a course to earn your first certificate.</p>
+                <p><a class="btn btn-primary" asp-controller="Dashboard" asp-action="Learn" data-i18n="learn_continue">Continue learning</a></p>
+            </div>
+        }
+        else
+        {
+            <div class="cert-list">
+                @foreach (var item in Model)
+                {
+                    <article class="cert-card">
+                        <div>
+                            <h4>@item.CourseTitle</h4>
+                            <p>@item.StartedAt.ToString("d MMM yyyy") – @item.IssuedAt.ToString("d MMM yyyy") · @item.Number</p>
+                        </div>
+                        <div class="cert-card-actions">
+                            <a class="btn btn-primary btn-sm" asp-controller="Dashboard" asp-action="Certificate" asp-route-slug="@item.CourseSlug" data-i18n="cert_view">View Certificate</a>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </section>
+</div>

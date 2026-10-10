@@ -7,6 +7,7 @@ using LanguageAcademy_MVC_FinalProject.ViewModels.Courses;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Messages;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Earnings;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Rewards;
+using LanguageAcademy_MVC_FinalProject.ViewModels.Certificates;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Plans;
 using LanguageAcademy_MVC_FinalProject.ViewModels.TeacherApplications;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Teachers;
@@ -151,6 +152,56 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             SetDash("Rewards", "reward_title");
             var page = await LoadRewardsAsync() ?? new RewardsUIVM();
             return View(page);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Roles.StudentPanelRoles)]
+        public async Task<IActionResult> Certificates()
+        {
+            if (!Roles.IsStudent(User))
+                return PlaceholderPage("Certificates", "dash_certificates");
+
+            SetDash("Certificates", "dash_certificates");
+            var items = new List<CertificateUIVM>();
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/Certificates");
+                if (response.IsSuccessStatusCode)
+                    items = await response.Content.ReadFromJsonAsync<List<CertificateUIVM>>() ?? items;
+            }
+            catch (HttpRequestException)
+            {
+            }
+
+            return View(items);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = Roles.StudentPanelRoles)]
+        public async Task<IActionResult> Certificate(string slug)
+        {
+            if (!Roles.IsStudent(User) || string.IsNullOrWhiteSpace(slug))
+                return RedirectToAction(nameof(Certificates));
+
+            SetDash("Certificate", "dash_certificates");
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/Certificates/" + Uri.EscapeDataString(slug));
+                if (response.IsSuccessStatusCode)
+                {
+                    var item = await response.Content.ReadFromJsonAsync<CertificateUIVM>();
+                    if (item is not null)
+                        return View(item);
+                }
+            }
+            catch (HttpRequestException)
+            {
+            }
+
+            TempData["CourseNotice"] = "Certificate not found. Finish every lesson first.";
+            return RedirectToAction(nameof(Certificates));
         }
 
         [HttpGet]
@@ -1068,7 +1119,9 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     var body = await response.Content.ReadFromJsonAsync<LessonCompleteUIVM>();
                     TempData["LearnNotice"] = body?.AlreadyCompleted == true
                         ? "Lesson already completed."
-                        : CompleteNotice(body);
+                        : body?.CertificateReady == true
+                            ? "Course complete. Your certificate is ready."
+                            : CompleteNotice(body);
                 }
                 else
                 {
@@ -1572,6 +1625,8 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             public int XpGained { get; set; }
             public int PointsGained { get; set; }
             public string? Kind { get; set; }
+            public bool CertificateReady { get; set; }
+            public string? CourseSlug { get; set; }
         }
 
         private sealed class ProfileTokenUIVM

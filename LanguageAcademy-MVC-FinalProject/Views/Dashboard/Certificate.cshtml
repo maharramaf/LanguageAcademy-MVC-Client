@@ -1,0 +1,62 @@
+@model CertificateUIVM
+@{
+    Layout = "_DashLayout";
+    var teacher = string.IsNullOrWhiteSpace(Model.TeacherName) ? "MF Language Academy" : Model.TeacherName;
+}
+@section Styles {
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&display=swap" rel="stylesheet">
+}
+<div class="dash-content cert-page">
+    <div class="cert-toolbar">
+        <a asp-controller="Dashboard" asp-action="Certificates" data-i18n="cert_my">My Certificates</a>
+        <button class="btn btn-primary" type="button" onclick="window.print()" data-i18n="cert_print">Print Certificate</button>
+    </div>
+    <section class="certificate-sheet">
+        <div class="cert-frame">
+            <span class="cert-corner cert-corner-tl"></span>
+            <span class="cert-corner cert-corner-tr"></span>
+            <span class="cert-corner cert-corner-bl"></span>
+            <span class="cert-corner cert-corner-br"></span>
+            <p class="cert-brand">MF Language Academy</p>
+            <div class="cert-seal" aria-hidden="true">
+                <span>MF</span>
+            </div>
+            <p class="cert-kicker" data-i18n="cert_title">Certificate of Completion</p>
+            <p class="cert-ornament">✦ — ✦</p>
+            <p class="cert-awarded" data-i18n="cert_awarded">This certificate is awarded to</p>
+            <p class="cert-student">@Model.StudentName</p>
+            <p class="cert-for" data-i18n="cert_for">for successfully completing</p>
+            <p class="cert-course">@Model.CourseTitle</p>
+            <div class="cert-meta">
+                <p>
+                    <span>Started on</span>
+                    <strong>@Model.StartedAt.ToString("d MMMM yyyy")</strong>
+                </p>
+                <p>
+                    <span data-i18n="cert_completed_on">Completed on</span>
+                    <strong>@Model.IssuedAt.ToString("d MMMM yyyy")</strong>
+                </p>
+                <p>
+                    <span data-i18n="cert_instructor">Instructor</span>
+                    <strong>@teacher</strong>
+                </p>
+                <p>
+                    <span data-i18n="cert_id">Certificate ID</span>
+                    <strong>@Model.Number</strong>
+                </p>
+            </div>
+            <div class="cert-signs">
+                <div class="cert-sign">
+                    <span class="cert-line"></span>
+                    <strong>@teacher</strong>
+                    <span data-i18n="cert_instructor">Instructor</span>
+                </div>
+                <div class="cert-sign">
+                    <span class="cert-line"></span>
+                    <strong>Elena Marquez</strong>
+                    <span data-i18n="cert_sign_role">Academic director</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

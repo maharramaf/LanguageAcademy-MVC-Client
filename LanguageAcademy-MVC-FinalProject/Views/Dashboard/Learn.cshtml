@@ -7,6 +7,7 @@
         .SelectMany(m => m.Lessons.OrderBy(x => x.Order).Select(x => new { Module = m, Lesson = x }))
         .ToList() ?? [];
     var current = lessonId is int openId ? lessons.FirstOrDefault(m => m.Lesson.Id == openId) : null;
+    var courseDone = lessons.Count > 0 && lessons.All(m => m.Lesson.Completed);
 }
 <div class="dash-content class-page">
     @if (Model is null)
@@ -34,7 +35,19 @@
             <p class="class-actions">
                 <a asp-controller="Dashboard" asp-action="MyCourses" data-i18n="dash_my_courses">My Courses</a>
                 <a asp-controller="Courses" asp-action="Details" asp-route-slug="@Model.Slug" data-i18n="btn_view_course">View course</a>
+                @if (courseDone)
+                {
+                    <a asp-controller="Dashboard" asp-action="Certificate" asp-route-slug="@Model.Slug" data-i18n="cert_view">View Certificate</a>
+                }
             </p>
+            @if (courseDone)
+            {
+                <p class="class-notice">Every lesson is complete. Your certificate is ready.</p>
+            }
+            else
+            {
+                <p class="class-notice">The certificate appears when every lesson is complete.</p>
+            }
 
             @if (current is not null)
             {

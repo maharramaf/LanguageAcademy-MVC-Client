@@ -11,6 +11,7 @@ namespace LanguageAcademy_MVC_FinalProject.Helpers
             new("Plans", "plan_nav", "Plans", "bi-stars", Teacher: true, Student: true),
             new("TeacherPlan", "tp_title", "Teacher Subscription", "bi-person-badge", Teacher: true),
             new("Rewards", "reward_title", "Rewards", "bi-trophy", Student: true),
+            new("Certificates", "dash_certificates", "Certificates", "bi-award", Student: true),
             new("Earnings", "tp_earnings", "Earnings", "bi-cash-coin", Teacher: true),
             new("Courses", "nav_courses", "Courses", "bi-journal-bookmark"),
             new("Teachers", "nav_teachers", "Teachers", "bi-person-workspace"),
