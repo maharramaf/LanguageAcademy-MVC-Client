@@ -197,6 +197,8 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Roles.StaffRoles)]
+        [RequestSizeLimit(MaxLessonVideoBytes)]
+        [RequestFormLimits(MultipartBodyLengthLimit = MaxLessonVideoBytes)]
         public async Task<IActionResult> CreateCourse(CourseCreateUIVM model)
         {
             SetDash("Create course", "nav_courses");
@@ -211,6 +213,17 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                 return View(model);
             }
 
+            string? videoPath = null;
+            if (model.Video is { Length: > 0 })
+            {
+                videoPath = await SaveCourseVideoAsync(model.Video);
+                if (videoPath is null)
+                {
+                    ModelState.AddModelError(nameof(model.Video), "Choose an MP4, WEBM, or OGG video.");
+                    return View(model);
+                }
+            }
+
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
@@ -223,7 +236,8 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     model.Price,
                     Image = imagePath,
                     model.Summary,
-                    model.Overview
+                    model.Overview,
+                    Video = videoPath
                 });
                 if (response.IsSuccessStatusCode)
                 {
@@ -278,6 +292,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     Price = course.Price,
                     Summary = course.Summary,
                     Overview = course.Overview,
+                    CurrentVideo = course.Video,
                     TeacherEmail = course.TeacherEmail
                 });
             }
@@ -291,6 +306,8 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = Roles.StaffRoles)]
+        [RequestSizeLimit(MaxLessonVideoBytes)]
+        [RequestFormLimits(MultipartBodyLengthLimit = MaxLessonVideoBytes)]
         public async Task<IActionResult> EditCourse(CourseEditUIVM model)
         {
             SetDash("Edit course", "nav_courses");
@@ -309,6 +326,17 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                 }
             }
 
+            string? videoPath = null;
+            if (model.Video is { Length: > 0 })
+            {
+                videoPath = await SaveCourseVideoAsync(model.Video);
+                if (videoPath is null)
+                {
+                    ModelState.AddModelError(nameof(model.Video), "Choose an MP4, WEBM, or OGG video.");
+                    return View(model);
+                }
+            }
+
             try
             {
                 var client = ApiClient.Create(_httpClientFactory, Request);
@@ -322,12 +350,15 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     Image = imagePath ?? model.CurrentImage,
                     model.Summary,
                     model.Overview,
+                    Video = videoPath,
                     TeacherEmail = model.TeacherEmail ?? string.Empty
                 });
                 if (response.IsSuccessStatusCode)
                 {
                     if (!string.IsNullOrWhiteSpace(imagePath))
                         DeleteCourseImage(model.CurrentImage);
+                    if (!string.IsNullOrWhiteSpace(videoPath))
+                        DeleteCourseVideo(model.CurrentVideo);
                     TempData["CourseNotice"] = "Course updated.";
                     return RedirectToAction(nameof(Courses));
                 }
@@ -367,6 +398,8 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     var course = await get.Content.ReadFromJsonAsync<CourseDetailUIVM>();
                     image = course?.Image;
                     videos = LessonVideos(course);
+                    if (!string.IsNullOrWhiteSpace(course?.Video))
+                        videos.Add(course.Video);
                 }
 
                 var response = await client.DeleteAsync("api/admin/Courses/" + id);
@@ -374,7 +407,10 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                 {
                     DeleteCourseImage(image);
                     foreach (var video in videos)
+                    {
                         DeleteLessonVideo(video);
+                        DeleteCourseVideo(video);
+                    }
                     TempData["CourseNotice"] = "Course deleted.";
                     return RedirectToAction(nameof(Courses));
                 }
@@ -474,7 +510,9 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             string? videoPath = null;
             if (IsVideoKind(model.Kind))
             {
-                videoPath = await SaveLessonVideoAsync(model.Video);
+                var module = page.Modules.FirstOrDefault(m => m.Id == moduleId);
+                var order = (module?.Lessons.Select(m => m.Order).DefaultIfEmpty(0).Max() ?? 0) + 1;
+                videoPath = await SaveLessonVideoAsync(model.Video, page.Slug, order, model.Title);
                 if (videoPath is null)
                 {
                     ModelState.AddModelError(nameof(model.Video), "Choose an MP4, WEBM, or OGG video.");
@@ -674,7 +712,10 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             string? videoPath = null;
             if (model.Video is { Length: > 0 })
             {
-                videoPath = await SaveLessonVideoAsync(model.Video);
+                var page = await LoadLessonsPageAsync(id);
+                var module = page?.Modules.FirstOrDefault(m => m.Id == moduleId);
+                var order = module?.Lessons.FirstOrDefault(m => m.Id == lessonId)?.Order ?? 1;
+                videoPath = await SaveLessonVideoAsync(model.Video, page?.Slug, order, model.Title);
                 if (videoPath is null)
                 {
                     ModelState.AddModelError(nameof(model.Video), "Choose an MP4, WEBM, or OGG video.");
@@ -993,6 +1034,14 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                 }
 
                 var course = await response.Content.ReadFromJsonAsync<CourseDetailUIVM>();
+                if (course is not null)
+                {
+                    var people = await client.GetAsync("api/Enrollments/classmates/" + course.Id);
+                    if (people.IsSuccessStatusCode)
+                        course.Classmates = await people.Content.ReadFromJsonAsync<List<ClassmateUIVM>>()
+                            ?? new List<ClassmateUIVM>();
+                }
+
                 ViewBag.LessonId = lessonId;
                 return View(course);
             }
@@ -1176,11 +1225,18 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                 if (course is null)
                     return null;
 
+                var classmates = new List<ClassmateUIVM>();
+                var people = await client.GetAsync(CoursesWriteApi() + "/" + id + "/classmates");
+                if (people.IsSuccessStatusCode)
+                    classmates = await people.Content.ReadFromJsonAsync<List<ClassmateUIVM>>() ?? classmates;
+
                 return new CourseLessonsPageUIVM
                 {
                     Id = course.Id,
                     Title = course.Title,
                     Slug = course.Slug,
+                    TeacherName = course.TeacherName ?? course.TeacherEmail,
+                    Classmates = classmates,
                     Modules = course.Modules ?? new List<CourseModuleUIVM>()
                 };
             }
@@ -1215,7 +1271,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             DeleteLocalFile(path, "images/courses/");
         }
 
-        private async Task<string?> SaveLessonVideoAsync(IFormFile? file)
+        private async Task<string?> SaveLessonVideoAsync(IFormFile? file, string? slug, int order, string? title)
         {
             if (file is null || file.Length is 0 or > MaxLessonVideoBytes)
                 return null;
@@ -1224,20 +1280,58 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             if (!VideoExtensions.Contains(extension))
                 return null;
 
-            var folder = Path.Combine(_environment.WebRootPath, "videos", "lessons");
+            var courseFolder = SafeFileName(slug, "course");
+            var folder = Path.Combine(_environment.WebRootPath, "videos", "lessons", courseFolder);
             Directory.CreateDirectory(folder);
 
-            var fileName = "lesson-" + Guid.NewGuid().ToString("N")[..12] + extension.ToLowerInvariant();
+            var fileName = $"{Math.Max(1, order):00}-{SafeFileName(title, "lesson")}{extension.ToLowerInvariant()}";
             var fullPath = Path.Combine(folder, fileName);
             await using var stream = System.IO.File.Create(fullPath);
             await file.CopyToAsync(stream);
 
-            return "videos/lessons/" + fileName;
+            return "videos/lessons/" + courseFolder + "/" + fileName;
+        }
+
+        private static string SafeFileName(string? value, string fallback)
+        {
+            var source = (value ?? string.Empty).Trim().ToLowerInvariant();
+            var chars = source.Select(c => char.IsLetterOrDigit(c) ? c : '-').ToArray();
+            var name = new string(chars).Trim('-');
+            while (name.Contains("--", StringComparison.Ordinal))
+                name = name.Replace("--", "-", StringComparison.Ordinal);
+            if (name.Length > 60)
+                name = name[..60].Trim('-');
+            return string.IsNullOrEmpty(name) ? fallback : name;
         }
 
         private void DeleteLessonVideo(string? path)
         {
             DeleteLocalFile(path, "videos/lessons/");
+        }
+
+        private async Task<string?> SaveCourseVideoAsync(IFormFile? file)
+        {
+            if (file is null || file.Length is 0 or > MaxLessonVideoBytes)
+                return null;
+
+            var extension = Path.GetExtension(file.FileName);
+            if (!VideoExtensions.Contains(extension))
+                return null;
+
+            var folder = Path.Combine(_environment.WebRootPath, "videos", "courses");
+            Directory.CreateDirectory(folder);
+
+            var fileName = "course-" + Guid.NewGuid().ToString("N")[..12] + extension.ToLowerInvariant();
+            var fullPath = Path.Combine(folder, fileName);
+            await using var stream = System.IO.File.Create(fullPath);
+            await file.CopyToAsync(stream);
+
+            return "videos/courses/" + fileName;
+        }
+
+        private void DeleteCourseVideo(string? path)
+        {
+            DeleteLocalFile(path, "videos/courses/");
         }
 
         private void DeleteLocalFile(string? path, string prefix)

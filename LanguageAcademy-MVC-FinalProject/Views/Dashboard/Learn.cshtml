@@ -6,11 +6,9 @@
         .OrderBy(m => m.Order)
         .SelectMany(m => m.Lessons.OrderBy(x => x.Order).Select(x => new { Module = m, Lesson = x }))
         .ToList() ?? [];
-    var current = lessons.FirstOrDefault(m => m.Lesson.Id == lessonId)
-        ?? lessons.FirstOrDefault(m => m.Lesson.Kind == "video")
-        ?? lessons.FirstOrDefault();
+    var current = lessonId is int openId ? lessons.FirstOrDefault(m => m.Lesson.Id == openId) : null;
 }
-<div class="dash-content">
+<div class="dash-content class-page">
     @if (Model is null)
     {
         <section class="panel">
@@ -21,118 +19,132 @@
     }
     else
     {
-        <section class="panel">
-            <h2>@Model.Title</h2>
-            <p>@Model.Level · @Model.Duration</p>
+        <section class="class-sheet">
+            <header class="class-head">
+                <span class="class-folder" aria-hidden="true"><i class="bi bi-folder2"></i></span>
+                <div>
+                    <h2>@Model.Title</h2>
+                    <p>@(string.IsNullOrWhiteSpace(Model.TeacherName) ? Model.TeacherEmail : Model.TeacherName)</p>
+                </div>
+            </header>
             @if (TempData["LearnNotice"] is string notice)
             {
-                <p>@notice</p>
+                <p class="class-notice">@notice</p>
             }
-            <p>
-                <a class="btn btn-outline" asp-controller="Dashboard" asp-action="MyCourses" data-i18n="dash_my_courses">My Courses</a>
-                <a class="btn btn-outline" asp-controller="Courses" asp-action="Details" asp-route-slug="@Model.Slug" data-i18n="btn_view_course">View Course</a>
+            <p class="class-actions">
+                <a asp-controller="Dashboard" asp-action="MyCourses" data-i18n="dash_my_courses">My Courses</a>
+                <a asp-controller="Courses" asp-action="Details" asp-route-slug="@Model.Slug" data-i18n="btn_view_course">View course</a>
             </p>
-        </section>
 
-        @if (current is not null)
-        {
-            var lesson = current.Lesson;
-            <section class="panel">
-                <h3>@lesson.Title</h3>
-                <p>@current.Module.Title · @lesson.Kind</p>
-                @if (lesson.Kind == "video" && !string.IsNullOrWhiteSpace(lesson.Video))
-                {
-                    var remote = lesson.Video.StartsWith("http", StringComparison.OrdinalIgnoreCase);
-                    var src = remote ? lesson.Video : "/" + lesson.Video.TrimStart('/');
-                    <div class="video-embed-wrap" style="margin:8px 0 16px;aspect-ratio:16/9;position:relative;background:#111;border-radius:12px;overflow:hidden;">
-                        @if (remote)
-                        {
-                            <iframe class="video-embed" src="@src" title="@lesson.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen style="position:absolute;inset:0;width:100%;height:100%;border:0;"></iframe>
-                        }
-                        else
-                        {
-                            <video class="video-embed" src="@src" title="@lesson.Title" controls playsinline style="position:absolute;inset:0;width:100%;height:100%;border:0;"></video>
-                        }
-                    </div>
-                    <p>Video lesson. Complete it for +20 XP.</p>
-                }
-                else if (lesson.Kind == "quiz")
-                {
-                    <p>Short quiz check. Complete it for +50 XP and +30 points.</p>
-                }
-                else if (lesson.Kind == "homework")
-                {
-                    <p>Homework task. Complete it for +50 XP and +20 points.</p>
-                }
-                else if (lesson.Kind == "text" || lesson.Kind == "download")
-                {
-                    <p>Read or download this lesson, then mark it complete for +20 XP.</p>
-                }
-                else
-                {
-                    <p>This lesson has no video yet.</p>
-                }
-                @if (lesson.Completed)
-                {
-                    <p>Completed</p>
-                }
-                else
-                {
-                    <form asp-controller="Dashboard" asp-action="CompleteLesson" method="post">
-                        <input type="hidden" name="slug" value="@Model.Slug" />
-                        <input type="hidden" name="lessonId" value="@lesson.Id" />
-                        <button class="btn btn-primary" type="submit">@(lesson.Kind == "quiz" ? "Complete quiz" : lesson.Kind == "homework" ? "Complete homework" : "Mark complete")</button>
-                    </form>
-                }
-            </section>
-        }
-        else
-        {
-            <section class="panel">
-                <p>No lessons yet.</p>
-            </section>
-        }
+            @if (current is not null)
+            {
+                var lesson = current.Lesson;
+                <section class="class-player">
+                    <h3>@lesson.Title</h3>
+                    <p>@current.Module.Title · @lesson.Kind</p>
+                    @if (lesson.Kind == "video" && !string.IsNullOrWhiteSpace(lesson.Video))
+                    {
+                        var remote = lesson.Video.StartsWith("http", StringComparison.OrdinalIgnoreCase);
+                        var src = remote ? lesson.Video : "/" + lesson.Video.TrimStart('/');
+                        <div class="video-embed-wrap class-player-frame">
+                            @if (remote)
+                            {
+                                <iframe class="video-embed" src="@src" title="@lesson.Title" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen></iframe>
+                            }
+                            else
+                            {
+                                <video class="video-embed" src="@src" title="@lesson.Title" controls playsinline></video>
+                            }
+                        </div>
+                        <p>Video lesson. Complete it for +20 XP.</p>
+                    }
+                    else if (lesson.Kind == "quiz")
+                    {
+                        <p>Short quiz check. Complete it for +50 XP and +30 points.</p>
+                    }
+                    else if (lesson.Kind == "homework")
+                    {
+                        <p>Homework task. Complete it for +50 XP and +20 points.</p>
+                    }
+                    else if (lesson.Kind == "text" || lesson.Kind == "download")
+                    {
+                        <p>Read or download this lesson, then mark it complete for +20 XP.</p>
+                    }
+                    else
+                    {
+                        <p>This lesson has no video yet.</p>
+                    }
+                    @if (lesson.Completed)
+                    {
+                        <p>Completed</p>
+                    }
+                    else
+                    {
+                        <form asp-controller="Dashboard" asp-action="CompleteLesson" method="post">
+                            <input type="hidden" name="slug" value="@Model.Slug" />
+                            <input type="hidden" name="lessonId" value="@lesson.Id" />
+                            <button class="btn btn-primary" type="submit">@(lesson.Kind == "quiz" ? "Complete quiz" : lesson.Kind == "homework" ? "Complete homework" : "Mark complete")</button>
+                        </form>
+                    }
+                    <p><a asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug">Back to class</a></p>
+                </section>
+            }
 
-        @foreach (var module in Model.Modules.OrderBy(m => m.Order))
-        {
-            <section class="panel">
-                <h3>@module.Title</h3>
-                <p>@module.Info</p>
-                @if (module.Lessons.Count == 0)
-                {
-                    <p>No lessons yet.</p>
-                }
-                else
-                {
-                    <div class="table-wrap">
-                        <table class="data-table">
-                            <tbody>
-                                @foreach (var lesson in module.Lessons.OrderBy(m => m.Order))
+            @if (lessons.Count == 0)
+            {
+                <p>No class files yet.</p>
+            }
+            else
+            {
+                <div class="class-files">
+                    @foreach (var item in lessons)
+                    {
+                        var lesson = item.Lesson;
+                        var video = (lesson.Video ?? string.Empty).Replace('\\', '/');
+                        var local = video.StartsWith("videos/lessons/", StringComparison.OrdinalIgnoreCase);
+                        var src = local ? "/" + video.TrimStart('/') : null;
+                        var fileName = local
+                            ? System.IO.Path.GetFileNameWithoutExtension(video)
+                            : $"{lesson.Order}-{lesson.Title}";
+                        <article class="class-file">
+                            <a class="class-file-thumb @(local ? null : "is-empty")" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug" asp-route-lessonId="@lesson.Id">
+                                @if (local && src is not null)
                                 {
-                                    var active = current?.Lesson.Id == lesson.Id;
-                                    <tr>
-                                        <td>
-                                            @if (active)
-                                            {
-                                                <strong>@lesson.Title</strong>
-                                            }
-                                            else
-                                            {
-                                                @lesson.Title
-                                            }
-                                        </td>
-                                        <td>@lesson.Kind</td>
-                                        <td>@(lesson.Completed ? "Done" : null)</td>
-                                        <td>
-                                            <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug" asp-route-lessonId="@lesson.Id">@(active ? "Open" : lesson.Kind == "video" ? "Play" : "Open")</a>
-                                        </td>
-                                    </tr>
+                                    <video muted preload="metadata" src="@src" playsinline></video>
+                                    <span class="class-play"><i class="bi bi-play-fill"></i></span>
                                 }
-                            </tbody>
-                        </table>
-                    </div>
+                                else
+                                {
+                                    <i class="bi @(lesson.Kind == "quiz" ? "bi-ui-checks" : lesson.Kind == "homework" ? "bi-journal-text" : "bi-play-fill")"></i>
+                                }
+                            </a>
+                            <a class="class-file-name" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug" asp-route-lessonId="@lesson.Id">@fileName</a>
+                            <p class="class-file-meta">@System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(lesson.Kind)@(lesson.Completed ? " · Done" : null)</p>
+                        </article>
+                    }
+                </div>
+            }
+
+            <section class="class-people">
+                <h3><i class="bi bi-people"></i> Classmates</h3>
+                @if (Model.Classmates.Count == 0)
+                {
+                    <p class="class-notice">No other students in this class yet.</p>
+                }
+                else
+                {
+                    <ul>
+                        @foreach (var person in Model.Classmates)
+                        {
+                            var names = person.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            var initials = names.Length == 0 ? "?" : names.Length == 1
+                                ? names[0][..1].ToUpperInvariant()
+                                : (names[0][..1] + names[^1][..1]).ToUpperInvariant();
+                            <li><span class="class-avatar">@initials</span> @person.Name</li>
+                        }
+                    </ul>
                 }
             </section>
-        }
+        </section>
     }
 </div>

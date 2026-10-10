@@ -1,21 +1,99 @@
 @model CourseLessonsPageUIVM
 @{
     Layout = "_DashLayout";
+    var lessons = Model.Modules
+        .OrderBy(m => m.Order)
+        .SelectMany(m => m.Lessons.OrderBy(x => x.Order).Select(x => new { Module = m, Lesson = x }))
+        .ToList();
 }
-<div class="dash-content">
-    <section class="panel">
-        <h2>@Model.Title</h2>
-        <p>Add modules and lessons here. For video lessons, choose a file from your computer. Do not paste a YouTube URL.</p>
+<div class="dash-content class-page">
+    <section class="class-sheet">
+        <header class="class-head">
+            <span class="class-folder" aria-hidden="true"><i class="bi bi-folder2"></i></span>
+            <div>
+                <h2>@Model.Title</h2>
+                <p>@(string.IsNullOrWhiteSpace(Model.TeacherName) ? "Teacher" : Model.TeacherName)</p>
+            </div>
+        </header>
+        <p class="class-actions">
+            <a asp-controller="Dashboard" asp-action="@(Roles.IsStaff(User) ? "Courses" : "Studio")">@(Roles.IsStaff(User) ? "Courses" : "Studio")</a>
+            <a asp-controller="Courses" asp-action="Details" asp-route-slug="@Model.Slug">View course</a>
+        </p>
         @if (TempData["CourseNotice"] is string notice)
         {
-            <p>@notice</p>
+            <p class="class-notice">@notice</p>
         }
         <div asp-validation-summary="ModelOnly" class="field-error"></div>
-        <p>
-            <a class="btn btn-outline" asp-controller="Dashboard" asp-action="@(Roles.IsStaff(User) ? "Courses" : "Studio")">@(Roles.IsStaff(User) ? "Courses" : "Studio")</a>
-            <a class="btn btn-outline" asp-controller="Courses" asp-action="Details" asp-route-slug="@Model.Slug">View Course</a>
-        </p>
 
+        @if (lessons.Count == 0)
+        {
+            <p>No class files yet. Add a module and upload a video below.</p>
+        }
+        else
+        {
+            <div class="class-files">
+                @foreach (var item in lessons)
+                {
+                    var lesson = item.Lesson;
+                    var video = (lesson.Video ?? string.Empty).Replace('\\', '/');
+                    var local = video.StartsWith("videos/lessons/", StringComparison.OrdinalIgnoreCase);
+                    var remote = video.StartsWith("http", StringComparison.OrdinalIgnoreCase);
+                    var src = local ? "/" + video.TrimStart('/') : null;
+                    var fileName = local
+                        ? System.IO.Path.GetFileNameWithoutExtension(video)
+                        : $"{lesson.Order}-{lesson.Title}";
+                    <article class="class-file">
+                        @if (local && src is not null)
+                        {
+                            <a class="class-file-thumb" asp-controller="Dashboard" asp-action="EditLesson" asp-route-id="@Model.Id" asp-route-moduleId="@item.Module.Id" asp-route-lessonId="@lesson.Id">
+                                <video muted preload="metadata" src="@src" playsinline></video>
+                                <span class="class-play"><i class="bi bi-play-fill"></i></span>
+                            </a>
+                        }
+                        else
+                        {
+                            <a class="class-file-thumb is-empty" asp-controller="Dashboard" asp-action="EditLesson" asp-route-id="@Model.Id" asp-route-moduleId="@item.Module.Id" asp-route-lessonId="@lesson.Id">
+                                <i class="bi @(lesson.Kind == "quiz" ? "bi-ui-checks" : lesson.Kind == "homework" ? "bi-journal-text" : "bi-play-fill")"></i>
+                            </a>
+                        }
+                        <a class="class-file-name" asp-controller="Dashboard" asp-action="EditLesson" asp-route-id="@Model.Id" asp-route-moduleId="@item.Module.Id" asp-route-lessonId="@lesson.Id">@fileName</a>
+                        <p class="class-file-meta">@(remote ? "Video" : System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(lesson.Kind))</p>
+                        <p class="class-file-tools">
+                            <a asp-controller="Dashboard" asp-action="EditLesson" asp-route-id="@Model.Id" asp-route-moduleId="@item.Module.Id" asp-route-lessonId="@lesson.Id">Edit</a>
+                            <form asp-controller="Dashboard" asp-action="DeleteLesson" asp-route-id="@Model.Id" asp-route-moduleId="@item.Module.Id" asp-route-lessonId="@lesson.Id" method="post" onsubmit="return confirm('Delete this lesson?');">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </p>
+                    </article>
+                }
+            </div>
+        }
+
+        <section class="class-people">
+            <h3><i class="bi bi-people"></i> Classmates</h3>
+            @if (Model.Classmates.Count == 0)
+            {
+                <p class="class-notice">No students in this class yet.</p>
+            }
+            else
+            {
+                <ul>
+                    @foreach (var person in Model.Classmates)
+                    {
+                        var names = person.Name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                        var initials = names.Length == 0 ? "?" : names.Length == 1
+                            ? names[0][..1].ToUpperInvariant()
+                            : (names[0][..1] + names[^1][..1]).ToUpperInvariant();
+                        <li><span class="class-avatar">@initials</span> @person.Name</li>
+                    }
+                </ul>
+            }
+            <a class="class-invite" asp-controller="Dashboard" asp-action="Messages"><i class="bi bi-person-plus"></i> Invite people</a>
+        </section>
+    </section>
+
+    <details class="class-manage" @(ViewData.ModelState.IsValid ? null : "open")>
+        <summary>Add material</summary>
         <h3>New module</h3>
         <form asp-controller="Dashboard" asp-action="CreateModule" asp-route-id="@Model.Id" method="post" novalidate data-module-create>
             <div class="field">
@@ -32,19 +110,16 @@
                 <button class="btn btn-primary" type="submit">Add module</button>
             </p>
         </form>
-    </section>
 
     @if (Model.Modules.Count == 0)
     {
-        <section class="panel">
-            <p>No modules yet.</p>
-        </section>
+        <p class="class-notice">Add a module first, then upload numbered class videos.</p>
     }
     else
     {
         @foreach (var module in Model.Modules.OrderBy(m => m.Order))
         {
-            <section class="panel">
+            <section>
                 <h3>@module.Title</h3>
                 <p>@module.Info</p>
                 <p>
@@ -53,52 +128,8 @@
                         <button class="btn btn-outline btn-sm" type="submit">Delete module</button>
                     </form>
                 </p>
-                @if (module.Lessons.Count == 0)
-                {
-                    <p>No lessons yet.</p>
-                }
-                else
-                {
-                    <div class="table-wrap">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Lesson</th>
-                                    <th>Type</th>
-                                    <th>Duration</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var lesson in module.Lessons.OrderBy(m => m.Order))
-                                {
-                                    <tr>
-                                        <td>@lesson.Title</td>
-                                        <td>@lesson.Kind</td>
-                                        <td>
-                                            @if (lesson.Seconds > 0)
-                                            {
-                                                <text>@lesson.Seconds sec</text>
-                                            }
-                                            else
-                                            {
-                                                <text>—</text>
-                                            }
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="EditLesson" asp-route-id="@Model.Id" asp-route-moduleId="@module.Id" asp-route-lessonId="@lesson.Id">Edit</a>
-                                            <form asp-controller="Dashboard" asp-action="DeleteLesson" asp-route-id="@Model.Id" asp-route-moduleId="@module.Id" asp-route-lessonId="@lesson.Id" method="post" style="display:inline;" onsubmit="return confirm('Delete this lesson?');">
-                                                <button class="btn btn-outline btn-sm" type="submit">Delete</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                }
-
                 <h4>New lesson</h4>
+                <p class="class-notice">Upload a video. Max 50 MB. Do not paste a YouTube URL.</p>
                 <form asp-controller="Dashboard" asp-action="CreateLesson" asp-route-id="@Model.Id" asp-route-moduleId="@module.Id" method="post" enctype="multipart/form-data" novalidate data-lesson-create>
                     <div class="field">
                         <label for="Title-@module.Id">Title</label>
@@ -134,6 +165,7 @@
             </section>
         }
     }
+    </details>
 </div>
 <script>
     (function () {

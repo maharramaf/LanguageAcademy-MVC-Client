@@ -100,6 +100,10 @@
   .float-card-b { top: 12px; }
   .welcome { flex-direction: column; align-items: flex-start; }
   .dash-content { padding: 18px; }
+  .dash-content.class-page { padding: 8px 20px 48px; }
+  .class-files { grid-template-columns: repeat(2, 1fr); gap: 22px 16px; }
+  .class-head h2 { font-size: 1.3rem; }
+  .class-file-tools { opacity: 1; }
   .dash-top { padding: 14px 18px; }
   .page-hero { padding: 48px 0 40px; }
   .cta { padding-bottom: 56px; }
@@ -131,6 +135,7 @@
 }
 
 @media (max-width: 576px) {
+  .class-files { grid-template-columns: 1fr; }
   .container { width: min(var(--container), calc(100% - 28px)); }
   .stats-grid,
   .dash-stats,

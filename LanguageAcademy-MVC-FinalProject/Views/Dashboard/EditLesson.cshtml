@@ -8,7 +8,7 @@
 <div class="dash-content">
     <section class="panel">
         <h2>Edit lesson</h2>
-        <p>For video lessons, choose a file from your computer. Leave empty to keep the current video. Do not paste a YouTube URL.</p>
+        <p>Upload replaces the file in this course folder. Leave empty to keep the current video. Do not paste a YouTube URL. Max 50 MB.</p>
         <form asp-controller="Dashboard" asp-action="EditLesson" asp-route-id="@Model.CourseId" asp-route-moduleId="@Model.ModuleId" asp-route-lessonId="@Model.LessonId" method="post" enctype="multipart/form-data" novalidate data-lesson-edit>
             <input type="hidden" asp-for="CourseId" />
             <input type="hidden" asp-for="ModuleId" />

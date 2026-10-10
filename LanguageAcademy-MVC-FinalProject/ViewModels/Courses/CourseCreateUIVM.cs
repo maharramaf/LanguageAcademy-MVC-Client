@@ -32,5 +32,7 @@ namespace LanguageAcademy_MVC_FinalProject.ViewModels.Courses
         [Required(ErrorMessage = "Overview is required.")]
         [MaxLength(2000, ErrorMessage = "Overview is required.")]
         public string Overview { get; set; } = string.Empty;
+
+        public IFormFile? Video { get; set; }
     }
 }

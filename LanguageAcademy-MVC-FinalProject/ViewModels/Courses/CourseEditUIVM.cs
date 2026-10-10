@@ -7,6 +7,7 @@ namespace LanguageAcademy_MVC_FinalProject.ViewModels.Courses
         public int Id { get; set; }
         public string Slug { get; set; } = string.Empty;
         public string CurrentImage { get; set; } = string.Empty;
+        public string? CurrentVideo { get; set; }
 
         [Required(ErrorMessage = "Title is required.")]
         [MaxLength(160, ErrorMessage = "Title is required.")]
@@ -35,6 +36,8 @@ namespace LanguageAcademy_MVC_FinalProject.ViewModels.Courses
         [Required(ErrorMessage = "Overview is required.")]
         [MaxLength(2000, ErrorMessage = "Overview is required.")]
         public string Overview { get; set; } = string.Empty;
+
+        public IFormFile? Video { get; set; }
 
         [MaxLength(256, ErrorMessage = "Teacher email is too long.")]
         public string? TeacherEmail { get; set; }

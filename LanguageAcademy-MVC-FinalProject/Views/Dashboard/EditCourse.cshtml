@@ -10,11 +10,12 @@
 <div class="dash-content">
     <section class="panel">
         <h2>Edit course</h2>
-        <p>Leave the image empty to keep the current photo. Add lessons from the course list. Videos come later from the folder.</p>
+        <p>Leave the image or video empty to keep the current files. Upload a preview video from your computer. Do not paste a YouTube URL.</p>
         <form asp-controller="Dashboard" asp-action="EditCourse" asp-route-id="@Model.Id" method="post" enctype="multipart/form-data" novalidate data-course-edit>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="Slug" />
             <input type="hidden" asp-for="CurrentImage" />
+            <input type="hidden" asp-for="CurrentVideo" />
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
                 <label asp-for="Title">Title</label>
@@ -50,6 +51,15 @@
                 <input asp-for="Image" type="file" accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif" data-image-input />
                 <img class="course-image-preview" data-image-preview data-current="@preview" alt="Course image" src="@preview" hidden="@(preview is null ? "hidden" : null)" />
                 <span asp-validation-for="Image" class="field-error" data-error-for="Image"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Video">Preview video</label>
+                <input asp-for="Video" type="file" accept=".mp4,.webm,.ogg,.ogv,video/mp4,video/webm,video/ogg" />
+                @if (!string.IsNullOrWhiteSpace(Model.CurrentVideo) && Model.CurrentVideo.Replace('\\', '/').StartsWith("videos/courses/", StringComparison.OrdinalIgnoreCase))
+                {
+                    <video src="/@Model.CurrentVideo.TrimStart('/')" controls playsinline style="max-width:100%;margin-top:8px;border-radius:12px;"></video>
+                }
+                <span asp-validation-for="Video" class="field-error" data-error-for="Video"></span>
             </div>
             <div class="field">
                 <label asp-for="Summary">Summary</label>
