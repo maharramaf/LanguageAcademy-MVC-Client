@@ -1,0 +1,45 @@
+@model RewardsUIVM
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2 data-i18n="reward_title">Rewards</h2>
+        <p data-i18n="reward_lead">Earn XP and MF Points as you learn. Enrolled courses count in this test.</p>
+    </section>
+    <div class="plan-grid">
+        <section class="panel">
+            <h3 data-i18n="reward_xp">Your XP</h3>
+            <p class="plan-metric">@Model.Xp XP</p>
+            <p>Current Level: <strong>@Model.Level — @Model.LevelName</strong></p>
+            <div class="progress" aria-hidden="true"><span style="width:@Model.ProgressPercent%"></span></div>
+            <p>@Model.NextLevelText</p>
+        </section>
+        <section class="panel">
+            <h3 data-i18n="reward_mf_points">MF Points</h3>
+            <p class="plan-metric">@Model.Points</p>
+            <p>Points can later become discount coupons. Demo only.</p>
+        </section>
+        <section class="panel">
+            <h3>Learning Streak</h3>
+            <p class="plan-metric">@Model.StreakDays <small>Days</small></p>
+        </section>
+        <section class="panel">
+            <h3>Achievements</h3>
+            <div class="plan-badges">
+                @foreach (var item in Model.Achievements)
+                {
+                    <div class="plan-badge-item @(item.Unlocked ? "is-on" : null)">
+                        @(item.Unlocked ? "UNLOCKED" : "LOCKED") @item.Title
+                        <small>@item.Done / @item.Total</small>
+                    </div>
+                }
+            </div>
+        </section>
+    </div>
+    <section class="panel">
+        <h3 data-i18n="reward_homework">Homework Rewards</h3>
+        <p data-i18n="reward_homework_lead">Homework and quiz XP will count when Learn saves progress.</p>
+        <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Learn" data-i18n="learn_continue">Continue learning</a>
+    </section>
+</div>

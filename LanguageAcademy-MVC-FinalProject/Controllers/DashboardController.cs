@@ -5,6 +5,7 @@ using LanguageAcademy_MVC_FinalProject.ViewModels.Accounts;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Courses;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Messages;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Earnings;
+using LanguageAcademy_MVC_FinalProject.ViewModels.Rewards;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Plans;
 using LanguageAcademy_MVC_FinalProject.ViewModels.TeacherApplications;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Teachers;
@@ -144,7 +145,12 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.StudentPanelRoles)]
-        public IActionResult Rewards() => PlaceholderPage("Rewards", "reward_title");
+        public async Task<IActionResult> Rewards()
+        {
+            SetDash("Rewards", "reward_title");
+            var page = await LoadRewardsAsync() ?? new RewardsUIVM();
+            return View(page);
+        }
 
         [HttpGet]
         [Authorize(Roles = Roles.TeacherPanelRoles)]
@@ -1242,6 +1248,23 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private string CourseListAction()
         {
             return Roles.IsStaff(User) ? nameof(Courses) : nameof(Studio);
+        }
+
+        private async Task<RewardsUIVM?> LoadRewardsAsync()
+        {
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/Rewards");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                return await response.Content.ReadFromJsonAsync<RewardsUIVM>();
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
 
         private async Task<EarningsUIVM?> LoadEarningsAsync()
