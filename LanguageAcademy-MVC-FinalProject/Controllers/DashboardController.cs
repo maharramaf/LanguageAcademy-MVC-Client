@@ -986,6 +986,38 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.StudentPanelRoles)]
+        public async Task<IActionResult> CompleteLesson(string slug, int lessonId)
+        {
+            if (!Roles.IsStudent(User))
+                return RedirectToAction(nameof(Learn));
+
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.PostAsync($"api/Rewards/lessons/{lessonId}", null);
+                if (response.IsSuccessStatusCode)
+                {
+                    var body = await response.Content.ReadFromJsonAsync<LessonCompleteUIVM>();
+                    TempData["LearnNotice"] = body?.AlreadyCompleted == true
+                        ? "Lesson already completed."
+                        : $"Lesson completed. +{body?.XpGained ?? 0} XP.";
+                }
+                else
+                {
+                    TempData["LearnNotice"] = "Could not complete the lesson.";
+                }
+            }
+            catch (HttpRequestException)
+            {
+                TempData["LearnNotice"] = "Could not complete the lesson.";
+            }
+
+            return RedirectToAction(nameof(Learn), new { slug, lessonId });
+        }
+
         [HttpGet]
         [Authorize(Roles = Roles.TeacherPanelRoles)]
         public async Task<IActionResult> Studio()
@@ -1389,6 +1421,13 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private sealed class AcceptResultUIVM
         {
             public string? TemporaryPassword { get; set; }
+        }
+
+        private sealed class LessonCompleteUIVM
+        {
+            public bool AlreadyCompleted { get; set; }
+            public int XpGained { get; set; }
+            public int PointsGained { get; set; }
         }
 
         private sealed class ProfileTokenUIVM

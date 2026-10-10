@@ -24,6 +24,10 @@
         <section class="panel">
             <h2>@Model.Title</h2>
             <p>@Model.Level · @Model.Duration</p>
+            @if (TempData["LearnNotice"] is string notice)
+            {
+                <p>@notice</p>
+            }
             <p>
                 <a class="btn btn-outline" asp-controller="Dashboard" asp-action="MyCourses" data-i18n="dash_my_courses">My Courses</a>
                 <a class="btn btn-outline" asp-controller="Courses" asp-action="Details" asp-route-slug="@Model.Slug" data-i18n="btn_view_course">View Course</a>
@@ -54,6 +58,18 @@
                 else
                 {
                     <p>This lesson has no video yet.</p>
+                }
+                @if (lesson.Completed)
+                {
+                    <p>Completed</p>
+                }
+                else
+                {
+                    <form asp-controller="Dashboard" asp-action="CompleteLesson" method="post">
+                        <input type="hidden" name="slug" value="@Model.Slug" />
+                        <input type="hidden" name="lessonId" value="@lesson.Id" />
+                        <button class="btn btn-primary" type="submit">Mark complete</button>
+                    </form>
                 }
             </section>
         }
@@ -93,6 +109,7 @@
                                             }
                                         </td>
                                         <td>@lesson.Kind</td>
+                                        <td>@(lesson.Completed ? "Done" : null)</td>
                                         <td>
                                             <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug" asp-route-lessonId="@lesson.Id">@(active ? "Playing" : "Play")</a>
                                         </td>
