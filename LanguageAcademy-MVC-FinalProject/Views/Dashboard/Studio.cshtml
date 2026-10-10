@@ -10,6 +10,11 @@
             <p>@notice</p>
         }
         <p>These are courses assigned to you. Add modules and lessons here. Admins assign a course from Edit course.</p>
+        @if (ViewBag.StudioLocked as bool? == true)
+        {
+            <p>Your teacher plan allows @ViewBag.StudioLimit course(s). Choose a higher plan to get more assigned.</p>
+            <a class="btn btn-primary" asp-controller="Dashboard" asp-action="TeacherPlan">Choose a teacher plan</a>
+        }
         @if (Model.Count == 0)
         {
             <p>No courses assigned yet.</p>

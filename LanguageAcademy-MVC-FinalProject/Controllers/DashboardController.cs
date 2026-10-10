@@ -1042,6 +1042,14 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             {
             }
 
+            if (!Roles.IsStaff(User))
+            {
+                var page = await LoadTeacherPlansPageAsync();
+                var limit = TeacherCourseLimit(page?.Current);
+                ViewBag.StudioLimit = limit;
+                ViewBag.StudioLocked = page is not null && limit is int max && items.Count >= max;
+            }
+
             return View(items);
         }
 
@@ -1314,6 +1322,17 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             {
                 return null;
             }
+        }
+
+        private static int? TeacherCourseLimit(string? type)
+        {
+            return type?.Trim().ToLowerInvariant() switch
+            {
+                "demo" => 1,
+                "standard" => 5,
+                "premium" => null,
+                _ => 1
+            };
         }
 
         private async Task<PlanPageUIVM?> LoadTeacherPlansPageAsync()
