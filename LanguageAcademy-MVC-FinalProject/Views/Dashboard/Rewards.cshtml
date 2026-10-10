@@ -39,7 +39,9 @@
     </div>
     <section class="panel">
         <h3 data-i18n="reward_homework">Homework Rewards</h3>
-        <p data-i18n="reward_homework_lead">Homework and quiz XP will count when Learn saves progress.</p>
+        <p>Quizzes completed: <strong>@Model.QuizzesDone</strong> · +50 XP each</p>
+        <p>Homework completed: <strong>@Model.HomeworkDone</strong> · +50 XP each</p>
+        <p>Lessons completed: <strong>@Model.LessonsDone</strong> · +20 XP each</p>
         <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Learn" data-i18n="learn_continue">Continue learning</a>
     </section>
 </div>

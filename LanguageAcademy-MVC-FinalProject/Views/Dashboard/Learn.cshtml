@@ -54,6 +54,19 @@
                             <video class="video-embed" src="@src" title="@lesson.Title" controls playsinline style="position:absolute;inset:0;width:100%;height:100%;border:0;"></video>
                         }
                     </div>
+                    <p>Video lesson. Complete it for +20 XP.</p>
+                }
+                else if (lesson.Kind == "quiz")
+                {
+                    <p>Short quiz check. Complete it for +50 XP and +30 points.</p>
+                }
+                else if (lesson.Kind == "homework")
+                {
+                    <p>Homework task. Complete it for +50 XP and +20 points.</p>
+                }
+                else if (lesson.Kind == "text" || lesson.Kind == "download")
+                {
+                    <p>Read or download this lesson, then mark it complete for +20 XP.</p>
                 }
                 else
                 {
@@ -68,7 +81,7 @@
                     <form asp-controller="Dashboard" asp-action="CompleteLesson" method="post">
                         <input type="hidden" name="slug" value="@Model.Slug" />
                         <input type="hidden" name="lessonId" value="@lesson.Id" />
-                        <button class="btn btn-primary" type="submit">Mark complete</button>
+                        <button class="btn btn-primary" type="submit">@(lesson.Kind == "quiz" ? "Complete quiz" : lesson.Kind == "homework" ? "Complete homework" : "Mark complete")</button>
                     </form>
                 }
             </section>
@@ -111,7 +124,7 @@
                                         <td>@lesson.Kind</td>
                                         <td>@(lesson.Completed ? "Done" : null)</td>
                                         <td>
-                                            <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug" asp-route-lessonId="@lesson.Id">@(active ? "Playing" : "Play")</a>
+                                            <a class="btn btn-outline btn-sm" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug" asp-route-lessonId="@lesson.Id">@(active ? "Open" : lesson.Kind == "video" ? "Play" : "Open")</a>
                                         </td>
                                     </tr>
                                 }

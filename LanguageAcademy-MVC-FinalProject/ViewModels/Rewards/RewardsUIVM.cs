@@ -9,6 +9,9 @@ namespace LanguageAcademy_MVC_FinalProject.ViewModels.Rewards
         public int ProgressPercent { get; set; }
         public string NextLevelText { get; set; } = string.Empty;
         public int StreakDays { get; set; }
+        public int LessonsDone { get; set; }
+        public int HomeworkDone { get; set; }
+        public int QuizzesDone { get; set; }
         public int CoursesDone { get; set; }
         public List<RewardAchievementUIVM> Achievements { get; set; } = new();
     }

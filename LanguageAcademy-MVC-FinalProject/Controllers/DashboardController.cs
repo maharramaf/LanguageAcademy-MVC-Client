@@ -1003,7 +1003,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     var body = await response.Content.ReadFromJsonAsync<LessonCompleteUIVM>();
                     TempData["LearnNotice"] = body?.AlreadyCompleted == true
                         ? "Lesson already completed."
-                        : $"Lesson completed. +{body?.XpGained ?? 0} XP.";
+                        : CompleteNotice(body);
                 }
                 else
                 {
@@ -1442,11 +1442,26 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             public string? TemporaryPassword { get; set; }
         }
 
+        private static string CompleteNotice(LessonCompleteUIVM? body)
+        {
+            var label = (body?.Kind ?? "lesson").Trim().ToLowerInvariant() switch
+            {
+                "quiz" => "Quiz",
+                "homework" => "Homework",
+                _ => "Lesson"
+            };
+            var text = $"{label} completed. +{body?.XpGained ?? 0} XP";
+            return (body?.PointsGained ?? 0) > 0
+                ? $"{text}, +{body?.PointsGained} points."
+                : $"{text}.";
+        }
+
         private sealed class LessonCompleteUIVM
         {
             public bool AlreadyCompleted { get; set; }
             public int XpGained { get; set; }
             public int PointsGained { get; set; }
+            public string? Kind { get; set; }
         }
 
         private sealed class ProfileTokenUIVM
