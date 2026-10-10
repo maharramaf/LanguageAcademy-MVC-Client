@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using LanguageAcademy_MVC_FinalProject.Helpers;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Courses;
+using LanguageAcademy_MVC_FinalProject.ViewModels.Plans;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,6 +40,9 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             if (course is null) return NotFound();
 
             ViewBag.Enrolled = await IsEnrolledAsync(course.Id);
+            ViewBag.PlanLocked = Roles.IsStudent(User)
+                && ViewBag.Enrolled as bool? != true
+                && !await CanEnrollWithPlanAsync(course.Type);
             return View(course);
         }
 
@@ -62,7 +67,7 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
                     return RedirectToAction("MyCourses", "Dashboard");
                 }
 
-                TempData["EnrollError"] = "Could not enroll in this course.";
+                TempData["EnrollError"] = await ReadEnrollErrorAsync(response);
             }
             catch (HttpRequestException)
             {
@@ -70,6 +75,51 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
             }
 
             return RedirectToAction(nameof(Details), new { slug });
+        }
+
+        private async Task<bool> CanEnrollWithPlanAsync(string? courseType)
+        {
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var page = await client.GetFromJsonAsync<PlanPageUIVM>("api/Plans");
+                return Rank(page?.Current) >= Rank(courseType);
+            }
+            catch (HttpRequestException)
+            {
+                return true;
+            }
+            catch (JsonException)
+            {
+                return true;
+            }
+        }
+
+        private static int Rank(string? type)
+        {
+            return type?.Trim().ToLowerInvariant() switch
+            {
+                "demo" => 1,
+                "standard" => 2,
+                "premium" => 3,
+                _ => 0
+            };
+        }
+
+        private static async Task<string> ReadEnrollErrorAsync(HttpResponseMessage response)
+        {
+            try
+            {
+                var body = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+                var error = body?.Errors?.FirstOrDefault(e => !string.IsNullOrWhiteSpace(e));
+                if (!string.IsNullOrWhiteSpace(error))
+                    return error;
+            }
+            catch (JsonException)
+            {
+            }
+
+            return "Could not enroll in this course.";
         }
 
         private async Task<bool> IsEnrolledAsync(int courseId)
@@ -96,6 +146,11 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private sealed class EnrollmentStatusUIVM
         {
             public bool Enrolled { get; set; }
+        }
+
+        private sealed class ApiErrorResponse
+        {
+            public List<string>? Errors { get; set; }
         }
     }
 }

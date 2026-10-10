@@ -33,6 +33,11 @@
                 {
                     <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Learn" asp-route-slug="@Model.Slug" data-i18n="learn_continue">Continue learning</a>
                 }
+                else if (ViewBag.PlanLocked as bool? == true)
+                {
+                    <p>Your plan cannot enroll in this @Model.Type course.</p>
+                    <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Plans">Choose a plan</a>
+                }
                 else
                 {
                     <form asp-controller="Courses" asp-action="Enroll" method="post" style="display:inline;">
