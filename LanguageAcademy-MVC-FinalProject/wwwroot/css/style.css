@@ -2756,8 +2756,94 @@ html:not(.mf-admin) a[data-admin-panel] { display: none !important; }
 .quiz-note { color: var(--muted); }
 .quiz-courses { margin-top: 16px; }
 
-.teacher-plan-offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-.plan-card.is-current { outline: 2px solid var(--primary); }
+.teacher-plan-offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
+.plans-page { display: grid; gap: 20px; }
+.plan-hero {
+  background: linear-gradient(135deg, #0f766e 0%, #115e59 58%, #0d1826 100%);
+  color: #fff;
+  border: 0;
+  padding: 28px 28px 26px;
+}
+.plan-hero .eyebrow { color: #99f6e4; }
+.plan-hero h2 { color: #fff; margin: 8px 0 8px; font-size: clamp(1.6rem, 2.4vw, 2.1rem); }
+.plan-hero p { margin: 0; color: rgba(255, 255, 255, 0.86); max-width: 640px; }
+.plan-hero strong { color: #fff; }
+.plan-usage { margin-top: 18px; max-width: 360px; }
+.plan-usage-row { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; color: #ccfbf1; font-size: 0.9rem; }
+.plan-usage-row strong { color: #fff; }
+.plan-hero .progress { background: rgba(255, 255, 255, 0.18); }
+.plan-hero .progress span { background: #fde68a; }
+.plan-flash {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(209, 250, 229, 0.18);
+  color: #d1fae5;
+  font-weight: 700;
+}
+.plan-card {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 24px 22px 22px;
+  min-height: 100%;
+}
+.plan-card h2, .plan-lock h3 { margin: 6px 0 8px; }
+.plan-card.is-premium {
+  border-color: #0f766e;
+  box-shadow: 0 16px 36px rgba(15, 118, 110, 0.12);
+  transform: translateY(-4px);
+}
+.plan-card.is-current { outline: 2px solid var(--primary); outline-offset: 0; }
+.plan-ribbon {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  margin: 0;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.plan-icon {
+  width: 42px;
+  height: 42px;
+  margin: 0 0 6px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 1.2rem;
+}
+.plan-card.is-premium .plan-icon { background: #0f766e; color: #fff; }
+.plan-card .eyebrow { color: var(--heading); letter-spacing: 0.04em; }
+.plan-info { margin: 0 0 4px; color: var(--muted); min-height: 2.8em; }
+.plan-features {
+  list-style: none;
+  margin: 8px 0 16px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.plan-features li { display: flex; align-items: flex-start; gap: 8px; color: var(--text); }
+.plan-features i { color: var(--primary); margin-top: 3px; }
+.plan-card form,
+.plan-card .pill { margin-top: auto; }
+.plan-card .btn { width: 100%; }
+.plan-card .pill { justify-content: center; padding: 0.55rem 0.8rem; }
+
+[data-theme="dark"] .plan-hero { background: linear-gradient(135deg, #115e59 0%, #0d1826 100%); }
+[data-theme="dark"] .plan-card.is-premium { box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28); }
+[data-theme="dark"] .plan-icon { background: rgba(15, 118, 110, 0.22); color: #99f6e4; }
 .reward-toast {
   position: fixed;
   right: 24px;
@@ -2830,6 +2916,7 @@ html:not(.mf-admin) a[data-admin-panel] { display: none !important; }
   .teacher-plan-offers,
   .video-learn,
   .learn-layout.is-video { grid-template-columns: 1fr; }
+  .plan-card.is-premium { transform: none; }
 }
 
 @media (max-width: 576px) {

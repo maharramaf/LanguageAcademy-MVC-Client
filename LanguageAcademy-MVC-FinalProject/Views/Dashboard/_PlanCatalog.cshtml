@@ -1,0 +1,101 @@
+@model PlanPageUIVM
+@{
+    var chooseAction = ViewData["ChooseAction"] as string ?? "ChoosePlan";
+    var noticeKey = ViewData["NoticeKey"] as string ?? "PlanNotice";
+    var lead = ViewData["Lead"] as string ?? "This is a test membership. No card is charged.";
+    var title = ViewData["CatalogTitle"] as string ?? "Plans";
+    var titleI18n = ViewData["CatalogI18n"] as string ?? "plan_nav";
+    int Rank(string? type) => type?.ToLowerInvariant() switch
+    {
+        "standard" => 1,
+        "premium" => 2,
+        _ => 0
+    };
+    var currentItem = Model.Items.FirstOrDefault(item =>
+        string.Equals(item.Type, Model.Current, StringComparison.OrdinalIgnoreCase));
+    var currentPrice = currentItem is null || currentItem.Price <= 0
+        ? "Free"
+        : $"₼{currentItem.Price.ToString("0")} / month";
+    var usageLimit = Model.CourseLimit;
+    var usageText = usageLimit is null ? "Unlimited" : usageLimit.Value.ToString();
+    var usagePercent = usageLimit is null or 0
+        ? 100
+        : Math.Min(100, Model.AssignedCount * 100 / usageLimit.Value);
+}
+<div class="dash-content plans-page">
+    <section class="panel plan-hero">
+        <p class="eyebrow" data-i18n="@titleI18n">@title</p>
+        <h2>@Model.DisplayCurrent</h2>
+        <p>@lead Current plan: <strong>@Model.DisplayCurrent</strong> · @currentPrice</p>
+        @if (Model.ShowUsage)
+        {
+            <div class="plan-usage">
+                <div class="plan-usage-row">
+                    <span>Assigned courses</span>
+                    <strong>@Model.AssignedCount / @usageText</strong>
+                </div>
+                <div class="progress" aria-hidden="true"><span style="width:@usagePercent%"></span></div>
+            </div>
+        }
+        @if (TempData[noticeKey] is string notice)
+        {
+            <p class="plan-flash"><i class="bi bi-check-circle" aria-hidden="true"></i> @notice</p>
+        }
+        <div asp-validation-summary="ModelOnly" class="field-error"></div>
+    </section>
+    <div class="teacher-plan-offers">
+        @foreach (var item in Model.Items)
+        {
+            var current = string.Equals(item.Type, Model.Current, StringComparison.OrdinalIgnoreCase);
+            var premium = string.Equals(item.Type, "premium", StringComparison.OrdinalIgnoreCase);
+            var icon = item.Type?.ToLowerInvariant() switch
+            {
+                "standard" => "bi-star",
+                "premium" => "bi-gem",
+                _ => "bi-gift"
+            };
+            var actionLabel = Rank(item.Type) < Rank(Model.Current)
+                ? $"Switch to {item.Title}"
+                : $"Choose {item.Title}";
+            <section class="panel plan-card @(current ? "is-current" : null) @(premium ? "is-premium" : null)">
+                @if (premium)
+                {
+                    <p class="plan-ribbon">Most chosen</p>
+                }
+                <p class="plan-icon"><i class="bi @icon" aria-hidden="true"></i></p>
+                <p class="eyebrow">@item.Title</p>
+                <p class="plan-metric">
+                    @if (item.Price <= 0)
+                    {
+                        <text>Free</text>
+                    }
+                    else
+                    {
+                        <text>₼@item.Price.ToString("0") <small>/ month</small></text>
+                    }
+                </p>
+                <p class="plan-info">@item.Info</p>
+                @if (item.Features.Count > 0)
+                {
+                    <ul class="plan-features">
+                        @foreach (var feature in item.Features)
+                        {
+                            <li><i class="bi bi-check2" aria-hidden="true"></i><span>@feature</span></li>
+                        }
+                    </ul>
+                }
+                @if (current)
+                {
+                    <p class="pill pill-success">Current plan</p>
+                }
+                else
+                {
+                    <form asp-controller="Dashboard" asp-action="@chooseAction" method="post">
+                        <input type="hidden" name="type" value="@item.Type" />
+                        <button class="btn @(Rank(item.Type) < Rank(Model.Current) ? "btn-outline" : "btn-primary")" type="submit">@actionLabel</button>
+                    </form>
+                }
+            </section>
+        }
+    </div>
+</div>
