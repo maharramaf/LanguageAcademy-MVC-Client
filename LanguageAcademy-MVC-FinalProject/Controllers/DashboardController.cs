@@ -4,6 +4,7 @@ using LanguageAcademy_MVC_FinalProject.Helpers;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Accounts;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Courses;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Messages;
+using LanguageAcademy_MVC_FinalProject.ViewModels.Earnings;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Plans;
 using LanguageAcademy_MVC_FinalProject.ViewModels.TeacherApplications;
 using LanguageAcademy_MVC_FinalProject.ViewModels.Teachers;
@@ -147,7 +148,12 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
 
         [HttpGet]
         [Authorize(Roles = Roles.TeacherPanelRoles)]
-        public IActionResult Earnings() => PlaceholderPage("Earnings", "tp_earnings");
+        public async Task<IActionResult> Earnings()
+        {
+            SetDash("Earnings", "tp_earnings");
+            var page = await LoadEarningsAsync() ?? new EarningsUIVM();
+            return View(page);
+        }
 
         [HttpGet]
         [Authorize(Roles = Roles.StaffRoles)]
@@ -1236,6 +1242,23 @@ namespace LanguageAcademy_MVC_FinalProject.Controllers
         private string CourseListAction()
         {
             return Roles.IsStaff(User) ? nameof(Courses) : nameof(Studio);
+        }
+
+        private async Task<EarningsUIVM?> LoadEarningsAsync()
+        {
+            try
+            {
+                var client = ApiClient.Create(_httpClientFactory, Request);
+                var response = await client.GetAsync("api/Earnings");
+                if (!response.IsSuccessStatusCode)
+                    return null;
+
+                return await response.Content.ReadFromJsonAsync<EarningsUIVM>();
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
 
         private async Task<PlanPageUIVM?> LoadTeacherPlansPageAsync()

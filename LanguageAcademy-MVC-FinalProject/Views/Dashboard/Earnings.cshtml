@@ -1,0 +1,18 @@
+@model EarningsUIVM
+@{
+    Layout = "_DashLayout";
+}
+<div class="dash-content">
+    <section class="panel">
+        <h2 data-i18n="tp_earnings">Earnings</h2>
+        <p>Preview from enrollments on your assigned courses. No card is charged.</p>
+        <ul class="plan-metrics">
+            <li><span>Total Sales</span><strong>₼@Model.TotalSales.ToString("0.00")</strong></li>
+            <li><span>Teacher Earnings</span><strong>₼@Model.TeacherShare.ToString("0.00")</strong></li>
+            <li><span>Platform Commission</span><strong>₼@Model.PlatformShare.ToString("0.00")</strong></li>
+            <li><span>Courses Sold</span><strong>@Model.CoursesSold</strong></li>
+            <li><span>This Month</span><strong>₼@Model.ThisMonth.ToString("0.00")</strong></li>
+            <li><span>Commission rate</span><strong>@Model.CommissionPercent%</strong></li>
+        </ul>
+    </section>
+</div>
