@@ -57,7 +57,7 @@ function nextLevelFromXp(xp) {
 }
 
 function pushRewardNotice(id, titleKey, messageKey) {
-  if (typeof mfNotifyItems === "undefined") return;
+  if (typeof mfNotifyItems === "undefined" || window.mfNotifyLive) return;
   if (mfNotifyItems.some(function (item) { return String(item.id) === id; })) return;
   mfNotifyItems.unshift({
     id: id,

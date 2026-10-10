@@ -73,7 +73,7 @@ function mfEnrollCourse(slug) {
   const course = window.courses && window.courses[slug];
   const name = course ? (typeof window.mfText === "function" ? window.mfText(course.title) : course.title) : slug;
   pushPlanNotice("buy-" + slug, "course_bought", "course_bought_text");
-  if (typeof mfNotifyItems !== "undefined") {
+  if (typeof mfNotifyItems !== "undefined" && !window.mfNotifyLive) {
     mfNotifyItems.unshift({
       id: "enroll-" + slug,
       type: "enrollment",
@@ -90,7 +90,7 @@ function mfEnrollCourse(slug) {
 }
 
 function pushPlanNotice(id, titleKey, messageKey) {
-  if (typeof mfNotifyItems === "undefined") return;
+  if (typeof mfNotifyItems === "undefined" || window.mfNotifyLive) return;
   if (mfNotifyItems.some(function (item) { return String(item.id) === id; })) return;
   mfNotifyItems.unshift({
     id: id,

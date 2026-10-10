@@ -62,7 +62,7 @@ function paintFile(form, name) {
 }
 
 function pushApplyNotice(id, titleKey, messageKey, href) {
-  if (typeof mfNotifyItems === "undefined" || typeof saveNotificationState !== "function") return;
+  if (window.mfNotifyLive || typeof mfNotifyItems === "undefined" || typeof saveNotificationState !== "function") return;
   if (mfNotifyItems.some(function (item) { return String(item.id) === id; })) return;
   mfNotifyItems.unshift({
     id: id,

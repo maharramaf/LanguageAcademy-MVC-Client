@@ -1,5 +1,9 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en"
+      data-notify-token="@(User.Identity?.IsAuthenticated == true ? Url.Action("HubToken", "Notifications") : null)"
+      data-notify-list="@Url.Action("List", "Notifications")"
+      data-notify-read="@Url.Action("Read", "Notifications")"
+      data-notify-read-all="@Url.Action("ReadAll", "Notifications")">
 <head>
     <script src="~/js/preferences-boot.js"></script>
     <meta charset="UTF-8">
@@ -178,6 +182,10 @@
     <script src="~/js/ai-assistant.js" defer></script>
     <script src="~/js/i18n-extra.js" defer></script>
     <script src="~/js/preferences.js" defer></script>
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@8.0.7/dist/browser/signalr.min.js"></script>
+    }
     <script src="~/js/notifications.js" defer></script>
     <script src="~/js/membership.js" defer></script>
     <script src="~/js/certificates.js" defer></script>

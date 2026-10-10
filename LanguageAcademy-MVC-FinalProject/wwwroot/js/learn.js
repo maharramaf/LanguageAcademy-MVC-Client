@@ -279,7 +279,7 @@ function grantIfNeeded(kind, label) {
 function maybeCourseComplete(state) {
   if (learnProgress(state) === 100) {
     grantIfNeeded("course", learnText("reward_course_done", "Course completed!"));
-    if (typeof mfNotifyItems !== "undefined") {
+    if (typeof mfNotifyItems !== "undefined" && !window.mfNotifyLive) {
       mfNotifyItems.unshift({
         id: "course-complete-" + Date.now(),
         type: "certificate",

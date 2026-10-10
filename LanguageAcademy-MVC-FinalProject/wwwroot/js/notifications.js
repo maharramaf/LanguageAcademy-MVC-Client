@@ -1,14 +1,5 @@
-/* Frontend notification prototype. Shown in this visit only. No network calls. */
-const MF_NOTIFICATIONS = [
-  { id: 1, type: "course", titleKey: "notification_new_course", messageKey: "notification_new_course_message", detailKey: "course_ielts", timeKey: "time_5_minutes", href: "catalog.html", read: false },
-  { id: 2, type: "lesson", titleKey: "notification_new_lesson", messageKey: "notification_new_lesson_message", detailKey: "course_speaking", timeKey: "time_20_minutes", href: "course-details.html?course=english-beginner", read: false },
-  { id: 3, type: "quiz", titleKey: "notification_quiz_result", messageKey: "notification_quiz_result_message", detailKey: "course_business", timeKey: "time_1_hour", href: "learn.html#grades", read: true },
-  { id: 4, type: "certificate", titleKey: "notification_certificate", messageKey: "notification_certificate_message", detailKey: "course_spanish", timeKey: "time_yesterday", href: "certificate.html?course=english-a2", read: true },
-  { id: 5, type: "enrollment", titleKey: "notification_enrollment", messageKey: "notification_enrollment_message", detailKey: "course_en_beginner", timeKey: "time_yesterday", href: "dashboard.html#my-courses-section", read: true },
-  { id: 6, type: "announcement", titleKey: "notification_announcement", messageKey: "notification_announcement_message", detailKey: "", timeKey: "time_just_now", href: "notifications.html", read: false },
-  { id: 7, type: "instructor", titleKey: "notification_new_student", messageKey: "notification_new_student_message", detailKey: "course_business", timeKey: "time_1_hour", href: "dashboard.html#students-section", read: true }
-];
-
+/* Live notifications consume api/Notifications + SignalR /hubs/notify. */
+window.mfNotifyLive = true;
 const MF_NOTIFY_ICONS = {
   course: "bi-journal-bookmark",
   lesson: "bi-play-circle",
@@ -16,10 +7,11 @@ const MF_NOTIFY_ICONS = {
   certificate: "bi-award",
   enrollment: "bi-person-check",
   instructor: "bi-person-plus",
+  message: "bi-chat-dots",
   announcement: "bi-megaphone"
 };
 
-let mfNotifyItems = MF_NOTIFICATIONS.map(function (item) { return Object.assign({}, item); });
+let mfNotifyItems = [];
 let mfNotifyFilter = "all";
 let mfNotifyIssued = {};
 
@@ -29,12 +21,38 @@ function mfNotifyText(key, fallback) {
   return fallback || key;
 }
 
-function loadNotificationState() {}
+function notifyTokenUrl() {
+  const root = document.documentElement;
+  return root.getAttribute("data-notify-token") || "";
+}
 
-function saveNotificationState() {}
+function notifyListUrl() {
+  return document.documentElement.getAttribute("data-notify-list") || "/Notifications/List";
+}
+
+function notifyReadUrl(id) {
+  const base = document.documentElement.getAttribute("data-notify-read") || "/Notifications/Read";
+  return base + "?id=" + encodeURIComponent(id);
+}
+
+function notifyReadAllUrl() {
+  return document.documentElement.getAttribute("data-notify-read-all") || "/Notifications/ReadAll";
+}
+
+function notifyWhen(value) {
+  if (!value) return "";
+  const text = String(value);
+  const date = new Date(/[zZ]|[+-]\d{2}:\d{2}$/.test(text) ? text : text + "Z");
+  if (Number.isNaN(date.getTime())) return "";
+  const seconds = Math.max(0, (Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return "Just now";
+  if (seconds < 3600) return Math.floor(seconds / 60) + " min ago";
+  if (seconds < 86400) return Math.floor(seconds / 3600) + " h ago";
+  return date.toLocaleDateString();
+}
 
 function unreadNotificationCount() {
-  return mfNotifyItems.filter(function (item) { return !item.read && !isAdminDashboardNotice(item); }).length;
+  return mfNotifyItems.filter(function (item) { return !item.read; }).length;
 }
 
 function updateNotificationBadge() {
@@ -51,40 +69,42 @@ function updateNotificationBadge() {
 
 function notificationMarkup(item, compact) {
   const icon = MF_NOTIFY_ICONS[item.type] || "bi-bell";
-  const course = item.courseKey ? mfNotifyText(item.courseKey, "") : (item.detailKey ? mfNotifyText(item.detailKey, "") : "");
-  let message = mfNotifyText(item.messageKey);
-  if (item.courseKey) message = message.replace(/\{courseName\}/g, course);
   return (
-    '<button class="notify-item' + (item.read ? "" : " is-unread") + '" type="button" data-notify-id="' + item.id + '">' +
+    '<button class="notify-item' + (item.read ? "" : " is-unread") + '" type="button" data-notify-id="' + item.id + '" data-href="' + escapeAttr(item.href || "") + '">' +
       '<i class="bi ' + icon + '" aria-hidden="true"></i>' +
       '<span>' +
-        '<strong>' + mfNotifyText(item.titleKey) + '</strong>' +
-        (course ? '<em>' + course + '</em>' : '') +
-        (compact ? '' : '<small>' + message + '</small>') +
-        '<time>' + mfNotifyText(item.timeKey) + '</time>' +
-      '</span>' +
-    '</button>'
+        '<strong>' + escapeHtml(item.title || "") + '</strong>' +
+        (compact ? "" : '<small>' + escapeHtml(item.body || "") + "</small>") +
+        "<time>" + escapeHtml(notifyWhen(item.createdAt)) + "</time>" +
+      "</span>" +
+    "</button>"
   );
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replace(/'/g, "&#39;");
 }
 
 function emptyNotificationMarkup() {
   return (
     '<div class="notify-empty">' +
       '<i class="bi bi-bell" aria-hidden="true"></i>' +
-      '<strong>' + mfNotifyText("no_notifications", "No new notifications") + '</strong>' +
-      '<p>' + mfNotifyText("notifications_caught_up", "You're all caught up.") + '</p>' +
-    '</div>'
+      '<strong>' + mfNotifyText("no_notifications", "No new notifications") + "</strong>" +
+      '<p>' + mfNotifyText("notifications_caught_up", "You're all caught up.") + "</p>" +
+    "</div>"
   );
-}
-
-function isAdminDashboardNotice(item) {
-  return item && typeof window.mfIsDashboardHref === "function" && window.mfIsDashboardHref(item.href)
-    && !(typeof window.mfCanSeeAdminPanel === "function" && window.mfCanSeeAdminPanel());
 }
 
 function visibleNotifications() {
   return mfNotifyItems.filter(function (item) {
-    if (isAdminDashboardNotice(item)) return false;
     if (mfNotifyFilter === "all") return true;
     if (mfNotifyFilter === "unread") return !item.read;
     return item.type === mfNotifyFilter;
@@ -92,17 +112,10 @@ function visibleNotifications() {
 }
 
 function renderNotifications() {
-  const unread = unreadNotificationCount();
   document.querySelectorAll(".notify-list").forEach(function (list) {
-    if (unread === 0) {
-      list.innerHTML = emptyNotificationMarkup();
-      return;
-    }
-    list.innerHTML = mfNotifyItems.filter(function (item) {
-      return !isAdminDashboardNotice(item);
-    }).map(function (item) {
-      return notificationMarkup(item, true);
-    }).join("");
+    list.innerHTML = mfNotifyItems.length
+      ? mfNotifyItems.map(function (item) { return notificationMarkup(item, true); }).join("")
+      : emptyNotificationMarkup();
   });
 
   const page = document.querySelector("[data-notifications]");
@@ -115,19 +128,31 @@ function renderNotifications() {
   updateNotificationBadge();
 }
 
+function upsertNotification(item) {
+  if (!item || !item.id) return;
+  const index = mfNotifyItems.findIndex(function (entry) { return String(entry.id) === String(item.id); });
+  if (index >= 0) mfNotifyItems[index] = item;
+  else mfNotifyItems.unshift(item);
+  renderNotifications();
+}
+
 function markNotificationAsRead(id) {
   const item = mfNotifyItems.find(function (entry) { return String(entry.id) === String(id); });
   if (!item || item.read) return item;
   item.read = true;
-  saveNotificationState();
   renderNotifications();
+  if (notifyTokenUrl()) {
+    fetch(notifyReadUrl(id), { method: "POST", credentials: "same-origin" });
+  }
   return item;
 }
 
 function markAllNotificationsAsRead() {
   mfNotifyItems.forEach(function (item) { item.read = true; });
-  saveNotificationState();
   renderNotifications();
+  if (notifyTokenUrl()) {
+    fetch(notifyReadAllUrl(), { method: "POST", credentials: "same-origin" });
+  }
 }
 
 function closeNotificationPanel(except) {
@@ -157,73 +182,33 @@ function bindNotificationList(root) {
     const button = event.target.closest("[data-notify-id]");
     if (!button || !root.contains(button)) return;
     const item = markNotificationAsRead(button.getAttribute("data-notify-id"));
-    if (item && item.href && root.classList.contains("notify-list")) {
-      if (isAdminDashboardNotice(item)) return;
-      window.location.href = item.href;
-    }
+    const href = button.getAttribute("data-href") || (item && item.href);
+    if (href) window.location.href = href;
   });
-}
-
-function ensureNotificationPage() {
-  const list = document.querySelector("[data-notifications]");
-  if (!list || document.querySelector(".notify-toolbar")) return;
-  const bar = document.createElement("div");
-  bar.className = "notify-toolbar";
-  const filters = [
-    ["all", "filter_all", "All"],
-    ["unread", "notify_filter_unread", "Unread"],
-    ["course", "nav_courses", "Courses"],
-    ["lesson", "faq_cat_lessons", "Lessons"],
-    ["quiz", "faq_cat_quizzes", "Quizzes"],
-    ["certificate", "faq_cat_certs", "Certificates"],
-    ["announcement", "notification_announcement", "Announcement"]
-  ];
-  bar.innerHTML =
-    '<div class="notify-filters">' +
-      filters.map(function (filter, index) {
-        return '<button type="button" class="filter-btn' + (index === 0 ? " is-active" : "") + '" data-notify-filter="' + filter[0] + '" data-i18n="' + filter[1] + '">' + filter[2] + '</button>';
-      }).join("") +
-    '</div>' +
-    '<button class="btn btn-outline notify-mark-all" type="button" data-i18n="mark_all_read">Mark all as read</button>';
-  list.parentNode.insertBefore(bar, list);
-  bar.addEventListener("click", function (event) {
-    const filter = event.target.closest("[data-notify-filter]");
-    if (filter) {
-      mfNotifyFilter = filter.getAttribute("data-notify-filter");
-      bar.querySelectorAll("[data-notify-filter]").forEach(function (button) {
-        button.classList.toggle("is-active", button === filter);
-      });
-      renderNotifications();
-      return;
-    }
-    if (event.target.closest(".notify-mark-all")) markAllNotificationsAsRead();
-  });
-  bindNotificationList(list);
 }
 
 function mountNotificationControls() {
   document.querySelectorAll(".header-tools").forEach(function (tools) {
     if (tools.querySelector(".notify-switch")) return;
+    if (!notifyTokenUrl()) return;
     const wrap = document.createElement("div");
     wrap.className = "notify-switch";
     wrap.innerHTML =
       '<button class="notify-toggle" type="button" aria-haspopup="dialog" aria-expanded="false" data-i18n-aria-label="open_notifications">' +
         '<i class="bi bi-bell" aria-hidden="true"></i>' +
         '<span class="notify-badge" hidden>0</span>' +
-      '</button>' +
+      "</button>" +
       '<div class="notify-panel" role="dialog" hidden>' +
         '<div class="notify-head">' +
           '<strong data-i18n="notes_title">Notifications</strong>' +
           '<button class="notify-mark-all" type="button" data-i18n="mark_all_read">Mark all as read</button>' +
-        '</div>' +
+        "</div>" +
         '<div class="notify-list"></div>' +
-        '<a class="notify-all" href="notifications.html" data-i18n="view_all_notifications">View all notifications</a>' +
-      '</div>';
+      "</div>";
     const theme = tools.querySelector(".theme-toggle");
     if (theme && theme.nextSibling) tools.insertBefore(wrap, theme.nextSibling);
     else tools.appendChild(wrap);
-    const button = wrap.querySelector(".notify-toggle");
-    button.addEventListener("click", function (event) {
+    wrap.querySelector(".notify-toggle").addEventListener("click", function (event) {
       event.stopPropagation();
       toggleNotificationPanel(wrap);
     });
@@ -234,20 +219,53 @@ function mountNotificationControls() {
   });
 }
 
+function loadNotifications() {
+  if (!notifyTokenUrl()) {
+    renderNotifications();
+    return Promise.resolve();
+  }
+  return fetch(notifyListUrl(), { credentials: "same-origin" })
+    .then(function (response) {
+      if (!response.ok) throw new Error("list");
+      return response.json();
+    })
+    .then(function (items) {
+      mfNotifyItems = Array.isArray(items) ? items : [];
+      renderNotifications();
+    })
+    .catch(function () {
+      renderNotifications();
+    });
+}
+
+function connectNotificationHub() {
+  const tokenUrl = notifyTokenUrl();
+  if (!tokenUrl || typeof signalR === "undefined") return;
+  fetch(tokenUrl, { credentials: "same-origin" })
+    .then(function (response) {
+      if (!response.ok) throw new Error("token");
+      return response.json();
+    })
+    .then(function (data) {
+      const connection = new signalR.HubConnectionBuilder()
+        .withUrl(data.hubUrl, { accessTokenFactory: function () { return data.token; } })
+        .withAutomaticReconnect()
+        .build();
+      connection.on("ReceiveNotification", upsertNotification);
+      return connection.start();
+    })
+    .catch(function () { /* keep the loaded list */ });
+}
+
 function initNotifications() {
   if (document.documentElement.dataset.notifyReady === "1") {
     mountNotificationControls();
-    ensureNotificationPage();
     renderNotifications();
-    if (typeof window.applyTranslations === "function") window.applyTranslations();
     return;
   }
   document.documentElement.dataset.notifyReady = "1";
-  loadNotificationState();
   mountNotificationControls();
-  ensureNotificationPage();
-  renderNotifications();
-  if (typeof window.applyTranslations === "function") window.applyTranslations();
+  loadNotifications().then(connectNotificationHub);
   document.addEventListener("click", function (event) {
     if (!event.target.closest(".notify-switch")) closeNotificationPanel(null);
   });
@@ -260,7 +278,7 @@ function initNotifications() {
   });
 }
 
-window.MF_NOTIFICATIONS = MF_NOTIFICATIONS;
+window.mfNotifyItems = mfNotifyItems;
 window.initNotifications = initNotifications;
 window.renderNotifications = renderNotifications;
 window.updateNotificationBadge = updateNotificationBadge;
@@ -269,11 +287,7 @@ window.markAllNotificationsAsRead = markAllNotificationsAsRead;
 window.toggleNotificationPanel = toggleNotificationPanel;
 window.closeNotificationPanel = closeNotificationPanel;
 window.mfNotifyIssued = function () { return mfNotifyIssued; };
-window.mfIssueCertificateNotice = function (id) {
-  if (mfNotifyIssued[id]) return false;
-  mfNotifyIssued[id] = true;
-  return true;
-};
+window.mfIssueCertificateNotice = function () { return false; };
 
 document.addEventListener("DOMContentLoaded", function () {
   initNotifications();

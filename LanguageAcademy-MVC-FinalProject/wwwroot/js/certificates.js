@@ -36,7 +36,7 @@ function certificateFromUrl() {
 }
 
 function issueCertificateNotifications() {
-  if (typeof window.mfIssueCertificateNotice !== "function" || typeof mfNotifyItems === "undefined") return;
+  if (window.mfNotifyLive || typeof window.mfIssueCertificateNotice !== "function" || typeof mfNotifyItems === "undefined") return;
   let added = false;
   completedCertificates().forEach(function (cert) {
     const noticeId = "cert-" + cert.slug;

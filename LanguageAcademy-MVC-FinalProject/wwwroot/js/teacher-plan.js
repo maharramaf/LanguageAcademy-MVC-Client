@@ -64,7 +64,7 @@ function mfActivateTeacherPlan(planId) {
     studentsUsed: current.studentsUsed || 12
   };
   writeTeacherPlan(record);
-  if (typeof mfNotifyItems !== "undefined") {
+  if (typeof mfNotifyItems !== "undefined" && !window.mfNotifyLive) {
     const id = "teacher-plan-" + planId;
     if (!mfNotifyItems.some(function (item) { return String(item.id) === id; })) {
       mfNotifyItems.unshift({
